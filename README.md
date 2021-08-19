@@ -123,10 +123,6 @@ Webhook subcriptions could be quite different among different service providers,
 
 Message tranform happens when we receive notifications and parse them into either [RingCentral Card](https://developers.ringcentral.com/guide/team-messaging/manual/posting-cards) or [Adaptive Card](https://adaptivecards.io/designer/).
 
-## Example Project
-
-Check out branch `Example` under this project.
-
 # Deployment
 
 ## Register App on RingCentral Developer Website
