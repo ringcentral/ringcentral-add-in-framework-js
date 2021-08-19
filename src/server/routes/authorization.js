@@ -1,4 +1,5 @@
 const { User } = require('../db/userModel');
+const { Subscription } = require('../db/subscriptionModel');
 const { decodeToken, generateToken } = require('../lib/jwt');
 const constants = require('../lib/constants');
 
@@ -96,6 +97,15 @@ async function revokeToken(req, res) {
         const user = await User.findByPk(userId);
         if (user && user.token) {
             await user.destroy();
+        }
+
+        if(user.subscriptionId)
+        {
+            const subscription = await Subscription.findByPk(user.subscriptionId);
+            if(subscription)
+            {
+                await subscription.destroy();
+            }
         }
 
         res.json({

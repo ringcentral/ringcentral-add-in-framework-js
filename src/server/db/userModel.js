@@ -12,5 +12,8 @@ exports.User = sequelize.define('users', {
   },
   rcWebhookUri:{
     type: Sequelize.STRING
-  }
+  },
+  subscriptionId: {
+    type: Sequelize.STRING
+  },
 });
