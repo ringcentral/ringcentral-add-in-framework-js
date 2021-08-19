@@ -5,7 +5,7 @@ const constants = require('../lib/constants');
 async function openAuthPage(req, res) {
     try {
         // ===[Replace]===
-        // replace this with actual auth page from 3rd party service
+        // replace this with actual auth page url from 3rd party service
         // Note: this mockAuthUrl directly triggers a successful auth callback event with mock access token
         const mockService = {
             mockAuthUrl : `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}?accessToken=testAccessToken`

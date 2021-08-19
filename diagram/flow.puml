@@ -22,7 +22,7 @@ group setup
     group authorization
     G -> T: user auth
     activate T
-    T --> G: grant user access upon auth
+    T --> G: grant user access
     deactivate T
     G -> SERVER: upload user info
     activate SERVER
@@ -31,10 +31,10 @@ group setup
     deactivate SERVER
     end
 
-    group configure
-    G -> SERVER: upload config info
+    group subscribe
+    G -> SERVER: subscribe
     activate SERVER
-    SERVER --> T: create subscription with SERVER_WEBHOOK (not RC_WEBHOOK)
+    SERVER --> T: create subscription with SERVER_WEBHOOK
     activate T
     T --> SERVER: return subscription info
     deactivate T
@@ -44,7 +44,7 @@ group setup
 end
 
 group notification
-    T -> SERVER: notification via Server webhook
+    T -> SERVER: notification via SERVER_WEBHOOK
     activate SERVER
     SERVER -> DB: query subscription id
     activate DB

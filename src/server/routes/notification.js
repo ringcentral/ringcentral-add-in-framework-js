@@ -4,6 +4,8 @@ const { User } = require('../db/userModel');
 
 async function notification(req, res) {
     try {
+        // ===[Replace]===
+        // replace this to use actual 3rd party notification data, transform it, and send to RC_WEBHOOK
         const mockSubscriptionId = req.body.id;
         const subscription = await Subscription.findByPk(mockSubscriptionId);
         const mockUserId = subscription.userId;
