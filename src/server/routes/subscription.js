@@ -20,7 +20,7 @@ async function subscribe(req, res) {
   // get user
   const userId = decodedToken.id;
   const user = await User.findByPk(userId);
-  if (!user || !user.token) {
+  if (!user || !user.tokens) {
     res.send('Session expired');
     res.status(401);
     return;
@@ -32,6 +32,26 @@ async function subscribe(req, res) {
     const mockSubscriptionResponse = {
       id : "sub-123456",
     }
+
+    // ===[Replace]===
+    // replace this section with access token expiry handling
+    if(mockSubscriptionResponse == null)
+    {
+      const mockRefreshTokenResponse = {
+        newAccessToken : "newAccessToken",
+        newRefreshToken : "newRefreshToken"
+      };
+      user.tokens = {
+        accessToken : mockRefreshTokenResponse.newAccessToken,
+        refreshToken : mockRefreshTokenResponse.newRefreshToken
+      }
+
+      // Call subscribe API again with new access token
+      const mockSubscriptionResponse = {
+        id : "sub-123456",
+      }
+    }
+
     // create new subscription in DB
     await Subscription.create({
       id: mockSubscriptionResponse.id,

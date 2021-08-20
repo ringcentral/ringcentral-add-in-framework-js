@@ -113,6 +113,51 @@ Press `Ubsubcribe and Logout`, and incoming notifications will not be sent to yo
 
 `!!!IMPORTANT!!! This framework is composed by mock actions which simulate responses from a 3rd party API server. All places with ===[Replace]=== tag should be replaced with the actual logic that handles interactions with 3rd party service`
 
+## Auth Callback
+
+Typically for OAuth with 3rd party service, the steps would be:
+1. Call 3rd party server to get a OAuth url, and open it on a new page.
+2. Input user credentials to authenticate and authorize. 3rd party service will return, typically, an access token and a refresh token to our `auth callback url`.
+3. We receive tokens from auth callback and store them in database for future use.
+
+`auth callback url` is `https://xxxxxxx.ngrok.io/oauth-callback`. More routes for other endpoints can be found in `src/server/index.js`.
+
+The callback from 3rd party service will firstly hit above url which eventually triggers `onAuthCallback` function in client side `Root.jsx`. From there, it does
+
+```js
+    // Authorize
+    await client.saveUserInfo(e.data.authCallback);
+    // Subscribe - most likely you'll need to separate this from Authorize
+    await client.subscribe();
+```
+
+Above two calls go to `src/server/routes/authorization.js` and `src/server/routes/subscription.js`.
+
+## Access Token Expiry
+
+Please write codes in `src/server/routes/subscription.js`, specifically here:
+
+```js
+    // ===[Replace]===
+    // replace this section with access token expiry handling
+    if(mockSubscriptionResponse == null)
+    {
+      const mockRefreshTokenResponse = {
+        newAccessToken : "newAccessToken",
+        newRefreshToken : "newRefreshToken"
+      };
+      user.tokens = {
+        accessToken : mockRefreshTokenResponse.newAccessToken,
+        refreshToken : mockRefreshTokenResponse.newRefreshToken
+      }
+
+      // Call subscribe API again with new access token
+      const mockSubscriptionResponse = {
+        id : "sub-123456",
+      }
+    }
+```
+
 ## Webhook Subscription
 
 Webhook subcriptions could be quite different among different service providers, some questions should be considered:

@@ -24,6 +24,7 @@ export class Client {
     const paramUrl = callbackUri.split('?')[1];
     const urlSearchParams = new URLSearchParams(paramUrl);
     const mockAccessToken = urlSearchParams.get('accessToken').replace(/^#/, '');
+    const mockRefreshToken = urlSearchParams.get('refreshToken').replace(/^#/, '');
     const response = await fetch(this._config.saveUserInfoUri, {
       method: 'POST',
       headers: {
@@ -31,6 +32,7 @@ export class Client {
       },
       body: JSON.stringify({
         mockAccessToken: mockAccessToken,
+        mockRefreshToken: mockRefreshToken,
         rcWebhookUri: this._config.rcWebhookUri
       }),
     });
