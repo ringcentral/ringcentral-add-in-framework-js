@@ -23,16 +23,14 @@ export class Client {
     // replace mockAccessToken to 3rd party access code
     const paramUrl = callbackUri.split('?')[1];
     const urlSearchParams = new URLSearchParams(paramUrl);
-    const mockAccessToken = urlSearchParams.get('accessToken').replace(/^#/, '');
-    const mockRefreshToken = urlSearchParams.get('refreshToken').replace(/^#/, '');
+    const code = urlSearchParams.get('code').replace(/^#/, '');
     const response = await fetch(this._config.saveUserInfoUri, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        mockAccessToken: mockAccessToken,
-        mockRefreshToken: mockRefreshToken,
+        code: code,
         rcWebhookUri: this._config.rcWebhookUri
       }),
     });

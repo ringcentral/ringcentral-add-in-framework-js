@@ -1,51 +1,50 @@
 const axios = require('axios');
-const { Subscription } = require('../db/subscriptionModel');
 const { User } = require('../db/userModel');
 
 async function notification(req, res) {
     try {
         // ===[Replace]===
         // replace this to use actual 3rd party notification data, transform it, and send to RC_WEBHOOK
-        const mockSubscriptionId = req.body.id;
-        const subscription = await Subscription.findByPk(mockSubscriptionId);
-        const mockUserId = subscription.userId;
-        const user = await User.findByPk(mockUserId);
-        
-        let message = {};
-        if(req.body.isAdaptiveCard)
-        {
-            message = generateGoogleDriveNewFileCard({
-                userAvatar : 'https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png',
-                username: req.body.username,
-                userEmail: req.body.userEmail,
-                documentIconUrl: 'https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png',
-                documentName: req.body.documentName,
-                fileUrl: 'https://google.com'
+        const repoOwnerId = req.body.repository.owner.id;
+        const user = await User.findByPk(repoOwnerId);
+
+        if (user) {
+            const repoName = req.body.repository.name;
+            const repoUrl = req.body.repository.html_url;
+
+            const headCommit = req.body.head_commit;
+            const commitMessage = headCommit.message;
+            const commitAuthor = headCommit.author.username;
+            const commitAuthorEmail = headCommit.author.email;
+            const commitUrl = headCommit.url;
+
+            const message = generateGoogleDriveNewFileCard({
+                repoName: repoName,
+                repoUrl: repoUrl,
+                commitAuthor: commitAuthor,
+                commitAuthorEmail: commitAuthorEmail,
+                githubIconUrl: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
+                commitMessage: commitMessage,
+                commitUrl: commitUrl
+            });
+            await axios.post(user.rcWebhookUri, message, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                }
             });
         }
-        else{
-            message = {
-                title: `${req.body.username} (${req.body.userEmail}) just shared [${req.body.documentName}](https://google.com) with you.`,
-                icon: 'https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png'
-            };
-        }
-        await axios.post(user.rcWebhookUri, message, {
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json'
-            }
-          });
     } catch (e) {
         console.error(e);
     }
 
     res.json({
-      result: 'OK',
+        result: 'OK',
     });
     res.status(200);
 }
 
-function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, documentIconUrl, documentName, fileUrl }) {
+function generateGoogleDriveNewFileCard({ repoName, repoUrl, commitAuthor, commitAuthorEmail, githubIconUrl, commitMessage, commitUrl }) {
     const card = {
         "attachments": [
             {
@@ -57,7 +56,7 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                         "type": "TextBlock",
                         "size": "Large",
                         "weight": "Bolder",
-                        "text": "New File Shared with You"
+                        "text": "New Commit"
                     },
                     {
                         "type": "ColumnSet",
@@ -68,7 +67,7 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                                     {
                                         "type": "Image",
                                         "style": "Person",
-                                        "url": userAvatar,
+                                        "url": githubIconUrl,
                                         "size": "Small"
                                     }
                                 ],
@@ -80,25 +79,13 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                                     {
                                         "type": "TextBlock",
                                         "weight": "Bolder",
-                                        "text": username,
+                                        "text": `${commitAuthor} (${commitAuthorEmail}) **pushed a commit** to [${repoName}](${repoUrl}):`,
                                         "wrap": true
                                     },
-                                    {
-                                        "type": "TextBlock",
-                                        "spacing": "None",
-                                        "text": userEmail,
-                                        "isSubtle": true,
-                                        "wrap": true
-                                    }
                                 ],
                                 "width": "stretch"
                             }
                         ]
-                    },
-                    {
-                        "type": "TextBlock",
-                        "text": `${username} **shared document**:`,
-                        "wrap": true
                     },
                     {
                         "type": "ColumnSet",
@@ -108,20 +95,8 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                                 "type": "Column",
                                 "items": [
                                     {
-                                        "type": "Image",
-                                        "url": documentIconUrl,
-                                        "size": "Small",
-                                        "height": "16px"
-                                    }
-                                ],
-                                "width": "auto"
-                            },
-                            {
-                                "type": "Column",
-                                "items": [
-                                    {
                                         "type": "TextBlock",
-                                        "text": documentName,
+                                        "text": `\"${commitMessage}\"`,
                                         "wrap": true
                                     }
                                 ],
@@ -133,8 +108,8 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                 "actions": [
                     {
                         "type": "Action.OpenUrl",
-                        "title": "View File",
-                        "url": fileUrl,
+                        "title": "View Commit",
+                        "url": commitUrl,
                         "style": "positive"
                     }
                 ]

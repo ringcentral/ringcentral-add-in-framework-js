@@ -1,25 +1,15 @@
 const { User } = require('../db/userModel');
 const { Subscription } = require('../db/subscriptionModel');
 const { decodeToken, generateToken } = require('../lib/jwt');
-const constants = require('../lib/constants');
+const axios = require('axios');
 
 async function openAuthPage(req, res) {
     try {
-        const authUrl = process.env.AUTH_URL;
-        
-        // ===[Replace]===
-        // [Actual Flow]: 1. open auth page -> 2. do auth -> 3. 3rd party service call back with user tokens
-        // [Mocked Flow]: 1. mock 3rd party service call back with mock user tokens
-        // mockAuthCallback: it is to mock the callback action that happens after a successful auth
-        // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that [Actual Flow] will work from step1: open auth page
-        mockAuthCallback(res, `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}?accessToken=testAccessToken&refreshToken=testRefreshToken`);
+        const authUrl = `${process.env.AUTH_URL}&client_id=${process.env.GITHUB_CLIENT_ID}`;
+        res.redirect(authUrl);
     } catch (e) {
         console.error(e);
     }
-}
-
-function mockAuthCallback(res, mockAuthCallbackUrl){
-    res.redirect(mockAuthCallbackUrl);
 }
 
 async function getUserInfo(req, res) {
@@ -45,9 +35,8 @@ async function getUserInfo(req, res) {
 async function saveUserInfo(req, res) {
     // ===[Replace]===
     // replace this with logic to get real tokens from 3rd party callback
-    const mockAccessToken = req.body.mockAccessToken;
-    const mockRefreshToken = req.body.mockRefreshToken;
-    if (!mockAccessToken) {
+    const code = req.body.code;
+    if (!code) {
         res.send('Params error');
         res.status(403);
         return;
@@ -55,32 +44,45 @@ async function saveUserInfo(req, res) {
     try {
         // ===[Replace]===
         // replace this with actual call to 3rd party service with access token, and retrieve user info
-        const mockUserInfoResponse = {
-            id : "user-123456"
+        const tokenRequest = {
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            code: code
         }
-        let user = await User.findByPk(mockUserInfoResponse.id);
+        const tokenResponse = await axios.post('https://github.com/login/oauth/access_token', tokenRequest,
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+        const accessToken = tokenResponse.data.access_token;
+        const userResponse = await axios.get('https://api.github.com/user', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                Accept: 'application/json'
+            }
+        });
+        const userId = userResponse.data.id;
+        const userName = userResponse.data.login;
+        let user = await User.findByPk(userId);
         // if existing user - we want to update tokens
         if (user) {
-            user.tokens = {
-                accessToken: mockAccessToken,
-                refreshToken: mockRefreshToken
-            };
+            user.accessToken = accessToken;
             await user.save();
         }
         // if new user - we want to create it with tokens. Tokens will be used for future API calls
         else {
             await User.create({
-                id: mockUserInfoResponse.id,
-                tokens: {
-                    accessToken: mockAccessToken,
-                    refreshToken: mockRefreshToken
-                },
+                id: userId,
+                name: userName,
+                accessToken: accessToken,
                 rcWebhookUri: req.body.rcWebhookUri
             });
         }
-        
+
         // return jwt to client for future client-server communication
-        const jwtToken = generateToken({ id: mockUserInfoResponse.id });
+        const jwtToken = generateToken({ id: userId });
         res.json({
             authorize: true,
             token: jwtToken,
@@ -109,16 +111,23 @@ async function revokeToken(req, res) {
     const userId = decodedToken.id;
     try {
         const user = await User.findByPk(userId);
-        if (user && user.tokens) {
-            await user.destroy();
-        }
+        if (user && user.subscriptionId) {
+            // unsubscribe - This can be separated to subscription.js as a different method
+            const webhookResponse = await axios.delete(`https://api.github.com/repos/${user.name}/${process.env.TEST_REPO_NAME}/hooks/${user.subscriptionId}`, {
+                headers: {
+                    Authorization: `Bearer ${user.accessToken}`,
+                }
+            });
 
-        if(user.subscriptionId)
-        {
-            const subscription = await Subscription.findByPk(user.subscriptionId);
-            if(subscription)
+            if(webhookResponse != null)
             {
-                await subscription.destroy();
+                // clear user db data
+                await user.destroy();
+                // clear subscription db data
+                const subscription = await Subscription.findByPk(user.subscriptionId);
+                if (subscription) {
+                    await subscription.destroy();
+                }
             }
         }
 

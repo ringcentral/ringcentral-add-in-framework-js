@@ -1,6 +1,8 @@
 const { decodeToken } = require('../lib/jwt');
 const { User } = require('../db/userModel');
 const { Subscription } = require('../db/subscriptionModel');
+const constants = require('../lib/constants');
+const axios = require('axios');
 
 async function subscribe(req, res) {
   // validate jwt
@@ -20,7 +22,7 @@ async function subscribe(req, res) {
   // get user
   const userId = decodedToken.id;
   const user = await User.findByPk(userId);
-  if (!user || !user.tokens) {
+  if (!user || !user.accessToken) {
     res.send('Session expired');
     res.status(401);
     return;
@@ -29,36 +31,28 @@ async function subscribe(req, res) {
   try {
     // ===[Replace]===
     // replace this section with the actual subscription call to 3rd party service
-    const mockSubscriptionResponse = {
-      id : "sub-123456",
-    }
-
-    // ===[Replace]===
-    // replace this section with access token expiry handling
-    if(mockSubscriptionResponse == null)
-    {
-      const mockRefreshTokenResponse = {
-        newAccessToken : "newAccessToken",
-        newRefreshToken : "newRefreshToken"
-      };
-      user.tokens = {
-        accessToken : mockRefreshTokenResponse.newAccessToken,
-        refreshToken : mockRefreshTokenResponse.newRefreshToken
-      }
-
-      // Call subscribe API again with new access token
-      const mockSubscriptionResponse = {
-        id : "sub-123456",
+    const webhookPayload = {
+      name: 'web',
+      events: ['push'],
+      active: true,
+      config: {
+        url: `${process.env.APP_SERVER}${constants.route.forThirdParty.NOTIFICATION}`,
+        content_type: "json"
       }
     }
-
+    const webhookResponse = await axios.post(`https://api.github.com/repos/${user.name}/${process.env.TEST_REPO_NAME}/hooks`, webhookPayload, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+        Accept: 'application/vnd.github.v3+json'
+      }
+    });
     // create new subscription in DB
     await Subscription.create({
-      id: mockSubscriptionResponse.id,
+      id: webhookResponse.data.id,
       userId: userId
     });
 
-    user.subscriptionId = mockSubscriptionResponse.id;
+    user.subscriptionId = webhookResponse.data.id;
     await user.save();
 
     res.json({
