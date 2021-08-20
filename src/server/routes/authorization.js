@@ -5,17 +5,21 @@ const constants = require('../lib/constants');
 
 async function openAuthPage(req, res) {
     try {
+        const authUrl = process.env.AUTH_URL;
+        
         // ===[Replace]===
-        // replace this with actual auth page url from 3rd party service
-        // Note1: this mockAuthUrl directly triggers a successful auth callback event with mock access token
-        // Note2: for most 3rd party services, you'll also want to define your scopes in the auth call
-        const mockService = {
-            mockAuthUrl : `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}?accessToken=testAccessToken&refreshToken=testRefreshToken`
-        };
-        res.redirect(mockService.mockAuthUrl);
+        // [Actual Flow]: 1. open auth page -> 2. do auth -> 3. 3rd party service call back with user tokens
+        // [Mocked Flow]: 1. mock 3rd party service call back with mock user tokens
+        // mockAuthCallback: it is to mock the callback action that happens after a successful auth
+        // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that [Actual Flow] will work from step1: open auth page
+        mockAuthCallback(res, `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}?accessToken=testAccessToken&refreshToken=testRefreshToken`);
     } catch (e) {
         console.error(e);
     }
+}
+
+function mockAuthCallback(res, mockAuthCallbackUrl){
+    res.redirect(mockAuthCallbackUrl);
 }
 
 async function getUserInfo(req, res) {

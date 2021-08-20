@@ -115,23 +115,14 @@ Press `Ubsubcribe and Logout`, and incoming notifications will not be sent to yo
 
 ## Auth Callback
 
+3rd party platform would require developer to set up `auth callback url` for it to return to when auth is successful. `auth callback url` is `{server domain}/oauth-callback`. For our local environment, it's `https://xxxxxxx.ngrok.io/oauth-callback`. More routes for other endpoints can be found in `src/server/index.js`.
+
 Typically for OAuth with 3rd party service, the steps would be:
 1. Call 3rd party server to get a OAuth url, and open it on a new page.
 2. Input user credentials to authenticate and authorize. 3rd party service will return, typically, an access token and a refresh token to our `auth callback url`.
 3. We receive tokens from auth callback and store them in database for future use.
 
-`auth callback url` is `https://xxxxxxx.ngrok.io/oauth-callback`. More routes for other endpoints can be found in `src/server/index.js`.
-
-The callback from 3rd party service will firstly hit above url which eventually triggers `onAuthCallback` function in client side `Root.jsx`. From there, it does
-
-```js
-    // Authorize
-    await client.saveUserInfo(e.data.authCallback);
-    // Subscribe - most likely you'll need to separate this from Authorize
-    await client.subscribe();
-```
-
-Above two calls go to `src/server/routes/authorization.js` and `src/server/routes/subscription.js`.
+The callback from 3rd party service will eventually trigger `saveUserInfo` function `authorization.js` to save user tokens into database.
 
 ## Access Token Expiry
 
