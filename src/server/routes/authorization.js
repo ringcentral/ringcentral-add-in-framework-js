@@ -10,7 +10,7 @@ async function openAuthPage(req, res) {
         // Note1: this mockAuthUrl directly triggers a successful auth callback event with mock access token
         // Note2: for most 3rd party services, you'll also want to define your scopes in the auth call
         const mockService = {
-            mockAuthUrl : `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}?accessToken=testAccessToken`
+            mockAuthUrl : `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}?accessToken=testAccessToken&refreshToken=testRefreshToken`
         };
         res.redirect(mockService.mockAuthUrl);
     } catch (e) {
