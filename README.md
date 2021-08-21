@@ -105,6 +105,12 @@ Now it is all set. Let's try sending some messages to our RingCentral App conver
 }
 ```
 
+```json
+headers:{
+  "Content-Type" : "application/json"
+}
+```
+
 ## Step.5 Revoke
 
 Press `Ubsubcribe and Logout`, and incoming notifications will not be sent to your RingCentral App conversation channel.
