@@ -12,14 +12,14 @@ This instruction assumes that you have already read the [framework instruction](
 
 Register an app on Github following [Instruction](https://docs.github.com/en/rest/guides/basics-of-authentication#registering-your-app).
 
-During the setup, let's fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/notification` (or go with a temporary one and update it after we do `npm run ngrok` and get our real server address). `Homepage URL` isn't important, you can fill in a dummy url.
+During the setup, let's fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/oauth-callback` (or go with a temporary one and update it after we do `npm run ngrok` and get our real server address). `Homepage URL` isn't important, you can fill in a dummy url.
 
 After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over to .env on `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
 
 ## Step.2 Local Setup
 
 - `npm run initDB`
-- `npm run ngrok` and copy `https://xxxxxxxx.ngrok.io` to `APP_SERVER` in `.env`, and fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/notification`. Pick a repository you want to subscribe and copy its name to `TEST_REPO_NAME` in `.env`.
+- `npm run ngrok` and copy `https://xxxxxxxx.ngrok.io` to `APP_SERVER` in `.env`, and fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/oauth-callback`. Pick a repository you want to subscribe and copy its name to `TEST_REPO_NAME` in `.env`.
 - Open a new terminal and `npm run start`
 - Open another new terminal and `npm run client`
 
