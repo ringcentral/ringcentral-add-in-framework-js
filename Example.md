@@ -4,6 +4,31 @@ This example is built based on `main` branch and intend to show basic integratio
 
 Note: This example only demonstartes commit action notification subscription for a pre-defined Github repository. Some implementations are intentionally done for the sake of simplicity.
 
+# Try Example
+
+This instruction assumes that you have already read the [framework instruction](/README.md).
+
+## Step.1 Github Registration
+
+Register an app on Github following [Instruction](https://docs.github.com/en/rest/guides/basics-of-authentication#registering-your-app).
+
+During the setup, let's fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/notification` (or go with a temporary one and update it after we do `npm run ngrok` and get our real server address). `Homepage URL` isn't important, you can fill in a dummy url.
+
+After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over to .env on `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
+
+## Step.2 Local Setup
+
+- `npm run initDB`
+- `npm run ngrok` and copy `https://xxxxxxxx.ngrok.io` to `APP_SERVER` in `.env`, and fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/notification`. Pick a repository you want to subscribe and copy its name to `TEST_REPO_NAME` in `.env`.
+- Open a new terminal and `npm run start`
+- Open another new terminal and `npm run client`
+
+## Step.3 Use Developer Tool
+
+- Go to [Developer Tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/), fill in relevant info and do auth.
+- Push a commit to your Github repository and there should be a message sent to your RingCentral App channel.
+- Logout and do another push, there should be no messasge sent to your RingCentral App channel.
+
 # Understand Changes
 
 Let's have a look at what I have changed to implement the basic integration with Github webhooks. It's recommended that you compare this branch with `main` to have a good overall view on what's changed.
@@ -33,31 +58,6 @@ Changes are in `src/server/routes/notification.js` and they are applied simply f
 ## Flow - Revoke
 
 Changes are in `src/server/routes/authorization.js` to unsubscribe from Github webhook and delete relevant database information.
-
-# Try Example
-
-This instruction assumes that you have already read the [framework instruction](/README.md).
-
-## Step.1 Github Registration
-
-Register an app on Github following [Instruction](https://docs.github.com/en/rest/guides/basics-of-authentication#registering-your-app).
-
-During the setup, let's fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/notification` (or go with a temporary one and update it after we do `npm run ngrok` and get our real server address).
-
-After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over to .env on `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
-
-## Step.2 Local Setup
-
-- `npm run initDB`
-- `npm run ngrok` and copy `https://xxxxxxxx.ngrok.io` to `APP_SERVER` in `.env`, and fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/notification`. Pick a repository you want to subscribe and copy its name to `TEST_REPO_NAME` in `.env`.
-- Open a new terminal and `npm run start`
-- Open another new terminal and `npm run client`
-
-## Step.3 Use Developer Tool
-
-- Go to [Developer Tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/), fill in relevant info and do auth.
-- Push a commit to your Github repository and there should be a message sent to your RingCentral App channel.
-- Logout and do another push, there should be no messasge sent to your RingCentral App channel.
 
 # Additional Resource
 - [Github Auth Scopes](https://docs.github.com/en/developers/apps/building-oauth-apps/scopes-for-oauth-apps)
