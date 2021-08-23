@@ -16,18 +16,21 @@ During the setup, let's fill `Authorization callback URL` with `https://xxxxxxxx
 
 Note: `Authorization callback URL` is the auth-callback endpoint on our server. It is registered under your Github app for creating a callback carring access code (NOT access token.) to our server when user authorization is finished. The access code will then be exchanged for access token.
 
-After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over to .env on `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
+After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over to `.env` on `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
 
 ## Step.2 Local Setup
 
 - `npm run initDB`
-- `npm run ngrok` and copy `https://xxxxxxxx.ngrok.io` to `APP_SERVER` in `.env`, and fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/oauth-callback`. Pick a repository you want to subscribe and copy its name to `TEST_REPO_NAME` in `.env`.
+- `npm run ngrok` and copy `https://xxxxxxxx.ngrok.io` to `APP_SERVER` in `.env`, and fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/oauth-callback`. Pick a repository you want to subscribe and copy its name (ONLY plain repo name, don't include user path) to `TEST_REPO_NAME` in `.env`.
 - Open a new terminal and `npm run start`
 - Open another new terminal and `npm run client`
 
+![](./diagram/github-webhook.png)
+
 ## Step.3 Use Developer Tool
 
-- Go to [Developer Tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/), fill in relevant info and do auth.
+- Go to [Developer Tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/), fill in relevant info and do auth. Note: the auth step will automatically create a subcription for `push` events under your repository.
+- Go to your repository's Settings page and check if there's a wehbook created.
 - Push a commit to your Github repository and there should be a message sent to your RingCentral App channel.
 - Logout and do another push, there should be no messasge sent to your RingCentral App channel.
 

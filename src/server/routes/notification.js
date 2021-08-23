@@ -18,7 +18,7 @@ async function notification(req, res) {
             const commitAuthorEmail = headCommit.author.email;
             const commitUrl = headCommit.url;
 
-            const message = generateGoogleDriveNewFileCard({
+            const message = generateGithubPushNotificationCard({
                 repoName: repoName,
                 repoUrl: repoUrl,
                 commitAuthor: commitAuthor,
@@ -44,7 +44,7 @@ async function notification(req, res) {
     res.status(200);
 }
 
-function generateGoogleDriveNewFileCard({ repoName, repoUrl, commitAuthor, commitAuthorEmail, githubIconUrl, commitMessage, commitUrl }) {
+function generateGithubPushNotificationCard({ repoName, repoUrl, commitAuthor, commitAuthorEmail, githubIconUrl, commitMessage, commitUrl }) {
     const card = {
         "attachments": [
             {
