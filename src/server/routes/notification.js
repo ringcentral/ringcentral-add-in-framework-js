@@ -3,7 +3,7 @@ const { User } = require('../db/userModel');
 
 async function notification(req, res) {
     try {
-        // ===[Replace]===
+        // ===[MOCK]===
         // replace this to use actual 3rd party notification data, transform it, and send to RC_WEBHOOK
         const repoOwnerId = req.body.repository.owner.id;
         const user = await User.findByPk(repoOwnerId);

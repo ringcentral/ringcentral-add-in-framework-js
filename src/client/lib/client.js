@@ -19,8 +19,8 @@ export class Client {
   }
 
   async saveUserInfo(callbackUri) {
-    // ===[Replace]===
-    // replace mockAccessToken to 3rd party access code
+    // ===[MOCK]===
+    // replace mockAccessToken to 3rd party access code with reference to their callback url structure
     const paramUrl = callbackUri.split('?')[1];
     const urlSearchParams = new URLSearchParams(paramUrl);
     const code = urlSearchParams.get('code').replace(/^#/, '');
