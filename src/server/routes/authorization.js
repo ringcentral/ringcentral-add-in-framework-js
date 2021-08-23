@@ -5,6 +5,11 @@ const axios = require('axios');
 
 async function openAuthPage(req, res) {
     try {
+        // [Actual Flow]: 1. open auth page -> 2. do auth -> 3. 3rd party service call back with user tokens
+        // ===[MOCK]===
+        // [Mocked Flow]: 1. mock 3rd party service call back with mock user tokens
+        // mockAuthCallback: it is to mock the callback action that happens after a successful auth
+        // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that it starts from step1: open auth page
         const authUrl = `${process.env.AUTH_URL}&client_id=${process.env.GITHUB_CLIENT_ID}`;
         res.redirect(authUrl);
     } catch (e) {
@@ -33,8 +38,9 @@ async function getUserInfo(req, res) {
 }
 
 async function saveUserInfo(req, res) {
-    // ===[Replace]===
+    // ===[MOCK]===
     // replace this with logic to get real tokens from 3rd party callback
+    // mockTokenResponse mocks the response from API call to exchange code for accessToken and refreshToken
     const code = req.body.code;
     if (!code) {
         res.send('Params error');
@@ -42,7 +48,7 @@ async function saveUserInfo(req, res) {
         return;
     }
     try {
-        // ===[Replace]===
+        // ===[MOCK]===
         // replace this with actual call to 3rd party service with access token, and retrieve user info
         const tokenRequest = {
             client_id: process.env.GITHUB_CLIENT_ID,

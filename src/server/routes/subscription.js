@@ -29,7 +29,7 @@ async function subscribe(req, res) {
   }
   // create notification subscription
   try {
-    // ===[Replace]===
+    // ===[MOCK]===
     // replace this section with the actual subscription call to 3rd party service
     const webhookPayload = {
       name: 'web',
