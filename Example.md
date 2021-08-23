@@ -14,6 +14,8 @@ Register an app on Github following [Instruction](https://docs.github.com/en/res
 
 During the setup, let's fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/oauth-callback` (or go with a temporary one and update it after we do `npm run ngrok` and get our real server address). `Homepage URL` isn't important, you can fill in a dummy url.
 
+Note: `Authorization callback URL` is the auth-callback endpoint on our server. It is registered under your Github app for creating a callback carring access code (NOT access token.) to our server when user authorization is finished. The access code will then be exchanged for access token.
+
 After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over to .env on `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
 
 ## Step.2 Local Setup
