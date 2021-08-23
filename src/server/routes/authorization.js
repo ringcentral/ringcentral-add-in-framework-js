@@ -6,12 +6,12 @@ const constants = require('../lib/constants');
 async function openAuthPage(req, res) {
     try {
         const authUrl = process.env.AUTH_URL;
-        
-        // ===[Replace]===
+
         // [Actual Flow]: 1. open auth page -> 2. do auth -> 3. 3rd party service call back with user tokens
+        // ===[MOCK]===
         // [Mocked Flow]: 1. mock 3rd party service call back with mock user tokens
         // mockAuthCallback: it is to mock the callback action that happens after a successful auth
-        // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that [Actual Flow] will work from step1: open auth page
+        // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that it starts from step1: open auth page
         mockAuthCallback(res, `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}?accessToken=testAccessToken&refreshToken=testRefreshToken`);
     } catch (e) {
         console.error(e);
@@ -43,17 +43,23 @@ async function getUserInfo(req, res) {
 }
 
 async function saveUserInfo(req, res) {
-    // ===[Replace]===
+    // ===[MOCK]===
     // replace this with logic to get real tokens from 3rd party callback
-    const mockAccessToken = req.body.mockAccessToken;
-    const mockRefreshToken = req.body.mockRefreshToken;
+    const mockCode = req.body.mockCode;
+    // mockTokenResponse mocks the response from API call to exchange code for accessToken and refreshToken
+    const mockTokenResponse = {
+        mockAccessToken : "accessToken",
+        mockRefreshToken : "refreshToken"
+    }
+    const mockAccessToken = mockTokenResponse.mockAccessToken;
+    const mockRefreshToken = mockTokenResponse.mockRefreshToken;
     if (!mockAccessToken) {
         res.send('Params error');
         res.status(403);
         return;
     }
     try {
-        // ===[Replace]===
+        // ===[MOCK]===
         // replace this with actual call to 3rd party service with access token, and retrieve user info
         const mockUserInfoResponse = {
             id : "user-123456"

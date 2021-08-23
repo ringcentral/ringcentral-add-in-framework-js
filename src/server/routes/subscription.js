@@ -27,29 +27,11 @@ async function subscribe(req, res) {
   }
   // create notification subscription
   try {
-    // ===[Replace]===
+    // ===[MOCK]===
     // replace this section with the actual subscription call to 3rd party service
+    // typically you would include notification callback url in the payload
     const mockSubscriptionResponse = {
       id : "sub-123456",
-    }
-
-    // ===[Replace]===
-    // replace this section with access token expiry handling
-    if(mockSubscriptionResponse == null)
-    {
-      const mockRefreshTokenResponse = {
-        newAccessToken : "newAccessToken",
-        newRefreshToken : "newRefreshToken"
-      };
-      user.tokens = {
-        accessToken : mockRefreshTokenResponse.newAccessToken,
-        refreshToken : mockRefreshTokenResponse.newRefreshToken
-      }
-
-      // Call subscribe API again with new access token
-      const mockSubscriptionResponse = {
-        id : "sub-123456",
-      }
     }
 
     // create new subscription in DB
