@@ -10,7 +10,6 @@ async function notification(req, res) {
         const subscription = await Subscription.findByPk(mockSubscriptionId);
         const mockUserId = subscription.userId;
         const user = await User.findByPk(mockUserId);
-        // ===[MOCK_END]===
         
         let message = {};
         if(req.body.isAdaptiveCard)
@@ -30,6 +29,7 @@ async function notification(req, res) {
                 icon: 'https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png'
             };
         }
+        // ===[MOCK_END]===
         await axios.post(user.rcWebhookUri, message, {
             headers: {
               Accept: 'application/json',

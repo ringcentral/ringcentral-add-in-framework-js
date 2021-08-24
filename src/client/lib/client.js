@@ -25,7 +25,6 @@ export class Client {
     const urlSearchParams = new URLSearchParams(paramUrl);
     const mockAccessToken = urlSearchParams.get('accessToken').replace(/^#/, '');
     const mockRefreshToken = urlSearchParams.get('refreshToken').replace(/^#/, '');
-    // ===[MOCK_END]===
     const response = await fetch(this._config.saveUserInfoUri, {
       method: 'POST',
       headers: {
@@ -37,6 +36,7 @@ export class Client {
         rcWebhookUri: this._config.rcWebhookUri
       }),
     });
+    // ===[MOCK_END]===
     if (response.status !== 200) {
       throw new Error('Authorization error')
     }

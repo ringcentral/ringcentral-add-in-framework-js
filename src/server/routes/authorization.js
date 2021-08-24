@@ -19,7 +19,7 @@ async function openAuthPage(req, res) {
     }
 }
 
-function mockAuthCallback(res, mockAuthCallbackUrl){
+function mockAuthCallback(res, mockAuthCallbackUrl) {
     res.redirect(mockAuthCallbackUrl);
 }
 
@@ -47,14 +47,7 @@ async function saveUserInfo(req, res) {
     // ===[MOCK]===
     // replace this with logic to get real tokens from 3rd party callback
     const mockCode = req.body.mockCode;
-    // mockTokenResponse mocks the response from API call to exchange code for accessToken and refreshToken
-    const mockTokenResponse = {
-        mockAccessToken : "accessToken",
-        mockRefreshToken : "refreshToken"
-    }
-    const mockAccessToken = mockTokenResponse.mockAccessToken;
-    const mockRefreshToken = mockTokenResponse.mockRefreshToken;
-    if (!mockAccessToken) {
+    if (!mockCode) {
     // ===[MOCK_END]===
         res.send('Params error');
         res.status(403);
@@ -62,9 +55,17 @@ async function saveUserInfo(req, res) {
     }
     try {
         // ===[MOCK]===
+        // mockTokenResponse mocks the response from API call to exchange code for accessToken and refreshToken
+        const mockTokenResponse = {
+            mockAccessToken: "accessToken",
+            mockRefreshToken: "refreshToken"
+        }
+        const mockAccessToken = mockTokenResponse.mockAccessToken;
+        const mockRefreshToken = mockTokenResponse.mockRefreshToken;
+        const mockRefreshToken = mockTokenResponse.mockRefreshToken;
         // replace this with actual call to 3rd party service with access token, and retrieve user info
         const mockUserInfoResponse = {
-            id : "user-123456"
+            id: "user-123456"
         }
         let user = await User.findByPk(mockUserInfoResponse.id);
         // if existing user - we want to update tokens
@@ -85,9 +86,9 @@ async function saveUserInfo(req, res) {
                 },
                 rcWebhookUri: req.body.rcWebhookUri
             });
-        } 
+        }
         // ===[MOCK_END]===
-        
+
         // return jwt to client for future client-server communication
         const jwtToken = generateToken({ id: mockUserInfoResponse.id });
         res.json({
@@ -122,11 +123,9 @@ async function revokeToken(req, res) {
             await user.destroy();
         }
 
-        if(user.subscriptionId)
-        {
+        if (user.subscriptionId) {
             const subscription = await Subscription.findByPk(user.subscriptionId);
-            if(subscription)
-            {
+            if (subscription) {
                 await subscription.destroy();
             }
         }
