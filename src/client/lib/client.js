@@ -25,6 +25,7 @@ export class Client {
     const urlSearchParams = new URLSearchParams(paramUrl);
     const mockAccessToken = urlSearchParams.get('accessToken').replace(/^#/, '');
     const mockRefreshToken = urlSearchParams.get('refreshToken').replace(/^#/, '');
+    // ===[MOCK_END]===
     const response = await fetch(this._config.saveUserInfoUri, {
       method: 'POST',
       headers: {

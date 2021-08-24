@@ -13,6 +13,7 @@ async function openAuthPage(req, res) {
         // mockAuthCallback: it is to mock the callback action that happens after a successful auth
         // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that it starts from step1: open auth page
         mockAuthCallback(res, `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}?accessToken=testAccessToken&refreshToken=testRefreshToken`);
+        // ===[MOCK_END]===
     } catch (e) {
         console.error(e);
     }
@@ -54,6 +55,7 @@ async function saveUserInfo(req, res) {
     const mockAccessToken = mockTokenResponse.mockAccessToken;
     const mockRefreshToken = mockTokenResponse.mockRefreshToken;
     if (!mockAccessToken) {
+    // ===[MOCK_END]===
         res.send('Params error');
         res.status(403);
         return;
@@ -83,7 +85,8 @@ async function saveUserInfo(req, res) {
                 },
                 rcWebhookUri: req.body.rcWebhookUri
             });
-        }
+        } 
+        // ===[MOCK_END]===
         
         // return jwt to client for future client-server communication
         const jwtToken = generateToken({ id: mockUserInfoResponse.id });

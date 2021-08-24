@@ -41,6 +41,7 @@ async function subscribe(req, res) {
     });
 
     user.subscriptionId = mockSubscriptionResponse.id;
+    // ===[MOCK_END]===
     await user.save();
 
     res.json({

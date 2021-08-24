@@ -10,6 +10,7 @@ async function notification(req, res) {
         const subscription = await Subscription.findByPk(mockSubscriptionId);
         const mockUserId = subscription.userId;
         const user = await User.findByPk(mockUserId);
+        // ===[MOCK_END]===
         
         let message = {};
         if(req.body.isAdaptiveCard)
