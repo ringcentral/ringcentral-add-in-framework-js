@@ -34,6 +34,7 @@ export class Client {
         rcWebhookUri: this._config.rcWebhookUri
       }),
     });
+    // ===[MOCK_END]===
     if (response.status !== 200) {
       throw new Error('Authorization error')
     }

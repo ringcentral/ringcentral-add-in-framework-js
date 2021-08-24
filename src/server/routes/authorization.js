@@ -12,6 +12,7 @@ async function openAuthPage(req, res) {
         // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that it starts from step1: open auth page
         const authUrl = `${process.env.AUTH_URL}&client_id=${process.env.GITHUB_CLIENT_ID}`;
         res.redirect(authUrl);
+        // ===[MOCK_END]===
     } catch (e) {
         console.error(e);
     }
@@ -43,6 +44,7 @@ async function saveUserInfo(req, res) {
     // mockTokenResponse mocks the response from API call to exchange code for accessToken and refreshToken
     const code = req.body.code;
     if (!code) {
+    // ===[MOCK_END]===
         res.send('Params error');
         res.status(403);
         return;
@@ -87,6 +89,7 @@ async function saveUserInfo(req, res) {
             });
         }
 
+        // ===[MOCK_END]===
         // return jwt to client for future client-server communication
         const jwtToken = generateToken({ id: userId });
         res.json({

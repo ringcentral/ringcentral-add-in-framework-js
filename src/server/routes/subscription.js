@@ -53,6 +53,7 @@ async function subscribe(req, res) {
     });
 
     user.subscriptionId = webhookResponse.data.id;
+    // ===[MOCK_END]===
     await user.save();
 
     res.json({

@@ -27,6 +27,8 @@ async function notification(req, res) {
                 commitMessage: commitMessage,
                 commitUrl: commitUrl
             });
+            
+        // ===[MOCK_END]===
             await axios.post(user.rcWebhookUri, message, {
                 headers: {
                     Accept: 'application/json',
