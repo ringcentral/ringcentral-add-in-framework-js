@@ -144,7 +144,7 @@ Typically for OAuth with 3rd party service, the steps would be:
 
 ### Apply Changes
 
-There are 4 places with `===[MOCK]===` tag that need to be changed, 3 in [authorization.js](./src/server/routes/authorization.js) and 1 in [client.js](./src/client/lib/client.js). 
+There are 5 places with `===[MOCK]===` tag that need to be changed, 4 in [authorization.js](./src/server/routes/authorization.js) and 1 in [client.js](./src/client/lib/client.js). 
 
 Note: `client.js - saveUserInfo` receives 3rd party callback uri and extract auth code, then calls server `authorization.js - saveUserInfo`.
 
