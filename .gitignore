@@ -105,3 +105,4 @@ dist
 
 # sqlite
 *.sqlite
+/.vscode/settings.json
