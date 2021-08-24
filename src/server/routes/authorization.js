@@ -114,6 +114,7 @@ async function revokeToken(req, res) {
     try {
         const user = await User.findByPk(userId);
         if (user && user.subscriptionId) {
+            // ===[MOCK]===
             // unsubscribe - This can be separated to subscription.js as a different method
             const octokit = getOctokit(user.accessToken);
             const webhookResponse = octokit.repos.deleteWebhook({
@@ -121,7 +122,7 @@ async function revokeToken(req, res) {
                 repo: process.env.TEST_REPO_NAME,
                 hook_id: user.subscriptionId
             });
-
+            // ===[MOCK_END]===
             if (webhookResponse != null) {
                 // clear user db data
                 await user.destroy();
