@@ -127,6 +127,8 @@ Press `Ubsubcribe and Logout`, and incoming notifications will not be sent to yo
 
 As indicated above, the worlflow isn't super complicated. In practice, the complexities are mostly from understanding how the target 3rd party designs its webhook service.
 
+It's recommended to use 3rd party's official npm package which should have a nice wrapping around functions regarding authorization, webhook subscription and other functionalities.
+
 ## Example
 
 Check out `Example` branch for a basic Github integration example with additional notes on what are the changes that need to be done.
@@ -138,7 +140,7 @@ Check out `Example` branch for a basic Github integration example with additiona
 Typically for OAuth with 3rd party service, the steps would be:
 1. Open a new auth page with `auth url`. `auth url`'s structure should be provided by 3rd party documents. 
 2. Input user credentials to authenticate and authorize. 3rd party service will return to our `auth callback url`, typically, with a code for calling another API and exchange it for an access token and a refresh token.
-3. We save jwt to client side and store tokens in database for future API calls.
+3. We save `jwt` to client side and store tokens in database for future API calls. `jwt` encryption key is `APP_SERVER_SECRET_KEY` in `.env`.
 
 ### Apply Changes
 
