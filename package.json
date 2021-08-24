@@ -46,6 +46,8 @@
     "whatwg-fetch": "^2.0.3"
   },
   "dependencies": {
+    "@octokit/oauth-app": "^3.5.1",
+    "@octokit/rest": "^18.9.1",
     "axios": "^0.21.1",
     "dotenv": "6.2.0",
     "dynamo-sequelize": "^0.8.1",

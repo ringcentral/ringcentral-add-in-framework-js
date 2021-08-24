@@ -2,6 +2,7 @@ const { User } = require('../db/userModel');
 const { Subscription } = require('../db/subscriptionModel');
 const { decodeToken, generateToken } = require('../lib/jwt');
 const axios = require('axios');
+const { getOAuthApp, getOctokit } = require('../lib/github');
 
 async function openAuthPage(req, res) {
     try {
@@ -10,8 +11,11 @@ async function openAuthPage(req, res) {
         // [Mocked Flow]: 1. mock 3rd party service call back with mock user tokens
         // mockAuthCallback: it is to mock the callback action that happens after a successful auth
         // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that it starts from step1: open auth page
-        const authUrl = `${process.env.AUTH_URL}&client_id=${process.env.GITHUB_CLIENT_ID}`;
-        res.redirect(authUrl);
+        const oauthApp = getOAuthApp();
+        const { url } = oauthApp.getWebFlowAuthorizationUrl({
+            scopes: [process.env.SCOPES.split(' ')]
+        });
+        res.redirect(url);
         // ===[MOCK_END]===
     } catch (e) {
         console.error(e);
@@ -44,7 +48,7 @@ async function saveUserInfo(req, res) {
     // mockTokenResponse mocks the response from API call to exchange code for accessToken and refreshToken
     const code = req.body.code;
     if (!code) {
-    // ===[MOCK_END]===
+        // ===[MOCK_END]===
         res.send('Params error');
         res.status(403);
         return;
@@ -52,27 +56,16 @@ async function saveUserInfo(req, res) {
     try {
         // ===[MOCK]===
         // replace this with actual call to 3rd party service with access token, and retrieve user info
-        const tokenRequest = {
-            client_id: process.env.GITHUB_CLIENT_ID,
-            client_secret: process.env.GITHUB_CLIENT_SECRET,
+        const oauthApp = getOAuthApp();
+        const { authentication } = await oauthApp.createToken({
             code: code
-        }
-        const tokenResponse = await axios.post('https://github.com/login/oauth/access_token', tokenRequest,
-            {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-        const accessToken = tokenResponse.data.access_token;
-        const userResponse = await axios.get('https://api.github.com/user', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                Accept: 'application/json'
-            }
         });
-        const userId = userResponse.data.id;
-        const userName = userResponse.data.login;
+        const accessToken = authentication.token;
+        const octokit = getOctokit(accessToken);
+        console.log(accessToken);
+        const { data: userInfo } = await octokit.users.getAuthenticated();
+        const userId = userInfo.id;
+        const userName = userInfo.login;
         let user = await User.findByPk(userId);
         // if existing user - we want to update tokens
         if (user) {
@@ -122,14 +115,14 @@ async function revokeToken(req, res) {
         const user = await User.findByPk(userId);
         if (user && user.subscriptionId) {
             // unsubscribe - This can be separated to subscription.js as a different method
-            const webhookResponse = await axios.delete(`https://api.github.com/repos/${user.name}/${process.env.TEST_REPO_NAME}/hooks/${user.subscriptionId}`, {
-                headers: {
-                    Authorization: `Bearer ${user.accessToken}`,
-                }
+            const octokit = getOctokit(user.accessToken);
+            const webhookResponse = octokit.repos.deleteWebhook({
+                owner: user.name,
+                repo: process.env.TEST_REPO_NAME,
+                hook_id: user.subscriptionId
             });
 
-            if(webhookResponse != null)
-            {
+            if (webhookResponse != null) {
                 // clear user db data
                 await user.destroy();
                 // clear subscription db data

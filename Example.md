@@ -22,6 +22,7 @@ After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over
 
 ## Step.2 Local Setup
 
+- `npm i`
 - `npm run initDB`
 - `npm run ngrok` and copy `https://xxxxxxxx.ngrok.io` to `APP_SERVER` in `.env`, and fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/oauth-callback`. Pick a repository you want to subscribe and copy its name (ONLY plain repo name, don't include user path) to `TEST_REPO_NAME` in `.env`.
 - Open a new terminal and `npm run start`
@@ -38,33 +39,18 @@ After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over
 
 # Understand Changes
 
-Let's have a look at what I have changed to implement the basic integration with Github webhooks. It's recommended that you compare this branch with `main` to have a good overall view on what's changed.
+Let's have a look at changes to implement the basic integration with Github webhooks. It's recommended that you compare this branch with `main` to have a good overall view on what's changed.
+
+Apart from `===[MOCK]===` tag places in: [client.js](./src/client/lib/client.js), [authorization.js](./src/server/routes/authorization.js), [subscription.js](./src/server/routes/subscription.js) and [notification.js](./src/server/routes/notification.js), there are two major changes described as follow.
+
+## New Script - github.js
+
+[github.js](./src/server/lib/github.js) is created to provide Github auth and API functionalities. It uses npm packages [@octokit/oauth-app](https://www.npmjs.com/package/@octokit/oauth-app) for auth and [@octokit/rest](https://www.npmjs.com/package/@octokit/rest) for other API calls (in this demo, they are Create Repository Webhook and Delete Repository Webhook).
 
 ## Database - User Model
 
-Typically, OAuth should have access_token and refresh_token for security reason. Github here only has access_token, `tokens` is replaced with `accessToken` in `src/server/db/userModel.js`. Also, `name` is added because Github locates a repository with owner's name rather than owner's id.
-
-## Flow - Auth
-
-1. In `src/server/routes/authorization.js`, I replaced [Mocked Flow] with [Actual Flow] and have `authUrl` as `${process.env.AUTH_URL}&client_id=${process.env.GITHUB_CLIENT_ID}` according to [Github Auth Basics](https://docs.github.com/en/rest/guides/basics-of-authentication#accepting-user-authorization)
-2. Once authorized, Github returns a temporary code which we can use to exchange for access token. Two spots need to be changed:
-   1. In `src/client/lib/client.js - saveUserInfo(callbackUri)`, we want `code` in `callbackUrl`.
-   2. In `src/server/routes/authorization.js - saveUserInfo(req, res)`, it gets the code and call [Github API](https://docs.github.com/en/rest/guides/basics-of-authentication#providing-a-callback) to exchange for access token, then save it to database.
-3. Additionally, [User API call](https://docs.github.com/en/rest/reference/users#get-the-authenticated-user) is also added to retrieve user information.
-
-After changes above, we are able to auth user for further API calls to Github.
-
-## Flow - Subscription
-
-There are several types of webhook subscriptions we can do on Github. [create repository webhook](https://docs.github.com/en/rest/reference/repos#create-a-repository-webhook) is chosen here. Code changes are made in `src/server/routes/subscription.js` to follow the API rules of creating a repository webhook and save relevant information in database.
-
-## Flow - Notification
-
-Changes are in `src/server/routes/notification.js` and they are applied simply following [push notification payload structure](https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push)
-
-## Flow - Revoke
-
-Changes are in `src/server/routes/authorization.js` to unsubscribe from Github webhook and delete relevant database information.
+Typically, OAuth should have access_token and refresh_token for security reason. Github here only has access_token, `tokens` is replaced with `accessToken` in [userModel.js](./src/server/db/userModel.js). Also, `name` is added because Github locates a repository with owner's name rather than owner's id.
 
 # Additional Resource
 - [Github Auth Scopes](https://docs.github.com/en/developers/apps/building-oauth-apps/scopes-for-oauth-apps)
+- [Octokit Rest JS Documentation](https://octokit.github.io/rest.js/v18/)

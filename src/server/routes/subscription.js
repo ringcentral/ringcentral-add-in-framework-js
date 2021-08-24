@@ -3,6 +3,7 @@ const { User } = require('../db/userModel');
 const { Subscription } = require('../db/subscriptionModel');
 const constants = require('../lib/constants');
 const axios = require('axios');
+const { getOctokit } = require('../lib/github');
 
 async function subscribe(req, res) {
   // validate jwt
@@ -31,19 +32,14 @@ async function subscribe(req, res) {
   try {
     // ===[MOCK]===
     // replace this section with the actual subscription call to 3rd party service
-    const webhookPayload = {
-      name: 'web',
+    const octokit = getOctokit(user.accessToken);
+    const webhookResponse = await octokit.repos.createWebhook({
+      owner: user.name,
+      repo: process.env.TEST_REPO_NAME,
       events: ['push'],
-      active: true,
       config: {
         url: `${process.env.APP_SERVER}${constants.route.forThirdParty.NOTIFICATION}`,
         content_type: "json"
-      }
-    }
-    const webhookResponse = await axios.post(`https://api.github.com/repos/${user.name}/${process.env.TEST_REPO_NAME}/hooks`, webhookPayload, {
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-        Accept: 'application/vnd.github.v3+json'
       }
     });
     // create new subscription in DB
