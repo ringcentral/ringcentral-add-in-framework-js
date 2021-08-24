@@ -2,7 +2,7 @@
 
 This example is built based on `main` branch and intend to show basic integration with Github Webhooks. Therefore this instruction will only show what changes have been done to adapt to Github webhook rules.
 
-Note: This example only demonstartes commit action notification subscription for a pre-defined Github repository. Some implementations are intentionally done for the sake of simplicity.
+Note: This example only demonstrates commit action notification subscription for a pre-defined Github repository. Some implementations are intentionally done for the sake of simplicity.
 
 # Try Example
 
@@ -14,7 +14,9 @@ Register an app on Github following [Instruction](https://docs.github.com/en/res
 
 During the setup, let's fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/oauth-callback` (or go with a temporary one and update it after we do `npm run ngrok` and get our real server address). `Homepage URL` isn't important, you can fill in a dummy url.
 
-Note: `Authorization callback URL` is the auth-callback endpoint on our server. It is registered under your Github app for creating a callback carring access code (NOT access token.) to our server when user authorization is finished. The access code will then be exchanged for access token.
+Note: `Authorization callback URL` is the auth-callback endpoint on our server. It is registered under your Github app for creating a callback carrying access code (NOT access token.) to our server when user authorization is finished. The access code will then be exchanged for access token.
+
+Do `cp .env.sample .env`
 
 After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over to `.env` on `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
 
@@ -25,14 +27,14 @@ After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over
 - Open a new terminal and `npm run start`
 - Open another new terminal and `npm run client`
 
-![](./diagram/github-webhook.png)
-
 ## Step.3 Use Developer Tool
 
-- Go to [Developer Tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/), fill in relevant info and do auth. Note: the auth step will automatically create a subcription for `push` events under your repository.
-- Go to your repository's Settings page and check if there's a wehbook created.
+- Go to [Developer Tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/), fill in relevant info and do auth (details in [Framework Readme](README.md#step3-mock-subscription)). Note: the auth step will automatically create a subscription for `push` events under your repository.
+- Go to your repository's Settings page and check if there's a webhook created.
 - Push a commit to your Github repository and there should be a message sent to your RingCentral App channel.
-- Logout and do another push, there should be no messasge sent to your RingCentral App channel.
+- Logout and do another push, there should be no message sent to your RingCentral App channel.
+
+![](./diagram/github-webhook.png)
 
 # Understand Changes
 
@@ -54,7 +56,7 @@ After changes above, we are able to auth user for further API calls to Github.
 
 ## Flow - Subscription
 
-There are several types of webhook subcriptions we can do on Github. [create repository webhook](https://docs.github.com/en/rest/reference/repos#create-a-repository-webhook) is chosen here. Code changes are made in `src/server/routes/subscription.js` to follow the API rules of creating a repository webhook and save relevant information in database.
+There are several types of webhook subscriptions we can do on Github. [create repository webhook](https://docs.github.com/en/rest/reference/repos#create-a-repository-webhook) is chosen here. Code changes are made in `src/server/routes/subscription.js` to follow the API rules of creating a repository webhook and save relevant information in database.
 
 ## Flow - Notification
 
