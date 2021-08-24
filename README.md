@@ -135,7 +135,7 @@ Check out `Example` branch for a basic Github integration example with additiona
 
 ## Auth
 
-3rd party platform would require developer to set up `auth callback url` for it to return to when auth is successful. `auth callback url` is `https://xxxxxxx.ngrok.io/oauth-callback`. More routes for other endpoints can be found in `src/server/index.js`.
+3rd party platform would require developer to set up `auth callback url` for it to return to when auth is successful. `auth callback url` is `https://xxxxxxx.ngrok.io/oauth-callback`. More routes for other endpoints can be found in [index.js](./src/server/index.js).
 
 Typically for OAuth with 3rd party service, the steps would be:
 1. Open a new auth page with `auth url`. `auth url`'s structure should be provided by 3rd party documents. 
@@ -144,13 +144,15 @@ Typically for OAuth with 3rd party service, the steps would be:
 
 ### Apply Changes
 
-There are 4 places with `===[MOCK]===` tag that need to be changed, 3 in `authorization.js` and 1 in `client.js`. Note: `client.js - saveUserInfo` receives 3rd party callback uri and extract auth code, then calls server `authorization.js - saveUserInfo`.
+There are 4 places with `===[MOCK]===` tag that need to be changed, 3 in [authorization.js](./src/server/routes/authorization.js) and 1 in [client.js](./src/client/lib/client.js). 
+
+Note: `client.js - saveUserInfo` receives 3rd party callback uri and extract auth code, then calls server `authorization.js - saveUserInfo`.
 
 Please read 3rd party docs and make changes accordingly. (There could also be database model changes)
 
 ### Test
 
-After making above changes, you should test the authorization part on its own. Go to `Root.jsx` amd comment out `await client.subscribe()`. The correct behaviors should be:
+After making above changes, you should test the authorization part on its own. Go to [Root.jsx](./src/client/components/Root.jsx) amd comment out `await client.subscribe()`. The correct behaviors should be:
 1. Click `Connect to 3rd Party Service and Subscribe` and a new page is open
 2. Do 3rd party auth on the new page and confirm
 3. Auth page closes and return to Developer Tool which should show `Hello, xxxxx` and a `Unsubscribe and Logout` button
@@ -162,7 +164,7 @@ Typically, webhook subscription can be created by API calls to 3rd party server 
 
 ### Apply Changes
 
-There is 1 `===[MOCK]===` tag in `subscription.js` and another in `notification.js`. In `notification.js`, message transformation should be done according to 3rd party notification data structure.
+There is 1 `===[MOCK]===` tag in [subscription.js](./src/server/routes/subscription.js) and another in [notification.js](./src/server/routes/notification.js). In [notification.js](./src/server/routes/notification.js), message transformation should be done according to 3rd party notification data structure.
 
 ### Message Transform
 
@@ -170,7 +172,7 @@ Message transform happens when we receive notifications and parse them into eith
 
 ### Test
 
-Go to `Root.jsx` amd uncomment `await client.subscribe()`. The correct behaviors should be:
+Go to [Root.jsx](./src/client/components/Root.jsx) amd uncomment `await client.subscribe()`. The correct behaviors should be:
 1. Auth and subscribe
 2. Do actions that will trigger event notification
 3. Receive message in RingCentral App
