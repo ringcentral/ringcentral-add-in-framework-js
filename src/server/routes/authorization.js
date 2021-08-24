@@ -126,8 +126,8 @@ async function revokeToken(req, res) {
         if (user.subscriptionId) {
             // ===[MOCK]===
             // We want to replace this one with the actual unsubscription action to 3rd party
-            // ===[MOCK_END]===
             const mockUnsubscriptionResponse = {};
+            // ===[MOCK_END]===
             const subscription = await Subscription.findByPk(user.subscriptionId);
             if (subscription) {
                 await subscription.destroy();
