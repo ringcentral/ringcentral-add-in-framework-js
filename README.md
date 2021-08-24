@@ -22,7 +22,7 @@ There are 3 major parts involved:
 - Use:
   - Process and forward 3rd party event notifications to RingCentral App via webhook
 - Revoke:
-  - Ubsubscribe and clear user info
+  - Unsubscribe and clear user info
 
 # Run It
 
@@ -33,7 +33,7 @@ There are 3 major parts involved:
 git clone git@github.com:DaKingKong/ringcentral-add-in-framework.git
 cd ringcentral-add-in-framework
 
-# install dependecies
+# install dependencies
 npm i
 
 # start proxy server, this will allow your local bot server to be accessed by the RingCentral service
@@ -88,7 +88,7 @@ Now press `Apply` ([workflow 1-2](#workflow-diagram)). We should be able to see 
 
 Due to the fact that every platform has its slightly different way to provide webhook services, and to make this framework not targeting specific platform, there's NO actual 3rd party integration. We'll do following mock steps instead.
 
-- `Mock Auth` ([workflow 3-7](#workflow-diagram)): Press `Connect to 3rd Party Service and Subcscribe`. It will open an auth page and immediately close it to mock a successful authorization and auth callback.
+- `Mock Auth` ([workflow 3-7](#workflow-diagram)): Press `Connect to 3rd Party Service and Subscribe`. It will open an auth page and immediately close it to mock a successful authorization and auth callback.
 - `Mock Subscription` ([workflow 8-11](#workflow-diagram)): Upon the close of auth page, a mock subscription is automatically created (in practice, it's recommended to create a separate flow for auth and subscription). `SERVER_WEBHOOK` is our endpoint to receive subscribed event notifications. Typically, it is to be registered on 3rd party platform manually or by API calls.
 
 ## Step.4 Send Mock Messages
@@ -99,8 +99,8 @@ Now it is all set. Let's try sending some messages to our RingCentral App conver
   
 ```json
 {
-    "isAdaptiveCard": true,   // false for RingCentral Card with plain message, true for Adapative Card
-    "id":"sub-123456",   // do NOT change this, it's a hard-coded mock subcription id in subscription.js
+    "isAdaptiveCard": true,   // false for RingCentral Card with plain message, true for Adaptive Card
+    "id":"sub-123456",   // do NOT change this, it's a hard-coded mock subscription id in subscription.js
     "username": "test user",
     "userEmail": "test@test.com",
     "documentName": "test.docx"
@@ -115,7 +115,7 @@ headers:{
 
 ## Step.5 Revoke
 
-Press `Ubsubcribe and Logout`, and incoming notifications will not be sent to your RingCentral App conversation channel.
+Press `Unsubscribe and Logout`, and incoming notifications will not be sent to your RingCentral App conversation channel.
 
 # Workflow Diagram
 
@@ -125,7 +125,7 @@ Press `Ubsubcribe and Logout`, and incoming notifications will not be sent to yo
 
 `!!!IMPORTANT!!! This framework is composed by mock actions which simulate responses from a 3rd party API server. All places with ===[MOCK]=== tag should be replaced with the actual logic that handles interactions with a real 3rd party service`
 
-As indicated above, the worlflow isn't super complicated. In practice, the complexities are mostly from understanding how the target 3rd party designs its webhook service.
+As indicated above, the workflow isn't super complicated. In practice, the complexities are mostly from understanding how the target 3rd party designs its webhook service.
 
 It's recommended to use 3rd party's official npm package which should have a nice wrapping around functions regarding authorization, webhook subscription and other functionalities.
 
@@ -150,7 +150,7 @@ Please read 3rd party docs and make changes accordingly. (There could also be da
 
 ### Test
 
-After making above changes, you should test the authorization part on its own. Go to `Root.jsx` amd comment out `await client.subscribe()`. The correct behaviours should be:
+After making above changes, you should test the authorization part on its own. Go to `Root.jsx` amd comment out `await client.subscribe()`. The correct behaviors should be:
 1. Click `Connect to 3rd Party Service and Subscribe` and a new page is open
 2. Do 3rd party auth on the new page and confirm
 3. Auth page closes and return to Developer Tool which should show `Hello, xxxxx` and a `Unsubscribe and Logout` button
@@ -162,15 +162,15 @@ Typically, webhook subscription can be created by API calls to 3rd party server 
 
 ### Apply Changes
 
-There is 1 `===[MOCK]===` tag in `subscription.js` and another in `notification.js`. In `notification.js`, message tranformation should be done according to 3rd party notification data structure.
+There is 1 `===[MOCK]===` tag in `subscription.js` and another in `notification.js`. In `notification.js`, message transformation should be done according to 3rd party notification data structure.
 
 ### Message Transform
 
-Message tranform happens when we receive notifications and parse them into either [RingCentral Card](https://developers.ringcentral.com/guide/team-messaging/manual/posting-cards) or [Adaptive Card](https://adaptivecards.io/designer/).
+Message transform happens when we receive notifications and parse them into either [RingCentral Card](https://developers.ringcentral.com/guide/team-messaging/manual/posting-cards) or [Adaptive Card](https://adaptivecards.io/designer/).
 
 ### Test
 
-Go to `Root.jsx` amd uncomment `await client.subscribe()`. The correct behaviours should be:
+Go to `Root.jsx` amd uncomment `await client.subscribe()`. The correct behaviors should be:
 1. Auth and subscribe
 2. Do actions that will trigger event notification
 3. Receive message in RingCentral App
