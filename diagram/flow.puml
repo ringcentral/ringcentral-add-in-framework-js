@@ -43,14 +43,14 @@ group setup
     end
 end
 
-group notification
+group transformation
     T -> SERVER: notification via SERVER_WEBHOOK
     activate SERVER
     SERVER -> DB: query subscription id
     activate DB
     DB --> SERVER: return user and subscription info
     deactivate DB
-    SERVER -->o RC: format notification and send to RC_WEBHOOK
+    SERVER -->o RC: transform notification message and send to RC_WEBHOOK
     deactivate SERVER
 end
 
