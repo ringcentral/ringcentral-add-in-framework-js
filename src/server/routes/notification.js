@@ -9,6 +9,8 @@ async function notification(req, res) {
         const user = await User.findByPk(repoOwnerId);
 
         if (user) {
+            console.log(`Incoming notification for user: ${user.id}`)
+            // extract needed info
             const repoName = req.body.repository.name;
             const repoUrl = req.body.repository.html_url;
 
@@ -18,6 +20,7 @@ async function notification(req, res) {
             const commitAuthorEmail = headCommit.author.email;
             const commitUrl = headCommit.url;
 
+            // compose a card
             const message = generateGithubPushNotificationCard({
                 repoName: repoName,
                 repoUrl: repoUrl,

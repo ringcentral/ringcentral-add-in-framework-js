@@ -47,6 +47,7 @@ async function saveUserInfo(req, res) {
     // replace this with logic to get real tokens from 3rd party callback
     // mockTokenResponse mocks the response from API call to exchange code for accessToken and refreshToken
     const code = req.body.code;
+    console.log(`accessCode: ${code}`);
     if (!code) {
         // ===[MOCK_END]===
         res.send('Params error');
@@ -57,22 +58,26 @@ async function saveUserInfo(req, res) {
         // ===[MOCK]===
         // replace this with actual call to 3rd party service with access token, and retrieve user info
         const oauthApp = getOAuthApp();
+        // exchange code for accessToken
         const { authentication } = await oauthApp.createToken({
             code: code
         });
         const accessToken = authentication.token;
+        // create authorized Github client object with accessToken
         const octokit = getOctokit(accessToken);
-        console.log(accessToken);
+        console.log(`accessToken: ${accessToken}`);
+        // get Github userInfo
         const { data: userInfo } = await octokit.users.getAuthenticated();
         const userId = userInfo.id;
         const userName = userInfo.login;
+        console.log(`userName: ${userName}`);
         let user = await User.findByPk(userId);
-        // if existing user - we want to update tokens
+        // if existing user - we want to update token
         if (user) {
             user.accessToken = accessToken;
             await user.save();
         }
-        // if new user - we want to create it with tokens. Tokens will be used for future API calls
+        // if new user - we want to create it with token. Token will be used for future API calls
         else {
             await User.create({
                 id: userId,
@@ -85,6 +90,7 @@ async function saveUserInfo(req, res) {
         // ===[MOCK_END]===
         // return jwt to client for future client-server communication
         const jwtToken = generateToken({ id: userId });
+        console.log(`jwtToken sent to client: ${jwtToken}`);
         res.json({
             authorize: true,
             token: jwtToken,

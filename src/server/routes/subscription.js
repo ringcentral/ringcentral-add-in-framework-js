@@ -32,7 +32,9 @@ async function subscribe(req, res) {
   try {
     // ===[MOCK]===
     // replace this section with the actual subscription call to 3rd party service
+    // create authorized Github client object with accessToken
     const octokit = getOctokit(user.accessToken);
+    // create a repo webhook that subscribes to PUSH event and send notification back to config.url
     const webhookResponse = await octokit.repos.createWebhook({
       owner: user.name,
       repo: process.env.TEST_REPO_NAME,
@@ -42,6 +44,7 @@ async function subscribe(req, res) {
         content_type: "json"
       }
     });
+    console.log(`Github repo webhook id: ${webhookResponse.data.id}`);
     // create new subscription in DB
     await Subscription.create({
       id: webhookResponse.data.id,
