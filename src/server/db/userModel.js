@@ -10,8 +10,8 @@ exports.User = sequelize.define('users', {
   name:{
     type: Sequelize.STRING,
   },
-  accessToken: {
-    type: Sequelize.STRING,
+  tokens: {
+    type: Sequelize.JSON,
   },
   rcWebhookUri:{
     type: Sequelize.STRING

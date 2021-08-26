@@ -30,7 +30,7 @@ export class Client {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        code: code,
+        code: callbackUri,
         rcWebhookUri: this._config.rcWebhookUri
       }),
     });

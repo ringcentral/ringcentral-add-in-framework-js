@@ -2,8 +2,7 @@ const { decodeToken } = require('../lib/jwt');
 const { User } = require('../db/userModel');
 const { Subscription } = require('../db/subscriptionModel');
 const constants = require('../lib/constants');
-const axios = require('axios');
-const { getOctokit } = require('../lib/github');
+const { Octokit } = require('@octokit/rest');
 
 async function subscribe(req, res) {
   // validate jwt
@@ -23,7 +22,7 @@ async function subscribe(req, res) {
   // get user
   const userId = decodedToken.id;
   const user = await User.findByPk(userId);
-  if (!user || !user.accessToken) {
+  if (!user || !user.tokens.accessToken) {
     res.send('Session expired');
     res.status(401);
     return;
@@ -33,7 +32,9 @@ async function subscribe(req, res) {
     // ===[MOCK]===
     // replace this section with the actual subscription call to 3rd party service
     // create authorized Github client object with accessToken
-    const octokit = getOctokit(user.accessToken);
+    const octokit = new Octokit({
+      auth: user.tokens.accessToken
+    });
     // create a repo webhook that subscribes to PUSH event and send notification back to config.url
     const webhookResponse = await octokit.repos.createWebhook({
       owner: user.name,

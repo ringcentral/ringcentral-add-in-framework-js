@@ -1,8 +1,21 @@
 const { User } = require('../db/userModel');
 const { Subscription } = require('../db/subscriptionModel');
 const { decodeToken, generateToken } = require('../lib/jwt');
-const axios = require('axios');
-const { getOAuthApp, getOctokit } = require('../lib/github');
+const { Octokit } = require('@octokit/rest');
+const constants = require('../lib/constants');
+const ClientOAuth2 = require('client-oauth2');
+
+// oauthApp strategy is default to 'code' which use credentials to get accessCode
+// then exchange accessCode for accessToken and refreshToken.
+// To change to other strategies, please refer to: https://github.com/mulesoft-labs/js-client-oauth2
+const { code: oauthApp } = new ClientOAuth2({
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    accessTokenUri: process.env.ACCESS_TOKEN_URI,
+    authorizationUri: process.env.AUTHORIZATION_URI,
+    redirectUri: `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}`,
+    scopes: process.env.SCOPES.split(process.env.SCOPES_SEPARATOR)
+});
 
 async function openAuthPage(req, res) {
     try {
@@ -11,10 +24,7 @@ async function openAuthPage(req, res) {
         // [Mocked Flow]: 1. mock 3rd party service call back with mock user tokens
         // mockAuthCallback: it is to mock the callback action that happens after a successful auth
         // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that it starts from step1: open auth page
-        const oauthApp = getOAuthApp();
-        const { url } = oauthApp.getWebFlowAuthorizationUrl({
-            scopes: [process.env.SCOPES.split(' ')]
-        });
+        const url = oauthApp.getUri();
         res.redirect(url);
         // ===[MOCK_END]===
     } catch (e) {
@@ -57,15 +67,13 @@ async function saveUserInfo(req, res) {
     try {
         // ===[MOCK]===
         // replace this with actual call to 3rd party service with access token, and retrieve user info
-        const oauthApp = getOAuthApp();
         // exchange code for accessToken
-        const { authentication } = await oauthApp.createToken({
-            code: code
-        });
-        const accessToken = authentication.token;
-        // create authorized Github client object with accessToken
-        const octokit = getOctokit(accessToken);
+        const { accessToken } = await oauthApp.getToken(code);
         console.log(`accessToken: ${accessToken}`);
+        // create authorized Github client object with accessToken
+        const octokit = new Octokit({
+            auth: accessToken
+        });
         // get Github userInfo
         const { data: userInfo } = await octokit.users.getAuthenticated();
         const userId = userInfo.id;
@@ -74,7 +82,7 @@ async function saveUserInfo(req, res) {
         let user = await User.findByPk(userId);
         // if existing user - we want to update token
         if (user) {
-            user.accessToken = accessToken;
+            user.tokens.accessToken = accessToken;
             await user.save();
         }
         // if new user - we want to create it with token. Token will be used for future API calls
@@ -82,7 +90,9 @@ async function saveUserInfo(req, res) {
             await User.create({
                 id: userId,
                 name: userName,
-                accessToken: accessToken,
+                tokens: {
+                    accessToken: accessToken
+                },
                 rcWebhookUri: req.body.rcWebhookUri
             });
         }
@@ -122,7 +132,9 @@ async function revokeToken(req, res) {
         if (user && user.subscriptionId) {
             // ===[MOCK]===
             // unsubscribe - This can be separated to subscription.js as a different method
-            const octokit = getOctokit(user.accessToken);
+            const octokit = new Octokit({
+                auth: user.tokens.accessToken
+            });
             const webhookResponse = octokit.repos.deleteWebhook({
                 owner: user.name,
                 repo: process.env.TEST_REPO_NAME,
