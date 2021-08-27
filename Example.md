@@ -12,13 +12,13 @@ This instruction assumes that you have already read the [framework instruction](
 
 Register an app on Github following [Instruction](https://docs.github.com/en/rest/guides/basics-of-authentication#registering-your-app).
 
-During the setup, let's fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/oauth-callback` (or go with a temporary one and update it after we do `npm run ngrok` and get our real server address). `Homepage URL` isn't important, you can fill in a dummy url.
+During Github setup, let's fill `Authorization callback URL` with `https://xxxxxxxx.ngrok.io/oauth-callback` (or go with a temporary one and update it after we do `npm run ngrok` and get our real server address). `Homepage URL` isn't important, you can fill in a dummy url.
 
 Note: `Authorization callback URL` is the auth-callback endpoint on our server. It is registered under your Github app for creating a callback carrying access code (NOT access token.) to our server when user authorization is finished. The access code will then be exchanged for access token.
 
 Do `cp .env.sample .env`
 
-After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over to `.env` on `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
+After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over to `.env` on `CLIENT_ID` and `CLIENT_SECRET`.
 
 ## Step.2 Local Setup
 
@@ -37,15 +37,11 @@ After the setup, we'll get `Client ID` and `Client Secret`. Let's copy them over
 
 ![](./diagram/github-webhook.png)
 
-# Understand Changes
+# Changes
 
 Let's have a look at changes to implement the basic integration with Github webhooks. It's recommended that you compare this branch with `main` to have a good overall view on what's changed.
 
-Apart from `===[MOCK]===` tag places in: [client.js](./src/client/lib/client.js), [authorization.js](./src/server/routes/authorization.js), [subscription.js](./src/server/routes/subscription.js) and [notification.js](./src/server/routes/notification.js), there are two major changes described as follow.
-
-## New Script - github.js
-
-[github.js](./src/server/lib/github.js) is created to provide Github auth and API functionalities. It uses npm packages [@octokit/oauth-app](https://www.npmjs.com/package/@octokit/oauth-app) for auth and [@octokit/rest](https://www.npmjs.com/package/@octokit/rest) for other API calls (in this demo, they are Create Repository Webhook and Delete Repository Webhook).
+Apart from `===[MOCK]===` tag places in: [authorization.js](./src/server/routes/authorization.js), [subscription.js](./src/server/routes/subscription.js) and [notification.js](./src/server/routes/notification.js), there is an additional change described as follow. (Note: all `===[MOCK]===` tags areas are changed, but comments are still kept as reference)
 
 ## Database - User Model
 

@@ -19,22 +19,16 @@ export class Client {
   }
 
   async saveUserInfo(callbackUri) {
-    // ===[MOCK]===
-    // replace mockAccessToken to 3rd party access code with reference to their callback url structure
-    const paramUrl = callbackUri.split('?')[1];
-    const urlSearchParams = new URLSearchParams(paramUrl);
-    const code = urlSearchParams.get('code').replace(/^#/, '');
     const response = await fetch(this._config.saveUserInfoUri, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        code: callbackUri,
+        callbackUri: callbackUri,
         rcWebhookUri: this._config.rcWebhookUri
       }),
     });
-    // ===[MOCK_END]===
     if (response.status !== 200) {
       throw new Error('Authorization error')
     }

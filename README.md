@@ -1,3 +1,7 @@
+# Example Project Doc
+
+[Example](Example.md)
+
 # RingCentral-Add-In-Framework
 
 The framework will help you create a RingCentral Add-In App that subscribes to 3rd party notifications via webhook and forward incoming notifications from 3rd party server to RingCentral App.
