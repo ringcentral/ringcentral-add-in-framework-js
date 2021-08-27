@@ -142,7 +142,7 @@ Typically for OAuth with 3rd party service, the steps would be:
 
 A typical setup involves creating developer account and creating a new app on 3rd party platform. Under OAuth standard, it should then provide `CLIENT_ID` and `CLIENT_SECRET` which you can fill in `.env` file. Additional fields to register are `ACCESS_TOKEN_URI`, `AUTHORIZATION_URI` and `SCOPES`. Note that if there are multiple scopes required, separate them by `,`.
 
-There are 6 places with `===[MOCK]===` tag that need to be changed, 5 in [authorization.js](./src/server/routes/authorization.js) and 1 in [client.js](./src/client/lib/client.js). 
+There are 5 places with `===[MOCK]===` tag in [authorization.js](./src/server/routes/authorization.js) that have some `TODO`s with guides for actual integration logic. 
 
 Please read 3rd party docs and make changes accordingly. (There could also be database model changes)
 
