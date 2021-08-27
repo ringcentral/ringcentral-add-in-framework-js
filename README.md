@@ -1,7 +1,3 @@
-# Example Project Doc
-
-[Example](Example.md)
-
 # RingCentral-Add-In-Framework
 
 The framework will help you create a RingCentral Add-In App that subscribes to 3rd party notifications via webhook and forward incoming notifications from 3rd party server to RingCentral App.
@@ -58,7 +54,7 @@ cp .env.sample .env
 npm run initDB
 ```
 
-Copy above `https://xxxx.ngrok.io` over to APP_SERVER field in `.env` file.
+Copy above `https://xxxx.ngrok.io` over to `APP_SERVER` field and `MOCK_CALLBACK_URI` field in `.env` file.
 
 
 ```bash
@@ -127,11 +123,11 @@ Press `Unsubscribe and Logout`, and incoming notifications will not be sent to y
 
 As indicated above, the workflow isn't super complicated. In practice, the complexities are mostly from understanding how the target 3rd party designs its webhook service.
 
-It's recommended to use 3rd party's official npm package which should have a nice wrapping around functions regarding authorization, webhook subscription and other functionalities.
+It's recommended to use 3rd party's official npm package which should have a nice wrapping around functions regarding webhook subscription and other functionalities.
 
 ## Example
 
-Check out `Example` branch for a basic Github integration example with additional notes on what are the changes that need to be done.
+Check out `Example` branch of this repository for a basic Github integration example with additional notes on what are the changes that need to be done.
 
 ## Auth
 
@@ -144,9 +140,9 @@ Typically for OAuth with 3rd party service, the steps would be:
 
 ### Apply Changes
 
-There are 5 places with `===[MOCK]===` tag that need to be changed, 4 in [authorization.js](./src/server/routes/authorization.js) and 1 in [client.js](./src/client/lib/client.js). 
+A typical setup involves creating developer account and creating a new app on 3rd party platform. Under OAuth standard, it should then provide `CLIENT_ID` and `CLIENT_SECRET` which you can fill in `.env` file. Additional fields to register are `ACCESS_TOKEN_URI`, `AUTHORIZATION_URI` and `SCOPES`. Note that if there are multiple scopes required, separate them by `,`.
 
-Note: `client.js - saveUserInfo` receives 3rd party callback uri and extract auth code, then calls server `authorization.js - saveUserInfo`.
+There are 6 places with `===[MOCK]===` tag that need to be changed, 5 in [authorization.js](./src/server/routes/authorization.js) and 1 in [client.js](./src/client/lib/client.js). 
 
 Please read 3rd party docs and make changes accordingly. (There could also be database model changes)
 
@@ -180,7 +176,7 @@ Go to [Root.jsx](./src/client/components/Root.jsx) amd uncomment `await client.s
 ## More to Think
 
 Auth:
-- Some platform would have access tokens with expiry. We'll need a refresh mechanism to detect that and refresh access.
+- Some platform would have access tokens with expiry. We'll need a refresh mechanism to detect that and refresh access. Check out `refreshAccessToken` method in [authorization.js](./src/server/routes/authorization.js).
 
 Subscription:
 - Is there a filtering mechanism to subscribe to selected types of events? If so, we'll want to add UIs for configuring it.
