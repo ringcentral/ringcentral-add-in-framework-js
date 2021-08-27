@@ -2,25 +2,36 @@ const { User } = require('../db/userModel');
 const { Subscription } = require('../db/subscriptionModel');
 const { decodeToken, generateToken } = require('../lib/jwt');
 const constants = require('../lib/constants');
+const ClientOAuth2 = require('client-oauth2');
+const { Token } = require('client-oauth2');
+
+// oauthApp strategy is default to 'code' which use credentials to get accessCode, then exchange for accessToken and refreshToken.
+// To change to other strategies, please refer to: https://github.com/mulesoft-labs/js-client-oauth2
+const { code: oauthApp } = new ClientOAuth2({
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    accessTokenUri: process.env.ACCESS_TOKEN_URI,
+    authorizationUri: process.env.AUTHORIZATION_URI,
+    redirectUri: `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}`,
+    scopes: process.env.SCOPES.split(process.env.SCOPES_SEPARATOR)
+});
 
 async function openAuthPage(req, res) {
     try {
-        const authUrl = process.env.AUTH_URL;
-
-        // [Actual Flow]: 1. open auth page -> 2. do auth -> 3. 3rd party service call back with user tokens
         // ===[MOCK]===
-        // [Mocked Flow]: 1. mock 3rd party service call back with mock user tokens
-        // mockAuthCallback: it is to mock the callback action that happens after a successful auth
-        // replace "mockAuthCallback(res, `xxx`);" with "res.redirect(authUrl);" so that it starts from step1: open auth page
-        mockAuthCallback(res, `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}?accessToken=testAccessToken&refreshToken=testRefreshToken`);
+        // Hack Warning!!!: Below [Mocked Flow] shortcuts [Actual Flow], please refer to the comparison
+        // [Actual Flow]: 1. open auth page -> 2. do auth -> 3. 3rd party service call back with user tokens
+        // [Mocked Flow]: 1. mock 3rd party service call back with mock access code directly
+        const url = process.env.MOCK_CALLBACK_URI;
+
+        // TODO: When start actual development, replace mock code with below code so to activate [Actual Flow]
+        // const url = oauthApp.getUri();
+
         // ===[MOCK_END]===
+        res.redirect(url);
     } catch (e) {
         console.error(e);
     }
-}
-
-function mockAuthCallback(res, mockAuthCallbackUrl) {
-    res.redirect(mockAuthCallbackUrl);
 }
 
 async function getUserInfo(req, res) {
@@ -45,25 +56,25 @@ async function getUserInfo(req, res) {
 
 async function saveUserInfo(req, res) {
     // ===[MOCK]===
-    // replace this with logic to get real tokens from 3rd party callback
-    const mockCode = req.body.mockCode;
-    if (!mockCode) {
-    // ===[MOCK_END]===
+    const mockTokenResponse = {
+        mockAccessToken: "mockAccessToken",
+        mockRefreshToken: "mockRefreshToken"
+    }
+    const mockAccessToken = mockTokenResponse.mockAccessToken;
+    const mockRefreshToken = mockTokenResponse.mockRefreshToken;
+
+    // TODO: When start actual development, replace mock code with blow code so to exchange accessCode for tokens from 3rd party
+    // const { accessToken } = await oauthApp.getToken(req.body.callbackUri);
+    if (!mockAccessToken) {
+        // ===[MOCK_END]===
         res.send('Params error');
         res.status(403);
         return;
     }
+    console.log(`accessToken: ${mockAccessToken}`);
     try {
         // ===[MOCK]===
-        // mockTokenResponse mocks the response from API call to exchange code for accessToken and refreshToken
-        const mockTokenResponse = {
-            mockAccessToken: "accessToken",
-            mockRefreshToken: "refreshToken"
-        }
-        const mockAccessToken = mockTokenResponse.mockAccessToken;
-        const mockRefreshToken = mockTokenResponse.mockRefreshToken;
-        const mockRefreshToken = mockTokenResponse.mockRefreshToken;
-        // replace this with actual call to 3rd party service with access token, and retrieve user info
+        // TODO: When start actual development, replace this with actual call to 3rd party service with access token, and retrieve user info
         const mockUserInfoResponse = {
             id: "user-123456"
         }
@@ -101,6 +112,25 @@ async function saveUserInfo(req, res) {
         res.send('Internal error.');
         res.status(500);
     }
+}
+
+async function refreshAccessToken(userId) {
+    const user = USER.findByPk(userId);
+    // ===[MOCK]===
+    // TODO: When start actual development, replace mock code with below commented code
+    // const token = new Token(oauthApp, { refreshToken: user.tokens.refreshToken });
+    // const { accessToken, refreshToken } = await token.refresh();
+    const mockRefreshResponse = {
+        mockAccessToken: "newMockAccessToken",
+        mockRefreshToken: "newMockRefreshToken"
+    };
+    user.tokens = {
+        accessToken: mockRefreshResponse.mockAccessToken,
+        refreshToken: mockRefreshResponse.mockRefreshToken
+    };
+
+    //===[MOCK_END]===
+    await user.save();
 }
 
 async function revokeToken(req, res) {
@@ -152,6 +182,7 @@ function oauthCallback(req, res) {
 
 exports.openAuthPage = openAuthPage;
 exports.getUserInfo = getUserInfo;
+exports.refreshAccessToken = refreshAccessToken;
 exports.saveUserInfo = saveUserInfo;
 exports.revokeToken = revokeToken;
 exports.oauthCallback = oauthCallback;
