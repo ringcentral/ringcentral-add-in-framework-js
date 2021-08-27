@@ -177,6 +177,17 @@ Go to [Root.jsx](./src/client/components/Root.jsx) amd uncomment `await client.s
 2. Do actions that will trigger event notification
 3. Receive message in RingCentral App
 
+### Additional Note
+
+There are several npm packages to be highlighted here:
+- [sequelize](https://www.npmjs.com/package//sequelize): Node.js database ORM tool
+- [dynamo-sequelize](https://www.npmjs.com/package/dynamo-sequelize): dynamodb extension for sequelize
+- [axios](https://www.npmjs.com/package/axios): Promise based HTTP client for the browser and node.js
+- [client-oauth2](https://www.npmjs.com/package/client-oauth2): OAuth2 wrapper
+- [serverless](https://www.npmjs.com/package/serverless): serverless framework
+
+When start development, it's recommended to use 3rd party's official npm package for its API calls.
+
 ## More to Think
 
 Auth:
