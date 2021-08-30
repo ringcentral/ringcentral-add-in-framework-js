@@ -127,7 +127,7 @@ It's recommended to use 3rd party's official npm package which should have a nic
 
 ## Example
 
-Check out `Example` branch of this repository for a basic Github integration example with additional notes on what are the changes that need to be done.
+Check out `GithubExample` and `AsanaExample` branches of this repository for basic Github (no refreshToken) and Asana(has refreshToken) integration examples with additional notes on what are the changes that need to be done.
 
 ## Auth
 

@@ -7,7 +7,7 @@ const { Token } = require('client-oauth2');
 
 // oauthApp strategy is default to 'code' which use credentials to get accessCode, then exchange for accessToken and refreshToken.
 // To change to other strategies, please refer to: https://github.com/mulesoft-labs/js-client-oauth2
-const { code: oauthApp } = new ClientOAuth2({
+const oauthApp = new ClientOAuth2({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     accessTokenUri: process.env.ACCESS_TOKEN_URI,
@@ -25,7 +25,7 @@ async function openAuthPage(req, res) {
         const url = process.env.MOCK_CALLBACK_URI;
 
         // TODO: When start actual development, replace mock code with below code so to activate [Actual Flow]
-        // const url = oauthApp.getUri();
+        // const url = oauthApp.code.getUri();
 
         // ===[MOCK_END]===
         res.redirect(url);
@@ -64,7 +64,7 @@ async function saveUserInfo(req, res) {
     const mockRefreshToken = mockTokenResponse.mockRefreshToken;
 
     // TODO: When start actual development, replace mock code with blow code so to exchange accessCode for tokens from 3rd party
-    // const { accessToken } = await oauthApp.getToken(req.body.callbackUri);
+    // const { accessToken } = await oauthApp.code.getToken(req.body.callbackUri);
     if (!mockAccessToken) {
         // ===[MOCK_END]===
         res.send('Params error');
@@ -114,11 +114,10 @@ async function saveUserInfo(req, res) {
     }
 }
 
-async function refreshAccessToken(userId) {
-    const user = USER.findByPk(userId);
+async function refreshAccessToken(user) {
     // ===[MOCK]===
     // TODO: When start actual development, replace mock code with below commented code
-    // const token = new Token(oauthApp, { refreshToken: user.tokens.refreshToken });
+    // const token = oauthApp.createToken(user.tokens.accessToken, user.tokens.refreshToken);
     // const { accessToken, refreshToken } = await token.refresh();
     const mockRefreshResponse = {
         mockAccessToken: "newMockAccessToken",
@@ -131,6 +130,8 @@ async function refreshAccessToken(userId) {
 
     //===[MOCK_END]===
     await user.save();
+
+    return user;
 }
 
 async function revokeToken(req, res) {
