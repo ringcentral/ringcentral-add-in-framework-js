@@ -16,4 +16,7 @@ exports.User = sequelize.define('users', {
   subscriptionId: {
     type: Sequelize.STRING
   },
+  tokenUpdatedDate:{
+    type: Sequelize.DATE
+  }
 });

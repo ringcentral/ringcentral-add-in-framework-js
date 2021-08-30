@@ -13,4 +13,9 @@ const route = {
     }
 }
 
+const oauth = {
+    tokenExpiry : 3600000 // in ms
+}
+
 exports.route = route;
+exports.oauth = oauth;

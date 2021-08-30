@@ -1,52 +1,68 @@
 const axios = require('axios');
 const { Subscription } = require('../db/subscriptionModel');
 const { User } = require('../db/userModel');
+const Asana = require('asana');
+const constants = require('../lib/constants')
+const { refreshAccessToken } = require('../routes/authorization');
 
+// Note: for practicality, incoming notification should be validated with 'x-hook-secret' header during  webhook creation handshake (https://developers.asana.com/docs/webhooks)
 async function notification(req, res) {
     try {
         // ===[MOCK]===
         // replace this to use actual 3rd party notification data, transform it, and send to RC_WEBHOOK
-        const mockSubscriptionId = req.body.id;
-        const subscription = await Subscription.findByPk(mockSubscriptionId);
-        const mockUserId = subscription.userId;
-        const user = await User.findByPk(mockUserId);
-        
-        let message = {};
-        if(req.body.isAdaptiveCard)
-        {
-            message = generateGoogleDriveNewFileCard({
-                userAvatar : 'https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png',
-                username: req.body.username,
-                userEmail: req.body.userEmail,
-                documentIconUrl: 'https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png',
-                documentName: req.body.documentName,
-                fileUrl: 'https://google.com'
+
+        const incomingEvents = req.body.events;
+        if (incomingEvents) {
+            // Asana events don't contain the actual change, we'll just get resource here then fetch the change ourselves
+            const event = req.body.events[0];
+            console.log(`[DEBUG]Incoming event:\n ${JSON.stringify(event, null, 2)}`);
+            let user = await User.findByPk(req.query.userId);
+
+            const nowDate = new Date();
+            // refresh accessToken when accessToken expires. It expires after 1 hour = 3600 seconds
+            if (nowDate - user.tokenUpdatedDate > constants.oauth.tokenExpiry) {
+                console.log('[DEBUG] accessToken expired. Refreshing...');
+                user = await refreshAccessToken(user);
+            }
+            
+            const client = Asana.Client.create().useAccessToken(user.tokens.accessToken);
+
+            // get info
+            const userChangedTask = await client.users.findById(event.user.gid);
+            const taskChanged = await client.tasks.findById(event.resource.gid);
+
+            // compose RingCentral App adaptive card
+            const message = generateAsanaTaskNameChangeCard({
+                asanaIcon: 'https://cdn.iconscout.com/icon/free/png-256/asana-226537.png',
+                username: userChangedTask.name,
+                userEmail: userChangedTask.email,
+                taskName: taskChanged.name,
+                taskUrl: taskChanged.permalink_url
+            });
+
+            // ===[MOCK_END]===
+            await axios.post(user.rcWebhookUri, message, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                }
             });
         }
-        else{
-            message = {
-                title: `${req.body.username} (${req.body.userEmail}) just shared [${req.body.documentName}](https://google.com) with you.`,
-                icon: 'https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png'
-            };
-        }
-        // ===[MOCK_END]===
-        await axios.post(user.rcWebhookUri, message, {
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json'
-            }
-          });
     } catch (e) {
         console.error(e);
     }
 
+    // required by Asana for handshake (https://developers.asana.com/docs/webhooks)
+    if (req.headers['x-hook-secret']) {
+        res.set("X-Hook-Secret", req.headers['x-hook-secret']);
+    }
     res.json({
-      result: 'OK',
+        result: 'OK',
     });
     res.status(200);
 }
 
-function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, documentIconUrl, documentName, fileUrl }) {
+function generateAsanaTaskNameChangeCard({ asanaIcon, username, userEmail, taskName, taskUrl }) {
     const card = {
         "attachments": [
             {
@@ -58,7 +74,7 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                         "type": "TextBlock",
                         "size": "Large",
                         "weight": "Bolder",
-                        "text": "New File Shared with You"
+                        "text": "Task Name Changed"
                     },
                     {
                         "type": "ColumnSet",
@@ -69,7 +85,7 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                                     {
                                         "type": "Image",
                                         "style": "Person",
-                                        "url": userAvatar,
+                                        "url": asanaIcon,
                                         "size": "Small"
                                     }
                                 ],
@@ -98,7 +114,7 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                     },
                     {
                         "type": "TextBlock",
-                        "text": `${username} **shared document**:`,
+                        "text": `${username} **changed task name to**:`,
                         "wrap": true
                     },
                     {
@@ -109,20 +125,8 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                                 "type": "Column",
                                 "items": [
                                     {
-                                        "type": "Image",
-                                        "url": documentIconUrl,
-                                        "size": "Small",
-                                        "height": "16px"
-                                    }
-                                ],
-                                "width": "auto"
-                            },
-                            {
-                                "type": "Column",
-                                "items": [
-                                    {
                                         "type": "TextBlock",
-                                        "text": documentName,
+                                        "text": taskName,
                                         "wrap": true
                                     }
                                 ],
@@ -134,8 +138,8 @@ function generateGoogleDriveNewFileCard({ userAvatar, username, userEmail, docum
                 "actions": [
                     {
                         "type": "Action.OpenUrl",
-                        "title": "View File",
-                        "url": fileUrl,
+                        "title": "View Task",
+                        "url": taskUrl,
                         "style": "positive"
                     }
                 ]

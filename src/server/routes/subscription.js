@@ -1,6 +1,8 @@
 const { decodeToken } = require('../lib/jwt');
 const { User } = require('../db/userModel');
 const { Subscription } = require('../db/subscriptionModel');
+const Asana = require('asana');
+const constants = require('../lib/constants')
 
 async function subscribe(req, res) {
   // validate jwt
@@ -30,17 +32,40 @@ async function subscribe(req, res) {
     // ===[MOCK]===
     // replace this section with the actual subscription call to 3rd party service
     // typically you would include notification callback url in the payload
-    const mockSubscriptionResponse = {
-      id : "sub-123456",
-    }
+
+    const client = Asana.Client.create().useAccessToken(user.tokens.accessToken);
+    // get target resource id for my user task list
+    const workspaces = await client.workspaces.findAll();
+    const targetWorkspace = workspaces.data[0];
+    const taskList = await client.userTaskLists.findByUser("me", { workspace: targetWorkspace.gid });
+
+    console.log(`[DEBUG]resource id: ${taskList.gid}`);
+
+    // create subscription webhook
+    const webhookResponse = await client.webhooks.create(
+      taskList.gid,
+      `${process.env.APP_SERVER}${constants.route.forThirdParty.NOTIFICATION}?userId=${user.id}`,
+      {
+        filters: [
+          {
+            resource_type: 'task',
+            action: 'changed',
+            fields: [
+              'name'
+            ]
+          }
+        ]
+      });
+
+    console.log(`[DEBUG]webhook id: ${webhookResponse.gid}`);
 
     // create new subscription in DB
     await Subscription.create({
-      id: mockSubscriptionResponse.id,
+      id: webhookResponse.gid,
       userId: userId
     });
 
-    user.subscriptionId = mockSubscriptionResponse.id;
+    user.subscriptionId = webhookResponse.gid;
     // ===[MOCK_END]===
     await user.save();
 
