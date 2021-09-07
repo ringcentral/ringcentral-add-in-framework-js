@@ -2,9 +2,8 @@
 const commander = require('commander');
 const program = new commander.Command();
 const { version } = require('../package.json');
+const { generateTemplate } = require('./template');
 
-const fs = require('fs');
-const path = require('path');
 const inquirer = require('inquirer');
 
 program.version(version).description('RingCentral Add-In Framework');
@@ -12,7 +11,7 @@ program.version(version).description('RingCentral Add-In Framework');
 program
     .command('template')
     .alias('t')
-    .description('create a new template')
+    .description('install a new template')
     .action(() => {
         inquirer
             .prompt([
@@ -34,7 +33,7 @@ program
                     message: 'Use refresh token?',
                     default: false,
                     when: (answers) => answers.useOAuth
-                },                {
+                }, {
                     type: 'confirm',
                     name: 'setupParams',
                     message: 'Do you want to setup 3rd party config now?',
@@ -43,15 +42,15 @@ program
                 },
                 {
                     type: 'input',
-                    name: 'accessTokenUri',
-                    message: '3rd party access token uri(optional):',
+                    name: 'authorizationUri',
+                    message: '3rd party authorization uri(optional):',
                     default: '',
                     when: (answers) => answers.useOAuth && answers.setupParams
                 },
                 {
                     type: 'input',
-                    name: 'authorizationUri',
-                    message: '3rd party authorization uri(optional):',
+                    name: 'accessTokenUri',
+                    message: '3rd party access token uri(optional):',
                     default: '',
                     when: (answers) => answers.useOAuth && answers.setupParams
                 },
@@ -78,33 +77,8 @@ program
                 }
             ])
             .then((answers) => {
-                // createProject(answer.appName);
-                console.log(answers.appName);
-                console.log(answers.useOAuth);
-                console.log(answers.useRefreshToken);
-                console.log(answers.accessTokenUri);
-                console.log(answers.authorizationUri);
-                console.log(answers.clientId);
-                console.log(answers.clientSecret);
-                console.log(answers.scopes);
+                generateTemplate(answers);
             })
     });
 
 program.parse(process.argv);
-
-function createProject(name) {
-    let projectName = name;
-    let projectDir;
-    if (!projectName) {
-        projectName = path.basename(process.cwd());
-        projectDir = process.cwd();
-    } else {
-        projectDir = path.resolve(process.cwd(), projectName);
-    }
-    if (!fs.existsSync(projectDir)) {
-        fs.mkdirSync(projectDir);
-    }
-    if (fs.existsSync(path.resolve(projectDir, 'package.json'))) {
-        throw Error('project existed');
-    }
-}
