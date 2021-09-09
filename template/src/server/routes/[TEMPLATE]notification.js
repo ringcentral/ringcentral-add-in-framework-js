@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { Subscription } = require('../model/subscriptionModel');
-<%if (useRefreshToken) {%>const { checkAndRefreshAccessToken } = require('../lib/oauthTokenHelper');<%}%>
+<%if (useRefreshToken) {%>const { User } = require('../model/userModel');
+const { checkAndRefreshAccessToken } = require('../lib/oauth');<%}%>
 
 
 // Note: for practicality, incoming notification should be validated with 'x-hook-secret' header during  webhook creation handshake (https://developers.asana.com/docs/webhooks)
@@ -12,7 +13,8 @@ async function notification(req, res) {
         const subscriptionId = "subscriptionId" // [REPLACE] this with actual subscriptionId from req
         const subscription = await Subscription.findByPk(subscriptionId);
         <%if (useRefreshToken) {%>// check token refresh condition
-        await checkAndRefreshAccessToken(userId);<%}%>
+        const user = await User.findByPk(userId);
+        await checkAndRefreshAccessToken(user);<%}%>
         // Step.2: Extract info from 3rd party notification POST body
         const testNotificationInfo = {
             title: "This is a test title",

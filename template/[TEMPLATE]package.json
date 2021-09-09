@@ -12,6 +12,7 @@
     "server": "node ./src/run-server.js",
     "start": "npm run server",
     "initDB": "node ./scripts/init-db",
+    "refreshDB": "node ./scripts/refresh-db",
     "client": "webpack-dev-server --config webpack-dev-server.config.js --inline",
     "client-build": "NODE_ENV=production webpack --config webpack-production.config.js",
     "serverless-build": "node ./scripts/serverless-build",
@@ -47,9 +48,9 @@
   },
   "dependencies": {
     <% if (useOAuth) { %>"client-oauth2": "^4.3.3",
+    "jsonwebtoken": "^8.5.1",<% } %>
     "sequelize": "^5.22.3",
     "dynamo-sequelize": "^0.8.1",
-    "jsonwebtoken": "^8.5.1",<% } %>
     "axios": "^0.21.1",
     "dotenv": "6.2.0",
     "glip-integration-js": "^0.2.0",

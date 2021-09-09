@@ -23,7 +23,7 @@ export function App({ integrationHelper, client }) {
   const [authorized, setAuthorized] = useState(client.authorized);
   const [userInfo, setUserInfo] = useState({});
 
-  // Listen authorized state to load google webhook data:
+  // Listen authorized state to load webhook data:
   useEffect(() => {
     if (!authorized) {
       setUserInfo({});
@@ -78,8 +78,6 @@ export function App({ integrationHelper, client }) {
                       try {
                         // Authorize
                         await client.authorize(e.data.authCallback);
-                        // Subscribe - most likely you'll need to separate this from Authorize
-                        await client.subscribe();
                         setAuthorized(true);
                       } catch (e) {
                         console.error(e);
@@ -93,12 +91,29 @@ export function App({ integrationHelper, client }) {
                     setLoading(false);
                   }, 2000);
                 }}>
-                  Connect to 3rd Party Service and Subscribe
+                  Connect to 3rd Party Service
                 </RcButton>
               </div>
             ) : (
               <div>
                 <RcText >Hello {userInfo.id}</RcText>
+                <br/>
+                <RcButton onClick={async () => {
+                  setLoading(true);
+                  try {
+                    // Subscribe
+                    await client.subscribe();
+                    setLoading(false);
+                  } catch (e) {
+                    console.error(e);
+                    setLoading(false);
+                    setError('Logout error please retry later.');
+                  }
+                }}>
+                  Subscribe
+                </RcButton>
+                <br/>
+                <br/>
                 <RcButton onClick={async () => {
                   setLoading(true);
                   try {

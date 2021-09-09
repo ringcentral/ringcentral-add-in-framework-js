@@ -2,7 +2,7 @@ const { decodeJwt } = require('../lib/jwt');
 const { User } = require('../model/userModel');
 const { Subscription } = require('../model/subscriptionModel');
 const constants = require('../lib/constants');
-<%if (useRefreshToken) {%>const { checkAndRefreshAccessToken } = require('../lib/oauthTokenHelper');<%}%>
+<%if (useRefreshToken) {%>const { checkAndRefreshAccessToken } = require('../lib/oauth');<%}%>
 
 async function subscribe(req, res) {
     // validate jwt
@@ -36,11 +36,11 @@ async function subscribe(req, res) {
         return;
     }
 
-    // create notification subscription
+    // create webhook notification subscription
     try {
     // CHOOSE one of flows below and DELETE the other. If 3rd party service includes subscriptionId in their subscription notification, go with Flow.1, otherwise go with Flow.2
     <%if (useRefreshToken) {%>// check token refresh condition
-    await checkAndRefreshAccessToken(userId);<%}%>
+    await checkAndRefreshAccessToken(user);<%}%>
     // Flow.1: Use 3rd party service webhook id as our subscriptionId:
         const notificationCallbackUrl = `${process.env.APP_SERVER}${constants.route.forThirdParty.NOTIFICATION}`;
 

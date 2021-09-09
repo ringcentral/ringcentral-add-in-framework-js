@@ -9,15 +9,16 @@ The framework will help you create a RingCentral Add-In App that subscribes to 3
 
 # Install Framework
 
-This framework contains several templates and demos. 3rd party platforms have different designs on their APIs. Before starting the installation, please check whether the 3rd party platform uses `OAuth`. If so, also check if it uses `accessToken` + `refreshToken` OR just `accessToken`.
+This framework contains several templates due to the fact that different 3rd party platforms have different designs on their APIs. Before starting the installation, please:
+1. Go to 3rd party platform and register a new app there. For most platforms who have OAuth flow implementation, there will be `ClientId` and `ClientSecret` generated for your app.
+2. If 3rd party platform uses `OAuth`, please check if it uses `accessToken` + `refreshToken` OR just `accessToken`.
+3. If 3rd party platform uses `OAuth`, please find their API endpoints for authorization and access token exchange.
 
-Please install with following commands:
+Then install the template with following commands:
 
 ```bash
 npx ringcentral-add-in-framework template
 ```
-
-The installation prompt will take you through several steps to set up the template.
 
 For further Information, please refer to the `README.md` that's inside your generated template.
 

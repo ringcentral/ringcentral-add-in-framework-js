@@ -9,7 +9,7 @@ async function clientView(req, res) {
       return;
     }
     res.render('setup', {
-      assetsPath: process.env.ASSETS_PATH,
+      <% if (useOAuth) { %>assetsPath: process.env.ASSETS_PATH,<% } %>
       data: {
         rcWebhookUri,
         <% if (useOAuth) { %>authPageUri: `${process.env.APP_SERVER}${constants.route.forClient.OPEN_AUTH_PAGE}`,

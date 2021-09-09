@@ -1,4 +1,3 @@
-const { User } = require('../model/userModel');
 const constants = require('./constants');
 const ClientOAuth2 = require('client-oauth2');
 
@@ -13,10 +12,14 @@ const oauthApp = new ClientOAuth2({
     scopes: process.env.SCOPES.split(process.env.SCOPES_SEPARATOR)
 });
 
+function getOAuthApp(){
+    return oauthApp;
+}
+
+<% if (useRefreshToken) { %>
 const SECOND_TO_MILLISECOND = 1000;
 
-async function checkAndRefreshAccessToken(userId) {
-    const user = await User.findByPk(userId);
+async function checkAndRefreshAccessToken(user) {
     const dateNow = new Date();
     if ((dateNow - user.tokenCreatedDate) > (process.env.ACCESS_TOKEN_EXPIRY_IN_SEC * SECOND_TO_MILLISECOND)) {
         const token = oauthApp.createToken(user.accessToken, user.refreshToken);
@@ -28,4 +31,6 @@ async function checkAndRefreshAccessToken(userId) {
     }
 }
 
-exports.checkAndRefreshAccessToken = checkAndRefreshAccessToken;
+
+exports.checkAndRefreshAccessToken = checkAndRefreshAccessToken;<% } %>
+exports.getOAuthApp = getOAuthApp;

@@ -20,6 +20,8 @@ There are 3 major parts involved:
 
 # Workflow Diagram
 
+Note: if you don't have Markdown view, please open the flow diagram directly from `diagram/flow.svg`.
+
 ![flow](./diagram/flow.svg)
 
 # Development
@@ -30,8 +32,8 @@ There are 3 major parts involved:
 # install dependencies
 npm i
 
-# create db file
-npm run initDB
+# create db file - additional note: 'npm run refreshDB' command will clear DB and re-init it
+npm run initDB 
 
 # start proxy server, this will allow your local bot server to be accessed by the RingCentral service
 npm run ngrok

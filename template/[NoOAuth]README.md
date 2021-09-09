@@ -7,6 +7,14 @@ This template aims to help you quickly set up your app with 3rd party webhook in
 - Download and install RingCentral App and login: https://www.ringcentral.com/apps/rc-app
 - Nodejs and npm.
 
+# Workflow
+
+The workflow is:
+
+1. Register app on 3rd party platform
+2. Create webhook subscription on 3rdp party platform with notification endpoint as `https://xxxx.ngrok.io/notification`. (Note: refer to [Development Section](#development) for more info regarding `https://xxxx.ngrok.io`)
+3. Incoming notification messages will go to `notification` method under `src/server/routes/notification.js`
+
 # Development
 
 ## Step.1 Start Web Tunnel

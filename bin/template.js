@@ -33,7 +33,6 @@ exports.generateTemplate = (
     createDirs([
         { dirPath: path.resolve(projectDir, 'scripts') },
         { dirPath: path.resolve(projectDir, 'src') },
-        { dirPath: path.resolve(projectDir, 'src/client') },
         { dirPath: path.resolve(projectDir, 'src/server') },
         { dirPath: path.resolve(projectDir, 'src/server/lib') },
         { dirPath: path.resolve(projectDir, 'src/server/routes') },
@@ -55,14 +54,15 @@ exports.generateTemplate = (
         { filePath: path.resolve(__dirname, '../template/getWebpackBaseConfig.js',), destinationPath: path.resolve(projectDir, 'getWebpackBaseConfig.js') },
         { filePath: path.resolve(__dirname, '../template/webpack-dev-server.config.js',), destinationPath: path.resolve(projectDir, 'webpack-dev-server.config.js') },
         { filePath: path.resolve(__dirname, '../template/webpack-production.config.js',), destinationPath: path.resolve(projectDir, 'webpack-production.config.js') },
-        { filePath: path.resolve(__dirname, '../template/scripts/serverless-build.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-build.js') },
+        { filePath: path.resolve(__dirname, '../template/scripts/init-db.js',), destinationPath: path.resolve(projectDir, 'scripts/init-db.js') },
+        { filePath: path.resolve(__dirname, '../template/scripts/refresh-db.js',), destinationPath: path.resolve(projectDir, 'scripts/refresh-db.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/serverless-deploy.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-deploy.js') },
+        { filePath: path.resolve(__dirname, '../template/scripts/serverless-build.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-build.js') },
         { filePath: path.resolve(__dirname, '../template/src/lambda.js',), destinationPath: path.resolve(projectDir, 'src/lambda.js') },
         { filePath: path.resolve(__dirname, '../template/src/run-server.js',), destinationPath: path.resolve(projectDir, 'src/run-server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server.js',), destinationPath: path.resolve(projectDir, 'src/server.js') },
-        { filePath: path.resolve(__dirname, '../template/src/client/app.js',), destinationPath: path.resolve(projectDir, 'src/client/app.js') },
         { filePath: path.resolve(__dirname, '../template/src/server/model/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/model/sequelize.js') },
-        { filePath: path.resolve(__dirname, '../template/src/server/views/setup.pug',), destinationPath: path.resolve(projectDir, 'src/server/views/setup.pug') },
+        { filePath: path.resolve(__dirname, '../template/src/server/model/subscriptionModel.js',), destinationPath: path.resolve(projectDir, 'src/server/model/subscriptionModel.js') },
     ])
 
 
@@ -71,154 +71,118 @@ exports.generateTemplate = (
             { filePath: path.resolve(__dirname, '../template/src/client/lib/client.js',), destinationPath: path.resolve(projectDir, 'src/client/lib/client.js') },
             { filePath: path.resolve(__dirname, '../template/src/server/views/oauth-callback.pug',), destinationPath: path.resolve(projectDir, 'src/server/views/oauth-callback.pug') },
             { filePath: path.resolve(__dirname, '../template/src/server/lib/jwt.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/jwt.js') },
-            { filePath: path.resolve(__dirname, '../template/src/server/model/subscriptionModel.js',), destinationPath: path.resolve(projectDir, 'src/server/model/subscriptionModel.js') },
             { filePath: path.resolve(__dirname, '../template/[OAuth]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
             { filePath: path.resolve(__dirname, '../template/[OAuth]diagram/flow.svg',), destinationPath: path.resolve(projectDir, 'diagram/flow.svg') },
+            { filePath: path.resolve(__dirname, '../template/src/client/components/Root.jsx',), destinationPath: path.resolve(projectDir, 'src/client/components/Root.jsx') },
+            { filePath: path.resolve(__dirname, '../template/src/client/app.js',), destinationPath: path.resolve(projectDir, 'src/client/app.js') },
         ]);
-
-        if(useRefreshToken)
-        {
-            copyFiles([
-                { filePath: path.resolve(__dirname, '../template/src/server/lib/oauthTokenHelper.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/oauthTokenHelper.js') },
-            ]);
-        }
     }
-    else{
+    else {
         copyFiles([
             { filePath: path.resolve(__dirname, '../template/[NoOAuth]README.md',), destinationPath: path.resolve(projectDir, 'README.md') }
         ]);
     }
 
     // copy templates
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/views/[TEMPLATE]setup.pug',),
+        destinationPath: path.resolve(projectDir, 'src/server/views/setup.pug'),
+        params: {
+            useOAuth: useOAuth
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/model/[TEMPLATE]userModel.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/model/userModel.js'),
+        params: {
+            useOAuth: useOAuth,
+            useRefreshToken: useRefreshToken
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/[TEMPLATE]package.json',),
+        destinationPath: path.resolve(projectDir, 'package.json'),
+        params: {
+            name: projectName.replace(/\s/g, ''),
+            useOAuth: useOAuth
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/[TEMPLATE].env',),
+        destinationPath: path.resolve(projectDir, '.env'),
+        params: {
+            useOAuth: useOAuth,
+            clientId: clientId,
+            clientSecret: clientSecret,
+            accessTokenUri: accessTokenUri,
+            authorizationUri: authorizationUri,
+            scopes: scopes
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/[TEMPLATE]index.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/index.js'),
+        params: {
+            useOAuth: useOAuth,
+            useRefreshToken: useRefreshToken
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/routes/[TEMPLATE]notification.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/routes/notification.js'),
+        params: {
+            useRefreshToken: useRefreshToken
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/routes/[TEMPLATE]view.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/routes/view.js'),
+        params: {
+            useOAuth: useOAuth
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/lib/[TEMPLATE]constants.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/lib/constants.js'),
+        params: {
+            useOAuth: useOAuth,
+            useRefreshToken: useRefreshToken
+        },
+    });
+
+    // templated files only for OAuth
     if (useOAuth) {
         copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/src/client/components/[TEMPLATE]Root.jsx',
-            ),
-            destinationPath: path.resolve(projectDir, 'src/client/components/Root.jsx'),
+            templatePath: path.resolve(__dirname, '../template/src/server/lib/[TEMPLATE]oauth.js',),
+            destinationPath: path.resolve(projectDir, 'src/server/lib/oauth.js'),
             params: {
-                // TODO
-            },
-        });
-
-        copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/[TEMPLATE]package.json',
-            ),
-            destinationPath: path.resolve(projectDir, 'package.json'),
-            params: {
-                name: projectName.replace(/\s/g, ''),
-                useOAuth: useOAuth
-            },
-        });
-
-        copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/[TEMPLATE].env',
-            ),
-            destinationPath: path.resolve(projectDir, '.env'),
-            params: {
-                useOAuth: useOAuth,
-                clientId: clientId,
-                clientSecret: clientSecret,
-                accessTokenUri: accessTokenUri,
-                authorizationUri: authorizationUri,
-                scopes: scopes
-            },
-        });
-
-        copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/src/server/[TEMPLATE]index.js',
-            ),
-            destinationPath: path.resolve(projectDir, 'src/server/index.js'),
-            params: {
-                useOAuth: useOAuth,
                 useRefreshToken: useRefreshToken
             },
         });
 
         copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/src/server/routes/[TEMPLATE]authorization.js',
-            ),
+            templatePath: path.resolve(__dirname, '../template/src/server/routes/[TEMPLATE]authorization.js',),
             destinationPath: path.resolve(projectDir, 'src/server/routes/authorization.js'),
             params: {
                 useRefreshToken: useRefreshToken
             },
         });
-        
-        copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/src/server/routes/[TEMPLATE]notification.js',
-            ),
-            destinationPath: path.resolve(projectDir, 'src/server/routes/notification.js'),
-            params: {
-                useRefreshToken: useRefreshToken
-            },
-        });
 
         copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/src/server/routes/[TEMPLATE]subscription.js',
-            ),
+            templatePath: path.resolve(__dirname, '../template/src/server/routes/[TEMPLATE]subscription.js',),
             destinationPath: path.resolve(projectDir, 'src/server/routes/subscription.js'),
             params: {
                 useRefreshToken: useRefreshToken
             },
         });
 
-        copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/src/server/routes/[TEMPLATE]view.js',
-            ),
-            destinationPath: path.resolve(projectDir, 'src/server/routes/view.js'),
-            params: {
-                useOAuth: useOAuth
-            },
-        });
-
-        copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/src/server/lib/[TEMPLATE]constants.js',
-            ),
-            destinationPath: path.resolve(projectDir, 'src/server/lib/constants.js'),
-            params: {
-                useOAuth: useOAuth,
-                useRefreshToken: useRefreshToken
-            },
-        });
-
-        copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/src/server/model/[TEMPLATE]userModel.js',
-            ),
-            destinationPath: path.resolve(projectDir, 'src/server/model/userModel.js'),
-            params: {
-                useOAuth: useOAuth,
-                useRefreshToken: useRefreshToken
-            },
-        });
-
-        copyTemplate({
-            templatePath: path.resolve(
-                __dirname,
-                '../template/scripts/init-db.js',
-            ),
-            destinationPath: path.resolve(projectDir, 'scripts/init-db.js'),
-            params: {
-                useOAuth: useOAuth
-            },
-        });
     }
 }

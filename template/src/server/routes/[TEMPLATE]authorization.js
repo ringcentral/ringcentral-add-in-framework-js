@@ -1,23 +1,11 @@
 const { User } = require('../model/userModel');
 const { Subscription } = require('../model/subscriptionModel');
 const { decodeJwt, generateJwt } = require('../lib/jwt');
-const constants = require('../lib/constants');
-const ClientOAuth2 = require('client-oauth2');
-<%if (useRefreshToken) {%>const { checkAndRefreshAccessToken } = require('../lib/oauthTokenHelper');<%}%>
-
-// oauthApp strategy is default to 'code' which use credentials to get accessCode, then exchange for accessToken and refreshToken.
-// To change to other strategies, please refer to: https://github.com/mulesoft-labs/js-client-oauth2
-const oauthApp = new ClientOAuth2({
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    accessTokenUri: process.env.ACCESS_TOKEN_URI,
-    authorizationUri: process.env.AUTHORIZATION_URI,
-    redirectUri: `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}`,
-    scopes: process.env.SCOPES.split(process.env.SCOPES_SEPARATOR)
-});
+const { <%if (useRefreshToken) {%> checkAndRefreshAccessToken,<%}%> getOAuthApp } = require('../lib/oauth');
 
 async function openAuthPage(req, res) {
     try {
+        const oauthApp = getOAuthApp();
         const url = oauthApp.code.getUri();
         console.log(`Opening auth page: ${url}`);
         res.redirect(url);
@@ -44,14 +32,15 @@ async function getUserInfo(req, res) {
         const user = await User.findByPk(userId);
 
         <%if (useRefreshToken) {%>// check token refresh condition
-        await checkAndRefreshAccessToken(userId);<%}%>
+            await checkAndRefreshAccessToken(user);<%}%>
 
-        res.json(user);
+                res.json(user);
     }
 }
 
 <%if (useRefreshToken) {%>
 async function generateToken(req, res) {
+    const oauthApp = getOAuthApp();
     const { accessToken, refreshToken } = await oauthApp.code.getToken(req.body.callbackUri);
     if (!accessToken || !refreshToken) {
         res.status(403);
@@ -62,10 +51,8 @@ async function generateToken(req, res) {
     try {
         // Step1: Get user info from 3rd party API call
         const userInfoResponse = { id: "id", email: "email" }   // [REPLACE] this line with actual call
-
         // Step2: Find if it's existing user in our database
         const user = await User.findByPk(userInfoResponse.id);  // [REPLACE] this line with user id from actual response
-        
         // Step3: If user doesn't exit, we want to create a new one
         if (!user) {
             await User.create({
@@ -76,10 +63,8 @@ async function generateToken(req, res) {
                 email: userInfoResponse.email, // [REPLACE] this with actual user email in response, [DELETE] this line if user info doesn't contain email
             });
         }
-
         // Step4: Return jwt to client for future client-server communication
         const jwtToken = generateJwt({ id: userInfoResponse.id });   // [REPLACE] this with actual user id in response
-        
         res.status(200);
         res.json({
             authorize: true,
@@ -91,9 +76,9 @@ async function generateToken(req, res) {
         res.send('Internal error.');
     }
 }
-
-<%} else{%>
+<%} else {%>
 async function generateToken(req, res) {
+    const oauthApp = getOAuthApp();
     const { accessToken } = await oauthApp.code.getToken(req.body.callbackUri);
     if (!accessToken) {
         res.status(403);
@@ -104,10 +89,8 @@ async function generateToken(req, res) {
     try {
         // Step1: Get user info from 3rd party API call
         const userInfoResponse = { id: "id", email: "email" }   // [REPLACE] this line with actual call
-
         // Step2: Find if it's existing user in our database
         const user = await User.findByPk(userInfoResponse.id);  // [REPLACE] this line with user id from actual response
-        
         // Step3: If user doesn't exit, we want to create a new one
         if (!user) {
             await User.create({
@@ -116,10 +99,8 @@ async function generateToken(req, res) {
                 email: userInfoResponse.email, // [REPLACE] this with actual user email in response, [DELETE] this line if user info doesn't contain email
             });
         }
-
         // Step4: Return jwt to client for future client-server communication
         const jwtToken = generateJwt({ id: userInfoResponse.id });   // [REPLACE] this with actual user id in response
-        
         res.status(200);
         res.json({
             authorize: true,
@@ -132,7 +113,6 @@ async function generateToken(req, res) {
     }
 }
 <%}%>
-
 async function revokeToken(req, res) {
     const jwtToken = req.body.token;
     if (!jwtToken) {
@@ -151,26 +131,21 @@ async function revokeToken(req, res) {
         const user = await User.findByPk(userId);
         if (user) {
             // Step.1: Clear token
-            user.accessToken='';
-            <%if (useRefreshToken) 
-            {%>user.refreshToken = '';<%}%>
-
-            // Step.2: Unsubscribe all webhook and clear subscriptions in db
-            const subscriptions = await Subscription.findAll({
-                where:{
-                    userId:userId
+            user.accessToken = '';
+<%if (useRefreshToken) {%> user.refreshToken = '';<%}%>
+// Step.2: Unsubscribe all webhook and clear subscriptions in db
+        const subscriptions = await Subscription.findAll({
+                where: {
+                    userId: userId
                 }
             });
-            for (const subscription of subscriptions)
-            {
+            for (const subscription of subscriptions) {
                 const sub = await Subscription.findByPk(subscription.id);
                 // [INSERT] call to delete webhook subscription from 3rd party platform
                 await sub.destroy();
             }
-
             await user.save();
         }
-
         res.status(200);
         res.json({
             result: 'ok',
