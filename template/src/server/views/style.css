@@ -1,0 +1,44 @@
+body {
+  padding: 60px 20px;
+}
+
+#copyArea {
+  display: none;
+}
+
+.input {
+  height: 40px;
+  outline: 0;
+  border: 1px solid rgb(206, 209, 217);
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 0px 16px;
+  flex: 1;
+  margin-right: 8px;
+  background-color: rgb(249, 249, 250);
+}
+
+#authCode:focus {
+  border: 1px solid rgb(68, 117, 253);
+  background-color: #ffffff;
+}
+
+#copyBtn {
+  border-radius: 4px;
+  border: 1px solid rgb(224, 224, 224);
+  color: rgb(115, 121, 131);
+  overflow: hidden;
+  transform: translate3d(0px, 0px, 0px);
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+#copyBtn:hover {
+  background: rgba(115, 121, 131, 0.12);
+}
+
+#copyBtn img {
+  width: 24px;
+  height: 24px;
+}

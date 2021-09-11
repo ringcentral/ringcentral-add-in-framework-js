@@ -25,6 +25,12 @@ export function App({ integrationHelper, client }) {
 
   // Listen authorized state to load webhook data:
   useEffect(() => {
+    // Listen RingCentral app submit event to submit data to server
+    integrationHelper.on('submit', async (e) => {
+        return {
+          status: true,
+        }
+    });
     if (!authorized) {
       setUserInfo({});
       return;
@@ -103,11 +109,12 @@ export function App({ integrationHelper, client }) {
                   try {
                     // Subscribe
                     await client.subscribe();
+                    integrationHelper.send({ canSubmit: true });  // enable 'Finish' button on Add-In setup shell
                     setLoading(false);
                   } catch (e) {
                     console.error(e);
                     setLoading(false);
-                    setError('Logout error please retry later.');
+                    setError('Subscription error please retry later.');
                   }
                 }}>
                   Subscribe

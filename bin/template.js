@@ -41,6 +41,7 @@ exports.generateTemplate = (
     ]);
     if (useOAuth) {
         createDirs([
+            { dirPath: path.resolve(projectDir, 'src/client') },
             { dirPath: path.resolve(projectDir, 'src/client/components') },
             { dirPath: path.resolve(projectDir, 'src/client/lib') },
             { dirPath: path.resolve(projectDir, 'diagram') },
@@ -51,9 +52,6 @@ exports.generateTemplate = (
     copyFiles([
         { filePath: path.resolve(__dirname, '../template/.babelrc',), destinationPath: path.resolve(projectDir, '.babelrc') },
         { filePath: path.resolve(__dirname, '../template/template.gitignore',), destinationPath: path.resolve(projectDir, '.gitignore') },
-        { filePath: path.resolve(__dirname, '../template/getWebpackBaseConfig.js',), destinationPath: path.resolve(projectDir, 'getWebpackBaseConfig.js') },
-        { filePath: path.resolve(__dirname, '../template/webpack-dev-server.config.js',), destinationPath: path.resolve(projectDir, 'webpack-dev-server.config.js') },
-        { filePath: path.resolve(__dirname, '../template/webpack-production.config.js',), destinationPath: path.resolve(projectDir, 'webpack-production.config.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/init-db.js',), destinationPath: path.resolve(projectDir, 'scripts/init-db.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/refresh-db.js',), destinationPath: path.resolve(projectDir, 'scripts/refresh-db.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/serverless-deploy.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-deploy.js') },
@@ -62,7 +60,8 @@ exports.generateTemplate = (
         { filePath: path.resolve(__dirname, '../template/src/run-server.js',), destinationPath: path.resolve(projectDir, 'src/run-server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server.js',), destinationPath: path.resolve(projectDir, 'src/server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server/model/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/model/sequelize.js') },
-        { filePath: path.resolve(__dirname, '../template/src/server/model/subscriptionModel.js',), destinationPath: path.resolve(projectDir, 'src/server/model/subscriptionModel.js') },
+        { filePath: path.resolve(__dirname, '../template/src/server/model/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/model/sequelize.js') },
+        { filePath: path.resolve(__dirname, '../template/src/server/lib/adaptiveCard.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/adaptiveCard.js') },
     ])
 
 
@@ -70,11 +69,15 @@ exports.generateTemplate = (
         copyFiles([
             { filePath: path.resolve(__dirname, '../template/src/client/lib/client.js',), destinationPath: path.resolve(projectDir, 'src/client/lib/client.js') },
             { filePath: path.resolve(__dirname, '../template/src/server/views/oauth-callback.pug',), destinationPath: path.resolve(projectDir, 'src/server/views/oauth-callback.pug') },
+            { filePath: path.resolve(__dirname, '../template/src/server/views/style.css',), destinationPath: path.resolve(projectDir, 'src/server/views/style.css') },
             { filePath: path.resolve(__dirname, '../template/src/server/lib/jwt.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/jwt.js') },
             { filePath: path.resolve(__dirname, '../template/[OAuth]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
             { filePath: path.resolve(__dirname, '../template/[OAuth]diagram/flow.svg',), destinationPath: path.resolve(projectDir, 'diagram/flow.svg') },
             { filePath: path.resolve(__dirname, '../template/src/client/components/Root.jsx',), destinationPath: path.resolve(projectDir, 'src/client/components/Root.jsx') },
             { filePath: path.resolve(__dirname, '../template/src/client/app.js',), destinationPath: path.resolve(projectDir, 'src/client/app.js') },
+            { filePath: path.resolve(__dirname, '../template/getWebpackBaseConfig.js',), destinationPath: path.resolve(projectDir, 'getWebpackBaseConfig.js') },
+            { filePath: path.resolve(__dirname, '../template/webpack-dev-server.config.js',), destinationPath: path.resolve(projectDir, 'webpack-dev-server.config.js') },
+            { filePath: path.resolve(__dirname, '../template/webpack-production.config.js',), destinationPath: path.resolve(projectDir, 'webpack-production.config.js') },
         ]);
     }
     else {

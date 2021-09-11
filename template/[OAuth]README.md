@@ -61,18 +61,18 @@ ACCESS_TOKEN_URI=
 AUTHORIZATION_URI=
 SCOPES= # if SCOPES_SEPARATOR is ',', then SCOPES will be something like scope1,scope2,scope3
 SCOPES_SEPARATOR=, # this field is default to ',', but can be changed
-ACCESS_TOKEN_EXPIRY_IN_SEC=
 ```
 
 ## Step.3 Coding
 
 There are several spots that need your input.
 
-- In `src/server/routes/authorization.js`, follow steps in `generateToken` and `revokeToken` functions.
-- In `src/server/routes/subscription.js`, follow steps in `subscribe` function.
-- In `src/server/routes/notification.js`, follow steps in `notification` function.
+- In `src/server/routes/authorization.js`, follow steps in function `generateToken` and `revokeToken` .
+- In `src/server/routes/subscription.js`, follow steps in function `subscribe`.
+- In `src/server/routes/notification.js`, follow steps in function `notification` and `interactiveMessages`.
+- You'll also need to customize your own [Adaptive Cards](https://adaptivecards.io/) in `src/server/lib/adaptiveCard.js`. There are two samples given.
 
-## Step.4 Test
+## Step.4 Run It Locally
 
 ```bash
 # open a new terminal
@@ -100,7 +100,8 @@ Refer to [Workflow Diagram](#workflow-diagram), sections are explained with user
 - `Authorization` ([workflow 3-7](#workflow-diagram)): Press `Connect to 3rd Party Service and Subscribe`. And do authorization on a new page rendered by 3rdp arty service.
 - `Subscription` ([workflow 8-11](#workflow-diagram)): Upon the close of auth page, the framework will automatically trigger subscription creation (in practice, it's recommended to create a separate flow for auth and subscription).
 - `Notification` ([workflow 12-15](#workflow-diagram)): Once the subscription is created, notifications from 3rd party service should be sent to our endpoint on `https://xxxx.ngrok.io/notification`. And notification data will be transformed and sent to RingCentral App.
-- `Revoke` ([workflow 16-18](#workflow-diagram)): Press `Unsubscribe and Logout`, and incoming notifications will stop being sent to RingCentral App.
+- `Interactive Message` ([workflow 16-30](#workflow-diagram)): Any user in RingCentral App conversation who has the 3rd party account would be able to perform actions within RingCentral App. New users will need to authorize first.
+- `Revoke` ([workflow 31-33](#workflow-diagram)): Press `Unsubscribe and Logout`, and incoming notifications will stop being sent to RingCentral App.
 
 ### Additional Note
 

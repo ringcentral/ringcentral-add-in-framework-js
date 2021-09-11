@@ -17,16 +17,14 @@ function getOAuthApp(){
 }
 
 <% if (useRefreshToken) { %>
-const SECOND_TO_MILLISECOND = 1000;
-
 async function checkAndRefreshAccessToken(user) {
     const dateNow = new Date();
-    if ((dateNow - user.tokenCreatedDate) > (process.env.ACCESS_TOKEN_EXPIRY_IN_SEC * SECOND_TO_MILLISECOND)) {
+    if (user.accessToken && user.refreshToken && user.tokenExpiredAt > dateNow) {
         const token = oauthApp.createToken(user.accessToken, user.refreshToken);
-        const { accessToken, refreshToken } = await token.refresh();
+        const { accessToken, refreshToken, expires } = await token.refresh();
         user.accessToken = accessToken;
         user.refreshToken = refreshToken;
-        user.tokenCreatedDate = dateNow;
+        user.tokenExpiredAt = expires;
         await user.save();
     }
 }

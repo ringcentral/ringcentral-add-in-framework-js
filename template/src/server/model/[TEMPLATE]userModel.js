@@ -13,10 +13,13 @@ exports.User = sequelize.define('users', {
   email: {
     type: Sequelize.STRING,
   },
+  rcUserId: {
+    type: Sequelize.STRING,
+  },
   <%if (useRefreshToken) {%>refreshToken: {
     type: Sequelize.STRING,
   },
-  tokenCreatedDate:{
+  tokenExpiredAt:{
     type: Sequelize.DATE
   },<%}%>
   accessToken: {

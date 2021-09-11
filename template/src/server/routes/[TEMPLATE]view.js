@@ -3,7 +3,7 @@ const constants = require('../lib/constants');
 // RingCentral notification app developer tool calls this to pass in RC_WEBHOOK
 async function clientView(req, res) {
     const rcWebhookUri = req.query.webhook;
-    if (!rcWebhookUri || rcWebhookUri.indexOf('https://') !== 0) {
+    if (!rcWebhookUri) {
       res.status(404);
       res.send('Webhook uri is required.');
       return;

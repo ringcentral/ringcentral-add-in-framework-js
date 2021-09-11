@@ -53,11 +53,6 @@ In `src/server/routes/notification.js`, follow steps in `notification` function.
 # start local server
 npm run start
 
-# open another new terminal
-# start client app
-npm run client
-```
-
 For local development, we can use [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) to simulate RingCentral App Gallery shell which handles communications between your app and RingCentral server.
 
 To use above tool, there are two fields we want to fill in:

@@ -54,6 +54,27 @@ group transformation
     deactivate SERVER
 end
 
+group interactive message - for KNOWN user
+    RC -> SERVER: request to perform action with RC_USER_ID
+    SERVER --> DB: get user
+    DB --> SERVER: known, return accessToken
+    SERVER --> T: perform action
+    SERVER --> RC: notify user about the result
+end
+
+group interactive message - for UNKNOWN user
+    RC -> SERVER: request to perform action with RC_USER_ID
+    SERVER --> DB: get user
+    DB --> SERVER: unknown
+    SERVER --> RC: prompt for auth
+    RC --> SERVER: retun accessCode for token exchange
+    SERVER --> T: token exchange
+    T --> SERVER: token
+    SERVER --> DB: register user info
+    SERVER --> T: perform action
+    SERVER --> RC: notify user about the result
+end
+
 group revoke
     G -> SERVER: log out
     activate SERVER

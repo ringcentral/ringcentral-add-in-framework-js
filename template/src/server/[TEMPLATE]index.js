@@ -27,4 +27,5 @@ exports.appExtend = (app) => {
   app.post(constants.route.forClient.REVOKE_TOKEN, authorizationRoute.revokeToken);<% } %>
   // notification
   app.post(constants.route.forThirdParty.NOTIFICATION, notificationRoute.notification);
+  app.post(constants.route.forThirdParty.INTERACTIVE_MESSAGE, notificationRoute.interactiveMessages);
 }

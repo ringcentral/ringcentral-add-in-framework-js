@@ -9,7 +9,8 @@ const route = {
     },
     forThirdParty:{
         <% if (useOAuth) { %>AUTH_CALLBACK: '/oauth-callback',<% } %>
-        NOTIFICATION: '/notification'
+        NOTIFICATION: '/notification',
+        INTERACTIVE_MESSAGE: '/interactive-messages',
     }
 }
 
