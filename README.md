@@ -24,4 +24,3 @@ For further Information, please refer to the `README.md` that's inside your gene
 
 # TODOs
 - No OAuth template
-- Better UI components

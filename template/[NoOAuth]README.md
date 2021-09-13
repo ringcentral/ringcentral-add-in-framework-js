@@ -40,6 +40,8 @@ Note: your local firewall might block certain ngrok regions. If so, try changing
 ```bash
 # .env file
 APP_SERVER= # Copy `https://xxxx.ngrok.io` from last step
+
+IM_SHARED_SECRET= # can be found on developer portal, under App Settings
 ```
 
 ## Step.3 Coding
@@ -52,8 +54,11 @@ In `src/server/routes/notification.js`, follow steps in `notification` function.
 # open a new terminal
 # start local server
 npm run start
+```
 
 For local development, we can use [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) to simulate RingCentral App Gallery shell which handles communications between your app and RingCentral server.
+
+!!!Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`. To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).
 
 To use above tool, there are two fields we want to fill in:
 
