@@ -48,7 +48,6 @@ async function notification(req, res) {
     });
 }
 
-
 async function interactiveMessages(req, res) {
     // Shared secret can be found on RingCentral developer portal, under your app Settings
     const SHARED_SECRET = process.env.IM_SHARED_SECRET;
@@ -83,7 +82,7 @@ async function interactiveMessages(req, res) {
       const authQuery = buff.toString('ascii');
       let token;
       try {
-        // callbackUri here is from 3rd party, identical to the one in authorization.js - generateToken()
+        // same call as 3rd party auth callback to return accessCode to exchange for accessToken
         const callbackUri = `${process.env.APP_SERVER}${constants.route.forThirdParty.AUTH_CALLBACK}${authQuery}`;
         token = await oauth.code.getToken(callbackUri);
       } catch (e) {
@@ -93,12 +92,12 @@ async function interactiveMessages(req, res) {
         res.send('ok');
         return;
       }
-      const { accessToken, refreshToken, expires } = token;
+      const { accessToken<%if (useRefreshToken) {%>, refreshToken, expires<%}%>} = token;
       // Case: when target user exists
       if (user) {
         user.accessToken = accessToken;
-        user.refreshToken = refreshToken;
-        user.tokenExpiredAt = expires;
+        <%if (useRefreshToken) {%>user.refreshToken = refreshToken;
+        user.tokenExpiredAt = expires;<%}%>
         if(!user.rcUserId)
         {
           user.rcUserId = body.user.id;
@@ -112,8 +111,8 @@ async function interactiveMessages(req, res) {
         user = await User.findByPk(userInfoResponse.id);
         if (user) {
           user.accessToken = accessToken;
-          user.refreshToken = refreshToken;
-          user.tokenExpiredAt = expires;
+          <%if (useRefreshToken) {%>user.refreshToken = refreshToken;
+          user.tokenExpiredAt = expires;<%}%>
           user.rcUserId = body.user.id;
           await user.save();
         } else {
@@ -121,8 +120,8 @@ async function interactiveMessages(req, res) {
             id: userInfoResponse.id,    // [REPLACE] id with actual id in user info
             name: userInfoResponse.name,    // [REPLACE] name with actual name in user info, this field is optional
             accessToken,
-            refreshToken,
-            tokenExpiredAt: expires,
+            <%if (useRefreshToken) {%>refreshToken,
+            tokenExpiredAt: expires,<%}%>
             rcUserId: body.user.id,
           });
         }
@@ -150,6 +149,7 @@ async function interactiveMessages(req, res) {
     if (action === 'testActionType') {
         // Step.2: Call 3rd party API to perform action that you want to apply
         try {
+            // [INSERT] API call to perform action on 3rd party platform 
             // notify user the result of the action in RingCentral App conversation
             await sendTextMessage(subscription.rcWebhookUri, `Action completed`);
         } catch (e) {

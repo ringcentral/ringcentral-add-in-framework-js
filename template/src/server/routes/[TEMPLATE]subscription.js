@@ -73,7 +73,9 @@ async function subscribe(req, res) {
             userId: userId,
             rcWebhookUri: req.body.rcWebhookUri,
         });
-
+        
+    // CHOOSE one of flows above
+    
         res.status(200);
         res.json({
             result: 'ok'

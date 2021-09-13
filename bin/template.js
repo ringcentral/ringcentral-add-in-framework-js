@@ -60,7 +60,7 @@ exports.generateTemplate = (
         { filePath: path.resolve(__dirname, '../template/src/run-server.js',), destinationPath: path.resolve(projectDir, 'src/run-server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server.js',), destinationPath: path.resolve(projectDir, 'src/server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server/model/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/model/sequelize.js') },
-        { filePath: path.resolve(__dirname, '../template/src/server/model/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/model/sequelize.js') },
+        { filePath: path.resolve(__dirname, '../template/src/server/model/subscriptionModel.js',), destinationPath: path.resolve(projectDir, 'src/server/model/subscriptionModel.js') },
         { filePath: path.resolve(__dirname, '../template/src/server/lib/adaptiveCard.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/adaptiveCard.js') },
     ])
 

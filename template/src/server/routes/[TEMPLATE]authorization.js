@@ -50,7 +50,7 @@ async function generateToken(req, res) {
     console.log(`Receiving accessToken: ${accessToken} and refreshToken: ${refreshToken}`);
     try {
         // Step1: Get user info from 3rd party API call
-        const userInfoResponse = { id: "id", email: "email" }   // [REPLACE] this line with actual call
+        const userInfoResponse = { id: "id", email: "email", name: "name" }   // [REPLACE] this line with actual call
         // Step2: Find if it's existing user in our database
         const user = await User.findByPk(userInfoResponse.id);  // [REPLACE] this line with user id from actual response
         // Step3: If user doesn't exist, we want to create a new one
@@ -61,6 +61,7 @@ async function generateToken(req, res) {
                 refreshToken: refreshToken,
                 tokenExpiredAt: expires,
                 email: userInfoResponse.email, // [REPLACE] this with actual user email in response, [DELETE] this line if user info doesn't contain email
+                name: userInfoResponse.name, // [REPLACE] this with actual user name in response, [DELETE] this line if user info doesn't contain name
             });
         }
         // If user exists but logged out, we want to fill in token info
@@ -95,7 +96,7 @@ async function generateToken(req, res) {
     console.log(`Receiving accessToken: ${accessToken}`);
     try {
         // Step1: Get user info from 3rd party API call
-        const userInfoResponse = { id: "id", email: "email" }   // [REPLACE] this line with actual call
+        const userInfoResponse = { id: "id", email: "email", name: "name" }   // [REPLACE] this line with actual call
         // Step2: Find if it's existing user in our database
         const user = await User.findByPk(userInfoResponse.id);  // [REPLACE] this line with user id from actual response
         // Step3: If user doesn't exist, we want to create a new one
@@ -104,6 +105,7 @@ async function generateToken(req, res) {
                 id: userInfoResponse.id,    // [REPLACE] this with actual user id in response
                 accessToken: accessToken,
                 email: userInfoResponse.email, // [REPLACE] this with actual user email in response, [DELETE] this line if user info doesn't contain email
+                name: userInfoResponse.name, // [REPLACE] this with actual user name in response, [DELETE] this line if user info doesn't contain name
             });
         }
         // Step4: Return jwt to client for future client-server communication

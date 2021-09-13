@@ -65,7 +65,7 @@ function getSampleStatusCard({ title, content, link, subscriptionId }) {
             {
                 "type": "TextBlock",
                 "size": "Large",
-                "text": "Task Name Changed"
+                "text": "Notification Card"
             },
             {
                 "type": "ColumnSet",
