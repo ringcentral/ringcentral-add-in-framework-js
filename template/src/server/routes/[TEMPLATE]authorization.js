@@ -1,5 +1,5 @@
-const { User } = require('../model/userModel');
-const { Subscription } = require('../model/subscriptionModel');
+const { User } = require('../models/userModel');
+const { Subscription } = require('../models/subscriptionModel');
 const { decodeJwt, generateJwt } = require('../lib/jwt');
 const { <%if (useRefreshToken) {%> checkAndRefreshAccessToken,<%}%> getOAuthApp } = require('../lib/oauth');
 
@@ -150,7 +150,9 @@ async function revokeToken(req, res) {
             });
             for (const subscription of subscriptions) {
                 const sub = await Subscription.findByPk(subscription.id);
+                const thirdPartySubscriptionId = sub.thirdPartyWebhookId;
                 // [INSERT] call to delete webhook subscription from 3rd party platform
+
                 await sub.destroy();
             }
             await user.save();

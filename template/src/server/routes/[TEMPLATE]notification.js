@@ -1,41 +1,38 @@
 const axios = require('axios');
-const { Subscription } = require('../model/subscriptionModel');
-const { User } = require('../model/userModel');
-const { getOAuthApp<%if (useRefreshToken) {%>, checkAndRefreshAccessToken <%}%>} = require('../lib/oauth');
-const constants = require('../lib/constants');
+const { Subscription } = require('../models/subscriptionModel');
+const { User } = require('../models/userModel');
+<%if (useOAuth) {%>const { getOAuthApp<%if (useRefreshToken) {%>, checkAndRefreshAccessToken <%}%>} = require('../lib/oauth'); 
+const constants = require('../lib/constants');<%}%>
 const crypto = require('crypto');
 const { getAuthCard, getSampleStatusCard } = require('../lib/adaptiveCard');
 
 
-// Note: for practicality, incoming notification should be validated with 'x-hook-secret' header during  webhook creation handshake (https://developers.asana.com/docs/webhooks)
 async function notification(req, res) {
     try {
         console.log(`Receiving notification: ${JSON.stringify(req.body, null, 2)}`);
-        // Step.1: Identify which user or subscription is relevant, normally by 3rd party webhook id or user id. 
-        // Note: How we get subscriptionId from notification would depend on which flow we choose in `subscription.js` when we create our webhook subscription
-        const subscriptionId = "subscriptionId" // [REPLACE] this with actual subscriptionId from req
+        // Identify which user or subscription is relevant, normally by 3rd party webhook id or user id. 
+        const subscriptionId = req.query.subscriptionId;
         const subscription = await Subscription.findByPk(subscriptionId);
         <%if (useRefreshToken) {%>// check token refresh condition
+        const userId = subscription.userId;
         const user = await User.findByPk(userId);
-            await checkAndRefreshAccessToken(user);<%}%>
-        // Step.2: Extract info from 3rd party notification POST body
-        const testNotificationInfo = {
+        await checkAndRefreshAccessToken(user);<%}%>
+        // Step.1: Extract info from 3rd party notification POST body
+        const testNotificationInfo = {    // [REPLACE] this with codes to extract relevant info from 3rd party notification request body and/or headers
             title: "This is a test title",
             message: "This is a test message",
             linkToPage: "about:blank"
-        }
+        } 
+        // Step.2(optional): Filter out notifications that user is not interested in, some platform may not have a build-in filtering mechanism.  
 
-        // Step.3(optional): Filter out notifications that user is not interested in, because some platform may not have a build-in filtering mechanism.
-
-        // Step.4: Transform notification info into RingCentral App adaptive card - design your own adaptive card: https://adaptivecards.io/designer/
-        const card = getSampleStatusCard({
+        // Step.3: Transform notification info into RingCentral App adaptive card - design your own adaptive card: https://adaptivecards.io/designer/
+        const card = getSampleStatusCard({    // [REPLACE] this with your card that's customized to show info from 3rd party notification and provide interaction
             title: testNotificationInfo.title,
             content: testNotificationInfo.message,
             link: testNotificationInfo.linkToPage,
             subscriptionId: subscriptionId
-        });
-
-        // Step.5: Send adaptive card to your channel in RingCentral App
+        }); 
+        // Send adaptive card to your channel in RingCentral App
         console.log(`[DEBUG]Adaptive card:\n ${JSON.stringify(card, null, 2)}`);
         await sendAdaptiveCardMessage(subscription.rcWebhookUri, card);
     } catch (e) {
@@ -48,6 +45,7 @@ async function notification(req, res) {
     });
 }
 
+<%if (useOAuth) {%>
 async function interactiveMessages(req, res) {
     // Shared secret can be found on RingCentral developer portal, under your app Settings
     const SHARED_SECRET = process.env.IM_SHARED_SECRET;
@@ -93,7 +91,7 @@ async function interactiveMessages(req, res) {
         return;
       }
       const { accessToken<%if (useRefreshToken) {%>, refreshToken, expires<%}%>} = token;
-      // Case: when target user exists
+      // Case: when target user exist as known by RingCentral App
       if (user) {
         user.accessToken = accessToken;
         <%if (useRefreshToken) {%>user.refreshToken = refreshToken;
@@ -104,37 +102,42 @@ async function interactiveMessages(req, res) {
         }
         await user.save();
       }
-      // Case: when target user doesn't exist
+      // Case: when target user doesn't exist as known by RingCentral App
       else {
         // Step.1: Get user info with 3rd party API call
         const userInfoResponse = {} // [REPLACE] userInfoResponse with actual user info API call to 3rd party server
         user = await User.findByPk(userInfoResponse.id);
+        // Case: when target user exists only as known by 3rd party platform
         if (user) {
           user.accessToken = accessToken;
           <%if (useRefreshToken) {%>user.refreshToken = refreshToken;
           user.tokenExpiredAt = expires;<%}%>
           user.rcUserId = body.user.id;
           await user.save();
-        } else {
+        } 
+        // Case: when target user doesn't exist as known by 3rd party platform
+        else {
           await User.create({
             id: userInfoResponse.id,    // [REPLACE] id with actual id in user info
             name: userInfoResponse.name,    // [REPLACE] name with actual name in user info, this field is optional
-            accessToken,
+            accessToken: accessToken,
             <%if (useRefreshToken) {%>refreshToken,
             tokenExpiredAt: expires,<%}%>
             rcUserId: body.user.id,
           });
         }
       }
-      await sendTextMessage(subscription.rcWebhookUri, `Hi ${body.user.firstName} ${body.user.lastName}, you have connected Asana successfully. Please click action button again.`);
+      await sendTextMessage(subscription.rcWebhookUri, `Hi ${body.user.firstName} ${body.user.lastName}, you have connected successfully. Please click action button again.`);
       res.status(200);
       res.send('ok');
       return;
     }
+    // if the action is not 'authorize', then it needs to make sure that authorization is valid for this user
     else {
         <%if (useRefreshToken) {%>if (user) {
         await checkAndRefreshAccessToken(user);
       }<%}%>
+      // If an unknown user wants to perform actions, we want to authenticate and authorize first
       if (!user || !user.accessToken) {
         await sendAdaptiveCardMessage(subscription.rcWebhookUri, getAuthCard({
           authorizeUrl: oauth.code.getUri(),
@@ -145,6 +148,8 @@ async function interactiveMessages(req, res) {
         return;
       }
     }
+
+    // Below tis the section for your customized actions handling
     // testActionType is from adaptiveCard.js - getSampleCard()
     if (action === 'testActionType') {
         // Step.2: Call 3rd party API to perform action that you want to apply
@@ -166,12 +171,119 @@ async function interactiveMessages(req, res) {
     res.status(200);
     res.json('OK');
 }
-  
+<%} else {%>
+async function interactiveMessages(req, res) {
+  // Shared secret can be found on RingCentral developer portal, under your app Settings
+  const SHARED_SECRET = process.env.IM_SHARED_SECRET;
+  if (SHARED_SECRET) {
+    const signature = req.get('X-Glip-Signature', 'sha1=');
+    const encryptedBody =
+      crypto.createHmac('sha1', SHARED_SECRET).update(JSON.stringify(req.body)).digest('hex');
+    if (encryptedBody !== signature) {
+      res.status(401).send();
+      return;
+    }
+  }
+  const body = req.body;
+  console.log(`Incoming interactive message: ${JSON.stringify(body, null, 2)}`);
+  if (!body.data || !body.user) {
+    res.status(400);
+    res.send('Params error');
+    return;
+  }
+  const subscriptionId = body.data.subscriptionId;
+  const subscription = await Subscription.findByPk(subscriptionId);
+  if (!subscription) {
+    res.status(404);
+    res.send('Not found');
+    return;
+  }
+  let user = await User.findOne({ where: { rcUserId: body.user.id } });
+  const action = body.data.action;
+  if (action === 'authorize') {
+    // Step.1: Call 3rd party platform to validate accessToken
+    const accessToken = body.data.token;
+    try {
+      const validationResponse = {} // [REPLACE] this with actual API call with accessToken to validate
+    } catch (e) {
+      console.error('Get token error');
+      await sendTextMessage(subscription.rcWebhookUri, `Hi ${body.user.firstName} ${body.user.lastName}, the token is invalid.`)
+      res.status(200);
+      res.send('ok');
+      return;
+    }
+    // Case: when target user exists as known by RingCentral App
+    if (user) {
+      user.accessToken = accessToken;
+      await user.save();
+    }
+    // Case: when target user doesn't exist as known by RingCentral App
+    else {
+      // Step.2: Get user info with 3rd party API call
+      const userInfoResponse = {} // [REPLACE] userInfoResponse with actual user info API call to 3rd party server
+      user = await User.findByPk(userInfoResponse.id);
+      // Case: when target user exists only as known by 3rd party platform
+      if (user) {
+        user.accessToken = accessToken;
+        user.rcUserId = body.user.id;
+        await user.save();
+      } 
+      // Case: when target user doesn't exist as known by 3rd party platform
+      else {
+        await User.create({
+          id: userInfoResponse.id,    // [REPLACE] id with actual id in user info
+          name: userInfoResponse.name,    // [REPLACE] name with actual name in user info, this field is optional
+          accessToken: accessToken,
+          rcUserId: body.user.id,
+        });
+      }
+    }
+    await sendTextMessage(subscription.rcWebhookUri, `Hi ${body.user.firstName} ${body.user.lastName}, you have connected Asana successfully. Please click action button again.`);
+    res.status(200);
+    res.send('ok');
+    return;
+  }
+  // if the action is not 'authorize', then it needs to make sure that authorization is valid for this user
+  else {
+    if (!user || !user.accessToken) {
+      // Step.3: if an unknown user wants to perform actions, we want to authorize first
+      await sendAdaptiveCardMessage(subscription.rcWebhookUri, getAuthCard({
+        authorizeUrl: '{url to get accessToken}', // [REPLACE] the string with actual url to where user can get/generate accessToken on 3rd party platform
+        subscriptionId,
+      }));
+      res.status(200);
+      res.send('OK');
+      return;
+    }
+  }
 
+  // Below tis the section for your customized actions handling
+  // testActionType is from adaptiveCard.js - getSampleCard()
+  if (action === 'testActionType') {
+    // Step.4: Call 3rd party API to perform action that you want to apply
+    try {
+      // [INSERT] API call to perform action on 3rd party platform 
+      // notify user the result of the action in RingCentral App conversation
+      await sendTextMessage(subscription.rcWebhookUri, `Action completed`);
+    } catch (e) {
+      // Case: require auth
+      if (e.statusCode === 401) {
+        await sendAdaptiveCardMessage(subscription.rcWebhookUri, getAuthCard({
+          authorizeUrl: oauth.code.getUri(),
+          subscriptionId,
+        }));
+      }
+      console.error(e);
+    }
+  }
+  res.status(200);
+  res.json('OK');
+}
+<%}%>
 async function sendTextMessage(rcWebhook, message) {
     await axios.post(rcWebhook, {
         title: message,
-        activity: 'Asana',
+        activity: 'Add-In Framework',
     }, {
         headers: {
             Accept: 'application/json',

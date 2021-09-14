@@ -23,4 +23,5 @@ npx ringcentral-add-in-framework template
 For further Information, please refer to the `README.md` that's inside your generated template.
 
 # TODOs
-- No OAuth template
+- Automated tests
+- Simple demos

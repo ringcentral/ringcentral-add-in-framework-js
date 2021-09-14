@@ -1,9 +1,31 @@
 body {
-  padding: 60px 20px;
+  margin: 0;
+  padding: 0;
+}
+#container {
+  font-family: Lato,Helvetica,Arial,sans-serif;
+  font-size: 13px;
+  tab-size: 4;
+  line-height: 1.42;
+  text-align: left;
+  white-space: pre-wrap;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: 3px 15px;
 }
 
-#copyArea {
-  display: none;
+#container p {
+  cursor: text;
+  margin: 0;
+  padding: 9px 0;
+}
+
+p img {
+  max-width: 100%;
+}
+
+.webhookURLArea {
+  display: flex;
 }
 
 .input {
@@ -18,7 +40,7 @@ body {
   background-color: rgb(249, 249, 250);
 }
 
-#authCode:focus {
+#input:focus {
   border: 1px solid rgb(68, 117, 253);
   background-color: #ffffff;
 }
@@ -35,10 +57,57 @@ body {
 }
 
 #copyBtn:hover {
-  background: rgba(115, 121, 131, 0.12);
+  background: rgba(115, 121, 131, 0.12)
 }
 
 #copyBtn img {
   width: 24px;
   height: 24px;
+}
+
+.authTokenArea {
+  display: flex;
+}
+
+.button {
+  text-transform: none;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: Lato, Helvetica, Arial, sans-serif;
+  line-height: 20px;
+  text-align: center;
+  box-shadow: unset;
+  min-width: 96px;
+  min-height: 36px;
+  padding: 8px 16px;
+  border: 0;
+  margin: 0;
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.button:focus {
+  outline: 0;
+}
+
+#authBtn {
+  color: rgb(255, 255, 255);
+  background-color: rgb(68, 117, 253);
+}
+
+#authBtn:hover {
+  background-color: rgba(68, 117, 253, 0.88);
+}
+
+#authCancelBtn {
+  color: rgb(68, 117, 253);
+  margin-right: 8px;
+  display: none;
+}
+
+#authCancelBtn:hover {
+  background-color: rgba(68, 117, 253, 0.12);
 }

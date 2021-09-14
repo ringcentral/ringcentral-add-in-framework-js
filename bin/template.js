@@ -37,7 +37,7 @@ exports.generateTemplate = (
         { dirPath: path.resolve(projectDir, 'src/server/lib') },
         { dirPath: path.resolve(projectDir, 'src/server/routes') },
         { dirPath: path.resolve(projectDir, 'src/server/views') },
-        { dirPath: path.resolve(projectDir, 'src/server/model') },
+        { dirPath: path.resolve(projectDir, 'src/server/models') },
     ]);
     if (useOAuth) {
         createDirs([
@@ -59,8 +59,7 @@ exports.generateTemplate = (
         { filePath: path.resolve(__dirname, '../template/src/lambda.js',), destinationPath: path.resolve(projectDir, 'src/lambda.js') },
         { filePath: path.resolve(__dirname, '../template/src/run-server.js',), destinationPath: path.resolve(projectDir, 'src/run-server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server.js',), destinationPath: path.resolve(projectDir, 'src/server.js') },
-        { filePath: path.resolve(__dirname, '../template/src/server/model/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/model/sequelize.js') },
-        { filePath: path.resolve(__dirname, '../template/src/server/model/subscriptionModel.js',), destinationPath: path.resolve(projectDir, 'src/server/model/subscriptionModel.js') },
+        { filePath: path.resolve(__dirname, '../template/src/server/models/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/models/sequelize.js') },
         { filePath: path.resolve(__dirname, '../template/src/server/lib/adaptiveCard.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/adaptiveCard.js') },
     ])
 
@@ -82,7 +81,8 @@ exports.generateTemplate = (
     }
     else {
         copyFiles([
-            { filePath: path.resolve(__dirname, '../template/[NoOAuth]README.md',), destinationPath: path.resolve(projectDir, 'README.md') }
+            { filePath: path.resolve(__dirname, '../template/[NoOAuth]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
+            { filePath: path.resolve(__dirname, '../template/src/server/views/style.css',), destinationPath: path.resolve(projectDir, 'src/server/views/style.css') },
         ]);
     }
 
@@ -97,11 +97,18 @@ exports.generateTemplate = (
     });
 
     copyTemplate({
-        templatePath: path.resolve(__dirname, '../template/src/server/model/[TEMPLATE]userModel.js',),
-        destinationPath: path.resolve(projectDir, 'src/server/model/userModel.js'),
+        templatePath: path.resolve(__dirname, '../template/src/server/models/[TEMPLATE]userModel.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/models/userModel.js'),
         params: {
-            useOAuth: useOAuth,
             useRefreshToken: useRefreshToken
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/models/[TEMPLATE]subscriptionModel.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/models/subscriptionModel.js'),
+        params: {
+            useOAuth: useOAuth
         },
     });
 
@@ -140,6 +147,16 @@ exports.generateTemplate = (
         templatePath: path.resolve(__dirname, '../template/src/server/routes/[TEMPLATE]notification.js',),
         destinationPath: path.resolve(projectDir, 'src/server/routes/notification.js'),
         params: {
+            useOAuth: useOAuth,
+            useRefreshToken: useRefreshToken
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/routes/[TEMPLATE]subscription.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/routes/subscription.js'),
+        params: {
+            useOAuth: useOAuth,
             useRefreshToken: useRefreshToken
         },
     });
@@ -178,14 +195,5 @@ exports.generateTemplate = (
                 useRefreshToken: useRefreshToken
             },
         });
-
-        copyTemplate({
-            templatePath: path.resolve(__dirname, '../template/src/server/routes/[TEMPLATE]subscription.js',),
-            destinationPath: path.resolve(projectDir, 'src/server/routes/subscription.js'),
-            params: {
-                useRefreshToken: useRefreshToken
-            },
-        });
-
     }
 }
