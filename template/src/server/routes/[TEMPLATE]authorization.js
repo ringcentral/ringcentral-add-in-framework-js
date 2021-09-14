@@ -71,7 +71,7 @@ async function generateToken(req, res) {
             user.tokenExpiredAt = expires;
             await user.save();
         }
-        // Step4: Return jwt to client for future client-server communication
+        // Return jwt to client for future client-server communication
         const jwtToken = generateJwt({ id: userInfoResponse.id });   // [REPLACE] this with actual user id in response
         res.status(200);
         res.json({
@@ -108,7 +108,7 @@ async function generateToken(req, res) {
                 name: userInfoResponse.name, // [REPLACE] this with actual user name in response, [DELETE] this line if user info doesn't contain name
             });
         }
-        // Step4: Return jwt to client for future client-server communication
+        // Return jwt to client for future client-server communication
         const jwtToken = generateJwt({ id: userInfoResponse.id });   // [REPLACE] this with actual user id in response
         res.status(200);
         res.json({
@@ -139,11 +139,11 @@ async function revokeToken(req, res) {
     try {
         const user = await User.findByPk(userId);
         if (user) {
-            // Step.1: Clear token
-            user.accessToken = '';
-<%if (useRefreshToken) {%> user.refreshToken = '';<%}%>
-// Step.2: Unsubscribe all webhook and clear subscriptions in db
-        const subscriptions = await Subscription.findAll({
+            // Clear token
+            user.accessToken = '';<%if (useRefreshToken) {%>
+            user.refreshToken = '';<%}%>
+            // Step.1: Unsubscribe all webhook and clear subscriptions in db
+            const subscriptions = await Subscription.findAll({
                 where: {
                     userId: userId
                 }

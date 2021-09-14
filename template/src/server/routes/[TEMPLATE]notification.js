@@ -104,7 +104,7 @@ async function interactiveMessages(req, res) {
       }
       // Case: when target user doesn't exist as known by RingCentral App
       else {
-        // Step.1: Get user info with 3rd party API call
+        // Get user info with 3rd party API call
         const userInfoResponse = {} // [REPLACE] userInfoResponse with actual user info API call to 3rd party server
         user = await User.findByPk(userInfoResponse.id);
         // Case: when target user exists only as known by 3rd party platform
@@ -117,11 +117,12 @@ async function interactiveMessages(req, res) {
         } 
         // Case: when target user doesn't exist as known by 3rd party platform
         else {
+          // Step.1: Create a new user in DB if user doesn't exist
           await User.create({
             id: userInfoResponse.id,    // [REPLACE] id with actual id in user info
             name: userInfoResponse.name,    // [REPLACE] name with actual name in user info, this field is optional
             accessToken: accessToken,
-            <%if (useRefreshToken) {%>refreshToken,
+            <%if (useRefreshToken) {%>refreshToken: refreshToken,
             tokenExpiredAt: expires,<%}%>
             rcUserId: body.user.id,
           });
@@ -219,7 +220,7 @@ async function interactiveMessages(req, res) {
     }
     // Case: when target user doesn't exist as known by RingCentral App
     else {
-      // Step.2: Get user info with 3rd party API call
+      // Get user info with 3rd party API call
       const userInfoResponse = {} // [REPLACE] userInfoResponse with actual user info API call to 3rd party server
       user = await User.findByPk(userInfoResponse.id);
       // Case: when target user exists only as known by 3rd party platform
@@ -230,6 +231,7 @@ async function interactiveMessages(req, res) {
       } 
       // Case: when target user doesn't exist as known by 3rd party platform
       else {
+        // Step.2: Create a new user in DB if user doesn't exist
         await User.create({
           id: userInfoResponse.id,    // [REPLACE] id with actual id in user info
           name: userInfoResponse.name,    // [REPLACE] name with actual name in user info, this field is optional
