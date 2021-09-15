@@ -42,17 +42,17 @@ async function subscribe(req, res) {
     try {
     <%if (useRefreshToken) {%>// check token refresh condition
         await checkAndRefreshAccessToken(user);<%}%>
-        // Step.1: Generate an unique id
+        // Generate an unique id
         // Note: notificationCallbackUrl here would contain our subscriptionId so that incoming notifications can be identified
         const subscriptionId = generate();
         const notificationCallbackUrl = `${process.env.APP_SERVER}${constants.route.forThirdParty.NOTIFICATION}?subscriptionId=${subscriptionId}`;
         
-        // Step.2: Create a new webhook subscription on 3rd party platform. For most cases, you would want to define what resources/events you want to subscribe to as well.
+        // Step.1: [INSERT]Create a new webhook subscription on 3rd party platform with their API. For most cases, you would want to define what resources/events you want to subscribe to as well.
         
-        // Step.3: Get response from webhook creation.
+        // Step.2: Get response from webhook creation.
         const webhookCreationResponse = {thirdPartySubscriptionId : "testSubId"};   // [REPLACE] this with actual API call to 3rd party platform to create a webhook subscription
 
-        // Step.4: Create new subscription in DB
+        // Step.3: Create new subscription in DB
         await Subscription.create({
             id: subscriptionId,
             userId: userId, 

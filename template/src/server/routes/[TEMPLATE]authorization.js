@@ -51,12 +51,13 @@ async function generateToken(req, res) {
     try {
         // Step1: Get user info from 3rd party API call
         const userInfoResponse = { id: "id", email: "email", name: "name" }   // [REPLACE] this line with actual call
-        // Step2: Find if it's existing user in our database
-        const user = await User.findByPk(userInfoResponse.id);  // [REPLACE] this line with user id from actual response
-        // Step3: If user doesn't exist, we want to create a new one
+        const userId = userInfoResponse.id; // [REPLACE] this line with user id from actual response
+        // Find if it's existing user in our database
+        const user = await User.findByPk(userId);  // [REPLACE] this line with user id from actual response
+        // Step2: If user doesn't exist, we want to create a new one
         if (!user) {
             await User.create({
-                id: userInfoResponse.id,    // [REPLACE] this with actual user id in response
+                id: userId,
                 accessToken: accessToken,
                 refreshToken: refreshToken,
                 tokenExpiredAt: expires,
@@ -72,7 +73,7 @@ async function generateToken(req, res) {
             await user.save();
         }
         // Return jwt to client for future client-server communication
-        const jwtToken = generateJwt({ id: userInfoResponse.id });   // [REPLACE] this with actual user id in response
+        const jwtToken = generateJwt({ id: userId });
         res.status(200);
         res.json({
             authorize: true,
@@ -97,19 +98,20 @@ async function generateToken(req, res) {
     try {
         // Step1: Get user info from 3rd party API call
         const userInfoResponse = { id: "id", email: "email", name: "name" }   // [REPLACE] this line with actual call
-        // Step2: Find if it's existing user in our database
-        const user = await User.findByPk(userInfoResponse.id);  // [REPLACE] this line with user id from actual response
-        // Step3: If user doesn't exist, we want to create a new one
+        const userId = userInfoResponse.id; // [REPLACE] this line with user id from actual response
+        // Find if it's existing user in our database
+        const user = await User.findByPk(userId);  
+        // Step2: If user doesn't exist, we want to create a new one
         if (!user) {
             await User.create({
-                id: userInfoResponse.id,    // [REPLACE] this with actual user id in response
+                id: userId,
                 accessToken: accessToken,
                 email: userInfoResponse.email, // [REPLACE] this with actual user email in response, [DELETE] this line if user info doesn't contain email
                 name: userInfoResponse.name, // [REPLACE] this with actual user name in response, [DELETE] this line if user info doesn't contain name
             });
         }
         // Return jwt to client for future client-server communication
-        const jwtToken = generateJwt({ id: userInfoResponse.id });   // [REPLACE] this with actual user id in response
+        const jwtToken = generateJwt({ id: userId });
         res.status(200);
         res.json({
             authorize: true,
