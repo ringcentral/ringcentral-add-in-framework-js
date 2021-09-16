@@ -3,8 +3,11 @@ const commander = require('commander');
 const program = new commander.Command();
 const { version } = require('../package.json');
 const { generateTemplate } = require('./template');
+const path = require('path');
+const { readdirSync } = require('fs')
 
 const inquirer = require('inquirer');
+const { generateDemo } = require('./demo');
 
 program.version(version).description('RingCentral Add-In Framework');
 
@@ -80,5 +83,25 @@ program
                 generateTemplate(answers);
             })
     });
+
+program
+    .command('demo')
+    .alias('d')
+    .description('install a new demo')
+    .action(() => {
+        inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    name: 'demoType',
+                    message: 'Which demo your want to install?',
+                    choices: readdirSync(path.resolve(__dirname, '../demos')),
+                }
+            ])
+            .then((answers) => {
+                generateDemo(answers);
+            })
+    }
+    );
 
 program.parse(process.argv);

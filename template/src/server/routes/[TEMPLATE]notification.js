@@ -104,9 +104,9 @@ async function interactiveMessages(req, res) {
       }
       // Case: when target user doesn't exist as known by RingCentral App
       else {
-        // Get user info with 3rd party API call
+        // Step.1: Get user info with 3rd party API call
         const userInfoResponse = {} // [REPLACE] userInfoResponse with actual user info API call to 3rd party server
-        user = await User.findByPk(userInfoResponse.id);
+        user = await User.findByPk(userInfoResponse.id);  // [REPLACE] this with actual user id
         // Case: when target user exists only as known by 3rd party platform
         if (user) {
           user.accessToken = accessToken;
@@ -117,7 +117,7 @@ async function interactiveMessages(req, res) {
         } 
         // Case: when target user doesn't exist as known by 3rd party platform
         else {
-          // Step.1: Create a new user in DB if user doesn't exist
+          // Step.2: Create a new user in DB if user doesn't exist
           await User.create({
             id: userInfoResponse.id,    // [REPLACE] id with actual id in user info
             name: userInfoResponse.name,    // [REPLACE] name with actual name in user info, this field is optional
@@ -153,7 +153,7 @@ async function interactiveMessages(req, res) {
     // Below tis the section for your customized actions handling
     // testActionType is from adaptiveCard.js - getSampleCard()
     if (action === 'testActionType') {
-        // Step.2: Call 3rd party API to perform action that you want to apply
+        // Step.3: Call 3rd party API to perform action that you want to apply
         try {
             // [INSERT] API call to perform action on 3rd party platform 
             // notify user the result of the action in RingCentral App conversation
@@ -220,9 +220,9 @@ async function interactiveMessages(req, res) {
     }
     // Case: when target user doesn't exist as known by RingCentral App
     else {
-      // Get user info with 3rd party API call
+      // Step.2: Get user info with 3rd party API call
       const userInfoResponse = {} // [REPLACE] userInfoResponse with actual user info API call to 3rd party server
-      user = await User.findByPk(userInfoResponse.id);
+      user = await User.findByPk(userInfoResponse.id);  // [REPLACE] this with actual user id
       // Case: when target user exists only as known by 3rd party platform
       if (user) {
         user.accessToken = accessToken;
@@ -231,7 +231,7 @@ async function interactiveMessages(req, res) {
       } 
       // Case: when target user doesn't exist as known by 3rd party platform
       else {
-        // Step.2: Create a new user in DB if user doesn't exist
+        // Step.3: Create a new user in DB if user doesn't exist
         await User.create({
           id: userInfoResponse.id,    // [REPLACE] id with actual id in user info
           name: userInfoResponse.name,    // [REPLACE] name with actual name in user info, this field is optional
@@ -248,7 +248,7 @@ async function interactiveMessages(req, res) {
   // if the action is not 'authorize', then it needs to make sure that authorization is valid for this user
   else {
     if (!user || !user.accessToken) {
-      // Step.3: if an unknown user wants to perform actions, we want to authorize first
+      // Step.4: if an unknown user wants to perform actions, we want to authorize first
       await sendAdaptiveCardMessage(subscription.rcWebhookUri, getAuthCard({
         authorizeUrl: '{url to get accessToken}', // [REPLACE] the string with actual url to where user can get/generate accessToken on 3rd party platform
         subscriptionId,
@@ -262,7 +262,7 @@ async function interactiveMessages(req, res) {
   // Below tis the section for your customized actions handling
   // testActionType is from adaptiveCard.js - getSampleCard()
   if (action === 'testActionType') {
-    // Step.4: Call 3rd party API to perform action that you want to apply
+    // Step.5: Call 3rd party API to perform action that you want to apply
     try {
       // [INSERT] API call to perform action on 3rd party platform 
       // notify user the result of the action in RingCentral App conversation

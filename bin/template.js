@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { copyTemplate, copyFiles, createDirs } = require('./templateHelper');
+const { copyTemplate, copyFiles, createDirs } = require('./copyHelper');
 
 exports.generateTemplate = (
     {

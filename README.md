@@ -23,5 +23,7 @@ npx ringcentral-add-in-framework template
 For further Information, please refer to the `README.md` that's inside your generated template.
 
 # TODOs
+- Indication of created subscription
+- Separation of unsubscribe and logout
 - Automated tests
 - Simple demos

@@ -1,4 +1,4 @@
-# RingCentral-Add-In-Framework
+# RingCentral-Add-In-Framework(Github Demo)
 
 This template aims to help you quickly set up your app with 3rd party webhook integration.
 
@@ -18,13 +18,9 @@ There are 3 major parts involved:
 - Revoke:
   - Unsubscribe and clear user info
 
-# Workflow Diagram
+# Try It
 
-Note: if you don't have Markdown view, please open the flow diagram directly from `diagram/flow.svg`.
-
-![flow](./diagram/flow.svg)
-
-# Development
+Let's give it a quick try.
 
 ## Step.1 Start Web Tunnel
 
@@ -49,7 +45,11 @@ Note: your local firewall might block certain ngrok regions. If so, try changing
 
 ## Step.2 Set Up Environment Info
 
-There are several OAuth-related fields in `.env` need to be set. They can be found on your target 3rd party platform docs.
+Firstly, we want to create a `OAuth App` on https://github.com/settings/developers. In app creation page, fill `Authorization callback URL` with `https://xxxx.ngrok.io/oauth-callback`
+
+After it's created, we'll see `ClientId` and let's also generate a `ClientSecret`.
+
+There are several OAuth-related fields in `.env` need to be set.
 
 ```bash
 # .env file
@@ -57,28 +57,21 @@ There are several OAuth-related fields in `.env` need to be set. They can be fou
 # local server setup
 APP_SERVER= # Copy `https://xxxx.ngrok.io` from last step
 
-# 3rd party Oauth
-CLIENT_ID=
-CLIENT_SECRET=
-ACCESS_TOKEN_URI=
-AUTHORIZATION_URI=
-SCOPES= # if SCOPES_SEPARATOR is ',', then SCOPES will be something like scope1,scope2,scope3
-SCOPES_SEPARATOR=, # this field is default to ',', but can be changed
+# Github Oauth
+CLIENT_ID= # ClientId from Github OAuth App
+CLIENT_SECRET= # ClientSecret from Github OAuth App
+ACCESS_TOKEN_URI=https://github.com/login/oauth/access_token
+AUTHORIZATION_URI=https://github.com/login/oauth/authorize
+SCOPES=admin:repo_hook,read:user,repo
+SCOPES_SEPARATOR=,
+
+GITHUB_REPO_NAME= # This can be any repo name that you want to watch, it's recommended to create a new test repo for initial try
 
 # RingCentral developer portal
 IM_SHARED_SECRET= # You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
 ```
 
-## Step.3 Coding
-
-There are several spots that need your input.
-
-- In `src/server/routes/authorization.js`, follow steps in function `generateToken` and `revokeToken` .
-- In `src/server/routes/subscription.js`, follow steps in function `subscribe`.
-- In `src/server/routes/notification.js`, follow steps in function `notification` and `interactiveMessages`.
-- You'll also need to customize your own [Adaptive Cards](https://adaptivecards.io/) in `src/server/lib/adaptiveCard.js`. There are two samples given.
-
-## Step.4 Run It Locally
+## Step.3 Start Local Server and Client
 
 ```bash
 # open a new terminal
@@ -90,18 +83,15 @@ npm run start
 npm run client
 ```
 
-For local development, we can use [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) to simulate RingCentral App Gallery shell which handles communications between your app and RingCentral server.
+Go to RingCentral App and add your app to a conversation, `Auth` -> `Subscribe` -> `Finish`. It should then provide the ability to listen to `New Issue` event and also give user ability to add any label to the issue.
 
-!!!Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`. To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).
+To test it, go to your Github repo and create a new issue. There should be an adaptive card sent to your RingCentral App conversation which also provides buttons for you to add labels to your issue.
 
-To use above tool, there are two fields we want to fill in:
+# Workflow Diagram
 
-1. `App Url`: It is for this tool to retrieve the app's entry point to render. In our framework, it's set to `https://xxxx.ngrok.io/view`
-2. `Webhook Url`, there are 2 ways:
-   1. Click `Get a webhookUrl` and login to your RingCentral App. Generate webhook url from your Team channel.
-   2. Go to RingCentral App Gallery and add Incoming Webhook App to your conversation channel. As a result, you will get a webhook URL like `https://hooks.glip.com/webhook/xxxxx` (aka `RC_WEBHOOK`) and that's what we need here.
+Note: if you don't have Markdown view, please open the flow diagram directly from `diagram/flow.svg`.
 
-Now press `Apply` ([workflow 1-2](#workflow-diagram)). We should be able to see the UI button gets rendered in top block.
+![flow](./diagram/flow.svg)
 
 Refer to [Workflow Diagram](#workflow-diagram), sections are explained with user actions as below:
 
@@ -111,7 +101,7 @@ Refer to [Workflow Diagram](#workflow-diagram), sections are explained with user
 - `Interactive Message` ([workflow 16-30](#workflow-diagram)): Any user in RingCentral App conversation who has the 3rd party account would be able to perform actions within RingCentral App. New users will need to authorize first.
 - `Revoke` ([workflow 31-33](#workflow-diagram)): Press `Unsubscribe and Logout`, and incoming notifications will stop being sent to RingCentral App.
 
-### Additional Note
+# Additional Note
 
 There are several npm packages to be highlighted here:
 - [sequelize](https://www.npmjs.com/package//sequelize): Node.js database ORM tool
