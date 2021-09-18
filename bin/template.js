@@ -32,6 +32,7 @@ exports.generateTemplate = (
     // create dirs
     createDirs([
         { dirPath: path.resolve(projectDir, 'scripts') },
+        { dirPath: path.resolve(projectDir, 'tests') },
         { dirPath: path.resolve(projectDir, 'src') },
         { dirPath: path.resolve(projectDir, 'src/server') },
         { dirPath: path.resolve(projectDir, 'src/server/lib') },
@@ -51,6 +52,8 @@ exports.generateTemplate = (
     // copy files
     copyFiles([
         { filePath: path.resolve(__dirname, '../template/.babelrc',), destinationPath: path.resolve(projectDir, '.babelrc') },
+        { filePath: path.resolve(__dirname, '../template/jest.config.js',), destinationPath: path.resolve(projectDir, 'jest.config.js') },
+        { filePath: path.resolve(__dirname, '../template/.env.test',), destinationPath: path.resolve(projectDir, '.env.test') },
         { filePath: path.resolve(__dirname, '../template/template.gitignore',), destinationPath: path.resolve(projectDir, '.gitignore') },
         { filePath: path.resolve(__dirname, '../template/scripts/init-db.js',), destinationPath: path.resolve(projectDir, 'scripts/init-db.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/refresh-db.js',), destinationPath: path.resolve(projectDir, 'scripts/refresh-db.js') },
@@ -61,6 +64,8 @@ exports.generateTemplate = (
         { filePath: path.resolve(__dirname, '../template/src/server.js',), destinationPath: path.resolve(projectDir, 'src/server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server/models/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/models/sequelize.js') },
         { filePath: path.resolve(__dirname, '../template/src/server/lib/adaptiveCard.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/adaptiveCard.js') },
+        { filePath: path.resolve(__dirname, '../template/tests/setup.js',), destinationPath: path.resolve(projectDir, 'tests/setup.js') },
+        { filePath: path.resolve(__dirname, '../template/tests/notification.test.js',), destinationPath: path.resolve(projectDir, 'tests/notification.test.js') },
     ])
 
 
@@ -77,6 +82,7 @@ exports.generateTemplate = (
             { filePath: path.resolve(__dirname, '../template/getWebpackBaseConfig.js',), destinationPath: path.resolve(projectDir, 'getWebpackBaseConfig.js') },
             { filePath: path.resolve(__dirname, '../template/webpack-dev-server.config.js',), destinationPath: path.resolve(projectDir, 'webpack-dev-server.config.js') },
             { filePath: path.resolve(__dirname, '../template/webpack-production.config.js',), destinationPath: path.resolve(projectDir, 'webpack-production.config.js') },
+            { filePath: path.resolve(__dirname, '../template/tests/authorization.test.js',), destinationPath: path.resolve(projectDir, 'tests/authorization.test.js') },
         ]);
     }
     else {

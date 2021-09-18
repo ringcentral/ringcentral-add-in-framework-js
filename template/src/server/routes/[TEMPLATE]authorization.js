@@ -15,33 +15,30 @@ async function openAuthPage(req, res) {
 }
 
 async function getUserInfo(req, res) {
-    if (req.query.token) {
-        const jwtToken = req.query.token;
-        if (!jwtToken) {
-            res.status(403);
-            res.send('Error params');
-            return;
-        }
-        const decodedToken = decodeJwt(jwtToken);
-        if (!decodedToken) {
-            res.status(401);
-            res.send('Token invalid.');
-            return;
-        }
-        const userId = decodedToken.id;
-        const user = await User.findByPk(userId);
-        <%if (useRefreshToken) {%>// check token refresh condition
-            await checkAndRefreshAccessToken(user);<%}%>
-            
-        const subscriptions = await Subscription.findAll({
-            where: {
-                userId: userId
-            }
-        });
-        const hasSubscription = subscriptions.length > 0;
-
-        res.json({ user, hasSubscription });
+    const jwtToken = req.query.token;
+    if (!jwtToken) {
+        res.status(403);
+        res.send('Error params');
+        return;
     }
+    const decodedToken = decodeJwt(jwtToken);
+    if (!decodedToken) {
+        res.status(401);
+        res.send('Token invalid.');
+        return;
+    }
+    const userId = decodedToken.id;
+    const user = await User.findByPk(userId);
+    <%if (useRefreshToken) {%>// check token refresh condition
+        await checkAndRefreshAccessToken(user);<%}%>
+        
+    const subscriptions = await Subscription.findAll({
+        where: {
+            userId: userId
+        }
+    });
+    const hasSubscription = subscriptions.length > 0;
+    res.json({ user, hasSubscription });
 }
 
 <%if (useRefreshToken) {%>

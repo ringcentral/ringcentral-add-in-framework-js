@@ -72,6 +72,14 @@ To use above tool, there are two fields we want to fill in:
 
 Now press `Apply`.
 
+# Test
+
+This template uses [supertest](https://www.npmjs.com/package/supertest) and [nock](https://www.npmjs.com/package/nock) for testing. A few examples are in `tests` folder. To start test:
+
+```bash
+npm run test
+```
+
 # Deployment
 
 ## Register App on RingCentral Developer Website

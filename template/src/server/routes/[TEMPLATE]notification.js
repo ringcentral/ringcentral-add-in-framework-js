@@ -13,6 +13,12 @@ async function notification(req, res) {
         // Identify which user or subscription is relevant, normally by 3rd party webhook id or user id. 
         const subscriptionId = req.query.subscriptionId;
         const subscription = await Subscription.findByPk(subscriptionId);
+        if(!subscription)
+        {
+          res.status(403);
+          res.send('Unknown subscription id');
+          return;
+        }
         <%if (useRefreshToken) {%>// check token refresh condition
         const userId = subscription.userId;
         const user = await User.findByPk(userId);

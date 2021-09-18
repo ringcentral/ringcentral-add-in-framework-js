@@ -121,6 +121,14 @@ There are several npm packages to be highlighted here:
 
 When start development, it's recommended to use 3rd party's official npm package for its API calls.
 
+# Test
+
+This template uses [supertest](https://www.npmjs.com/package/supertest) and [nock](https://www.npmjs.com/package/nock) for testing. A few examples are in `tests` folder. To start test:
+
+```bash
+npm run test
+```
+
 # Deployment
 
 ## Register App on RingCentral Developer Website

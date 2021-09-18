@@ -45,7 +45,7 @@ Note: your local firewall might block certain ngrok regions. If so, try changing
 
 ## Step.2 Set Up Environment Info
 
-Firstly, we want to create a `OAuth App` on https://github.com/settings/developers. In app creation page, fill `Authorization callback URL` with `https://xxxx.ngrok.io/oauth-callback`
+Firstly, we want to create a `OAuth App` on https://github.com/settings/developers. In app creation page, fill `Authorization callback URL` with `https://xxxx.ngrok.io/oauth-callback`. Note: `Homepage URL` isn't important, you can fill it with a dummy url.
 
 After it's created, we'll see `ClientId` and let's also generate a `ClientSecret`.
 

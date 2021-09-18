@@ -20,10 +20,14 @@ Then install the template with following commands:
 npx ringcentral-add-in-framework template
 ```
 
+We also have simple demos that are based on the template, they can be installed with:
+
+```bash
+npx ringcentral-add-in-framework demo
+```
+
 For further Information, please refer to the `README.md` that's inside your generated template.
 
 # TODOs
-- Indication of created subscription
 - Separation of unsubscribe and logout
-- Automated tests
-- Simple demos
+- More demos
