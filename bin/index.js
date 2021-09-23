@@ -104,4 +104,29 @@ program
     }
     );
 
+program
+    .command('test')
+    .description('simple test for template installation')
+    .action(() => {
+        let answers = {
+            appName: '1',
+            useOAuth: true,
+            useRefreshToken: true,
+            setupParams: false
+        };
+        generateTemplate(answers);
+        answers = {
+            appName: '2',
+            useOAuth: true,
+            useRefreshToken: false,
+            setupParams: false
+        };
+        generateTemplate(answers);
+        answers = {
+            appName: '3',
+            useOAuth: false,
+            setupParams: false
+        }
+        generateTemplate(answers);
+    });
 program.parse(process.argv);
