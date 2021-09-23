@@ -32,6 +32,7 @@ exports.generateTemplate = (
     // create dirs
     createDirs([
         { dirPath: path.resolve(projectDir, 'scripts') },
+        { dirPath: path.resolve(projectDir, 'serverless-deploy') },
         { dirPath: path.resolve(projectDir, 'tests') },
         { dirPath: path.resolve(projectDir, 'src') },
         { dirPath: path.resolve(projectDir, 'src/server') },
@@ -66,6 +67,8 @@ exports.generateTemplate = (
         { filePath: path.resolve(__dirname, '../template/src/server/lib/adaptiveCard.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/adaptiveCard.js') },
         { filePath: path.resolve(__dirname, '../template/tests/setup.js',), destinationPath: path.resolve(projectDir, 'tests/setup.js') },
         { filePath: path.resolve(__dirname, '../template/tests/notification.test.js',), destinationPath: path.resolve(projectDir, 'tests/notification.test.js') },
+        { filePath: path.resolve(__dirname, '../template/serverless-deploy/env.default.yml',), destinationPath: path.resolve(projectDir, 'serverless-deploy/env.default.yml') },
+        { filePath: path.resolve(__dirname, '../template/serverless-deploy/serverless.default.yml',), destinationPath: path.resolve(projectDir, 'serverless-deploy/serverless.default.yml') },
     ])
 
 
