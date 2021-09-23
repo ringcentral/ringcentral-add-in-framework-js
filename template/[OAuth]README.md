@@ -96,7 +96,7 @@ For local development, we can use [RingCentral notification app developer tool](
 
 To use above tool, there are two fields we want to fill in:
 
-1. `App Url`: It is for this tool to retrieve the app's entry point to render. In our framework, it's set to `https://xxxx.ngrok.io/view`
+1. `App Url`: It is for this tool to retrieve the app's entry point to render. In our framework, it's set to `https://xxxx.ngrok.io/setup`
 2. `Webhook Url`, there are 2 ways:
    1. Click `Get a webhookUrl` and login to your RingCentral App. Generate webhook url from your Team channel.
    2. Go to RingCentral App Gallery and add Incoming Webhook App to your conversation channel. As a result, you will get a webhook URL like `https://hooks.glip.com/webhook/xxxxx` (aka `RC_WEBHOOK`) and that's what we need here.
