@@ -1,4 +1,4 @@
-# RingCentral-Add-In-Framework(Github Demo)
+# RingCentral-Add-In-Framework(Asana Demo)
 
 This template aims to help you quickly set up your app with 3rd party webhook integration.
 
@@ -45,9 +45,7 @@ Note: your local firewall might block certain ngrok regions. If so, try changing
 
 ## Step.2 Set Up Environment Info
 
-Firstly, we want to create a `OAuth App` on https://github.com/settings/developers. In app creation page, fill `Authorization callback URL` with `https://xxxx.ngrok.io/oauth-callback`. Note: `Homepage URL` isn't important, you can fill it with a dummy url.
-
-After it's created, we'll see `ClientId` and let's also generate a `ClientSecret`.
+Firstly, we want to create a new app on https://app.asana.com/0/developer-console. After it's created, we'll see `ClientId` and `ClientSecret`.
 
 There are several OAuth-related fields in `.env` need to be set.
 
@@ -60,12 +58,10 @@ APP_SERVER= # Copy `https://xxxx.ngrok.io` from last step
 # Github Oauth
 CLIENT_ID= # ClientId from Github OAuth App
 CLIENT_SECRET= # ClientSecret from Github OAuth App
-ACCESS_TOKEN_URI=https://github.com/login/oauth/access_token
-AUTHORIZATION_URI=https://github.com/login/oauth/authorize
-SCOPES=admin:repo_hook,read:user,repo
+ACCESS_TOKEN_URI=https://app.asana.com/-/oauth_token
+AUTHORIZATION_URI=https://app.asana.com/-/oauth_authorize
+SCOPES=default
 SCOPES_SEPARATOR=,
-
-GITHUB_REPO_NAME= # This can be any repo name that you want to watch, it's recommended to create a new test repo for initial try
 
 # RingCentral developer portal
 IM_SHARED_SECRET= # You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
@@ -83,9 +79,9 @@ npm run start
 npm run client
 ```
 
-Go to RingCentral App and add your app to a conversation, `Auth` -> `Subscribe` -> `Finish`. It should then provide the ability to listen to `New Issue` event and also give user ability to add any label to the issue.
+Go to RingCentral App and add your app to a conversation, `Auth` -> `Subscribe` -> `Finish`. It should then provide the ability to listen to `Task Name Changed` event and also give RingCentral user ability to complete the task within RingCentral App.
 
-To test it, go to your Github repo and create a new issue. There should be an adaptive card sent to your RingCentral App conversation which also provides buttons for you to add labels to your issue.
+To test it, go to your `Asana` -> `My Tasks` -> `Add Task` -> `Change Its Name`. There should be an adaptive card sent to your RingCentral App conversation which also provides buttons for you to complete the task.
 
 # Workflow Diagram
 
@@ -104,7 +100,7 @@ Refer to [Workflow Diagram](#workflow-diagram), sections are explained with user
 # Additional Note
 
 There are several npm packages to be highlighted here:
-- [octokit rest](https://www.npmjs.com/package/@octokit/rest): Github's official npm package to make API calls easy.
+- [asana](https://www.npmjs.com/package/asana): Asana's official npm package to make API calls easy
 - [sequelize](https://www.npmjs.com/package//sequelize): Node.js database ORM tool
 - [axios](https://www.npmjs.com/package/axios): Promise based HTTP client for the browser and node.js
 - [client-oauth2](https://www.npmjs.com/package/client-oauth2): OAuth2 wrapper

@@ -54,7 +54,7 @@ exports.generateTemplate = (
     copyFiles([
         { filePath: path.resolve(__dirname, '../template/.babelrc',), destinationPath: path.resolve(projectDir, '.babelrc') },
         { filePath: path.resolve(__dirname, '../template/jest.config.js',), destinationPath: path.resolve(projectDir, 'jest.config.js') },
-        { filePath: path.resolve(__dirname, '../template/.env.test',), destinationPath: path.resolve(projectDir, '.env.test') },
+        { filePath: path.resolve(__dirname, '../template/[TEMPLATE].env.test',), destinationPath: path.resolve(projectDir, '.env.test') },
         { filePath: path.resolve(__dirname, '../template/template.gitignore',), destinationPath: path.resolve(projectDir, '.gitignore') },
         { filePath: path.resolve(__dirname, '../template/scripts/init-db.js',), destinationPath: path.resolve(projectDir, 'scripts/init-db.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/refresh-db.js',), destinationPath: path.resolve(projectDir, 'scripts/refresh-db.js') },
