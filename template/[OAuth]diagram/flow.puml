@@ -1,0 +1,86 @@
+@startuml
+
+title RingCentral App Add-In Framework Developement Workflow
+
+autonumber
+
+Database "Database" as DB
+control "Server" as SERVER
+control "RingCentral Notification App Tool" as G
+control "3rd Party Service" as T
+actor "RC App" as RC
+
+group setup
+
+    group register RC_WEBHOOK
+    G -> SERVER: fill in 'App Url' and 'Webhook Url', and Apply
+    activate SERVER
+    SERVER -->o G: return RC_WEBHOOK and auth view
+    deactivate SERVER
+    end
+
+    group authorization
+    G -> T: user auth
+    activate T
+    T --> G: grant user access
+    deactivate T
+    G -> SERVER: upload user info
+    activate SERVER
+    SERVER -->o DB: save user info to db
+    SERVER -->o G: return jwt (encrypted user info) and save locally
+    deactivate SERVER
+    end
+
+    group subscribe
+    G -> SERVER: subscribe
+    activate SERVER
+    SERVER --> T: create subscription with SERVER_WEBHOOK
+    activate T
+    T --> SERVER: return subscription info
+    deactivate T
+    SERVER -->o DB: save subscription info to db
+    deactivate SERVER
+    end
+end
+
+group transformation
+    T -> SERVER: notification to SERVER_WEBHOOK
+    activate SERVER
+    SERVER -> DB: query subscription id
+    activate DB
+    DB --> SERVER: return user and subscription info
+    deactivate DB
+    SERVER -->o RC: transform notification message and send to RC_WEBHOOK
+    deactivate SERVER
+end
+
+group interactive message - for KNOWN user
+    RC -> SERVER: request to perform action with RC_USER_ID
+    SERVER --> DB: get user
+    DB --> SERVER: known, return accessToken
+    SERVER --> T: perform action
+    SERVER --> RC: notify user about the result
+end
+
+group interactive message - for UNKNOWN user
+    RC -> SERVER: request to perform action with RC_USER_ID
+    SERVER --> DB: get user
+    DB --> SERVER: unknown
+    SERVER --> RC: prompt for auth
+    RC --> SERVER: retun accessCode for token exchange
+    SERVER --> T: token exchange
+    T --> SERVER: token
+    SERVER --> DB: register user info
+    SERVER --> T: perform action
+    SERVER --> RC: notify user about the result
+end
+
+group revoke
+    G -> SERVER: log out
+    activate SERVER
+    SERVER -->o T: delete subscription
+    SERVER -->o DB: clear user and subscription info
+    deactivate SERVER
+end
+
+@enduml
