@@ -4,10 +4,13 @@ const { User } = require('../models/userModel');
 const { getOAuthApp, checkAndRefreshAccessToken } = require('../lib/oauth');
 const constants = require('../lib/constants');
 const crypto = require('crypto');
-const { getAuthCard, getAsanaTaskCard } = require('../lib/adaptiveCard');
+const { Template } = require('adaptivecards-templating');
 const Asana = require('asana');
 
-
+const authCardTemplate = require('../adaptiveCardPayloads/auth.json');
+const authCardTemplateString = JSON.stringify(authCardTemplate, null, 2);
+const asanaTaskCardTemplate = require('../adaptiveCardPayloads/asanaTask.json');
+const asanaTaskCardTemplateString = JSON.stringify(asanaTaskCardTemplate, null, 2);
 
 async function notification(req, res) {
   try {
@@ -42,18 +45,17 @@ async function notification(req, res) {
       const taskGid = taskChanged.gid;
 
       // Step.3: Transform notification info into RingCentral App adaptive card - design your own adaptive card: https://adaptivecards.io/designer/
-      const card = getAsanaTaskCard({
+      const cardParams = {
         username: username,
         userEmail: userEmail,
         taskName: taskName,
         taskUrl: taskUrl,
         taskGid: taskGid,
         subscriptionId: subscriptionId
-      })
+      };
 
       // Send adaptive card to your channel in RingCentral App
-      console.log(`[DEBUG]Adaptive card:\n ${JSON.stringify(card, null, 2)}`);
-      await sendAdaptiveCardMessage(subscription.rcWebhookUri, card);
+      await sendAdaptiveCardMessage(subscription.rcWebhookUri, asanaTaskCardTemplateString, cardParams);
     }
   } catch (e) {
     console.error(e);
@@ -166,10 +168,13 @@ async function interactiveMessages(req, res) {
     }
     // If an unknown user wants to perform actions, we want to authenticate and authorize first
     if (!user || !user.accessToken) {
-      await sendAdaptiveCardMessage(subscription.rcWebhookUri, getAuthCard({
-        authorizeUrl: oauth.code.getUri(),
-        subscriptionId,
-      }));
+      await sendAdaptiveCardMessage(
+        subscription.rcWebhookUri,
+        authCardTemplateString,
+        {
+          authorizeUrl: oauth.code.getUri(),
+          subscriptionId: subscriptionId,
+        });
       res.status(200);
       res.send('OK');
       return;
@@ -190,10 +195,13 @@ async function interactiveMessages(req, res) {
     } catch (e) {
       // Case: require auth
       if (e.statusCode === 401) {
-        await sendAdaptiveCardMessage(subscription.rcWebhookUri, getAuthCard({
-          authorizeUrl: oauth.code.getUri(),
-          subscriptionId,
-        }));
+        await sendAdaptiveCardMessage(
+          subscription.rcWebhookUri,
+          authCardTemplateString,
+          {
+            authorizeUrl: oauth.code.getUri(),
+            subscriptionId: subscriptionId,
+          });
       }
       console.error(e);
     }
@@ -214,10 +222,15 @@ async function sendTextMessage(rcWebhook, message) {
   });
 }
 
-async function sendAdaptiveCardMessage(rcWebhook, card) {
+async function sendAdaptiveCardMessage(rcWebhook, cardTemplate, params) {
+  const template = new Template(cardTemplate);
+  const card = template.expand({
+    $root: params
+  });
+  console.log(card);
   const response = await axios.post(rcWebhook, {
     attachments: [
-      card
+      JSON.parse(card),
     ]
   }, {
     headers: {

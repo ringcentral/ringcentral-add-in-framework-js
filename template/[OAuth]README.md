@@ -69,16 +69,9 @@ SCOPES_SEPARATOR=, # this field is default to ',', but can be changed
 IM_SHARED_SECRET= # You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
 ```
 
-## Step.3 Coding
+## Step.3 Write Code and Test It
 
-There are several spots that need your input.
-
-- In `src/server/routes/authorization.js`, follow steps in function `generateToken` and `revokeToken` .
-- In `src/server/routes/subscription.js`, follow steps in function `subscribe`.
-- In `src/server/routes/notification.js`, follow steps in function `notification` and `interactiveMessages`.
-- You'll also need to customize your own [Adaptive Cards](https://adaptivecards.io/) in `src/server/lib/adaptiveCard.js`. There are two samples given.
-
-## Step.4 Run It Locally
+Open 2 new terminals and run below commands respectively:
 
 ```bash
 # open a new terminal
@@ -90,26 +83,36 @@ npm run start
 npm run client
 ```
 
-For local development, we can use [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) to simulate RingCentral App Gallery shell which handles communications between your app and RingCentral server.
+### Online Developer Tool
 
-!!!Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`. To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).
+For local development, we can use [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) to simulate RingCentral App Gallery shell which handles communications between your app and RingCentral server.
 
 To use above tool, there are two fields we want to fill in:
 
 1. `App Url`: It is for this tool to retrieve the app's entry point to render. In our framework, it's set to `https://xxxx.ngrok.io/setup`
 2. `Webhook Url`, there are 2 ways:
    1. Click `Get a webhookUrl` and login to your RingCentral App. Generate webhook url from your Team channel.
-   2. Go to RingCentral App Gallery and add Incoming Webhook App to your conversation channel. As a result, you will get a webhook URL like `https://hooks.glip.com/webhook/xxxxx` (aka `RC_WEBHOOK`) and that's what we need here.
+   2. Go to RingCentral App Gallery and add `Incoming Webhook` App to your conversation channel. As a result, you will get a webhook URL like `https://hooks.glip.com/webhook/xxxxx` (aka `RC_WEBHOOK`) and that's what we need here.
 
 Now press `Apply` ([workflow 1-2](#workflow-diagram)). We should be able to see the UI button gets rendered in top block.
 
-Refer to [Workflow Diagram](#workflow-diagram), sections are explained with user actions as below:
+(Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`([workflow 16-30](#workflow-diagram)). To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).)
 
-- `Authorization` ([workflow 3-7](#workflow-diagram)): Press `Connect to 3rd Party Service and Subscribe`. And do authorization on a new page rendered by 3rdp arty service.
-- `Subscription` ([workflow 8-11](#workflow-diagram)): Upon the close of auth page, the framework will automatically trigger subscription creation (in practice, it's recommended to create a separate flow for auth and subscription).
-- `Notification` ([workflow 12-15](#workflow-diagram)): Once the subscription is created, notifications from 3rd party service should be sent to our endpoint on `https://xxxx.ngrok.io/notification`. And notification data will be transformed and sent to RingCentral App.
-- `Interactive Message` ([workflow 16-30](#workflow-diagram)): Any user in RingCentral App conversation who has the 3rd party account would be able to perform actions within RingCentral App. New users will need to authorize first.
-- `Revoke` ([workflow 31-33](#workflow-diagram)): Press `Unsubscribe and Logout`, and incoming notifications will stop being sent to RingCentral App.
+### Development
+
+Now that development environment is all set, let's make some changes to the code. 
+
+There is a few spots that need your input. Note: If you want to test your changes, you'll need to kill the server and start it again. So in above `npm run start` terminal, do `Ctrl + C` and run `npm run start` again.
+
+1. Go to `src/server/routes/authorization.js` and follow the instruction on top. After this step, click `Connect to 3rd Party Service and Subscribe`([workflow 3-7](#workflow-diagram)) and you'll be able to auth user for 3rd party platform. Then Developer Tool should show `Subscribe` and `Unsubscribe and Logout` buttons.
+2. Go to `src/server/routes/subscription.js` and follow the instruction on top. After this step, click `subscribe`([workflow 8-11](#workflow-diagram)) button on Developer Tool, your RingCentral App conversation should receive an example message from webhook.
+3. Go to `src/server/routes/notification.js` and follow the instruction on top. After this step, it would send message([workflow 12-15](#workflow-diagram)) with data transformed from 3rd party platform notification where there's any new event that you subscribe to.
+4. Go back to `src/server/routes/authorization.js`, follow the instruction in `revokeToken` method. After this step, click `Unsubscribe and Logout`([workflow 31-33](#workflow-diagram)) button and there will be no more notifications from 3rd party platform.
+
+### Tips
+
+- [Adaptive Cards Designer](https://adaptivecards.io/designer/) is a great online tool to design your Adaptive Cards. Json files under `src/server/adaptiveCards` follow the same format as in `CARD PAYLOAD EDITOR`, so you can design your card on [Adaptive Cards Designer](https://adaptivecards.io/designer/) and copy over the payload directly.
+- `npm run refreshDB` to delete existing db file and create a new one
 
 ### Additional Note
 

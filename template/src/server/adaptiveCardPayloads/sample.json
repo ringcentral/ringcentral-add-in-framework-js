@@ -1,0 +1,66 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "TextBlock",
+            "size": "Large",
+            "text": "Notification Card"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "${title}"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "${content}",
+                            "weight": "Bolder"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Open",
+            "url": "${link}",
+            "style": "positive"
+        },
+        {
+            "type": "Action.ShowCard",
+            "title": "Action Title",
+            "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                    {
+                        "type": "Input.Toggle",
+                        "id": "actionTitle",
+                        "title": "Action Title",
+                        "value": "true",
+                        "valueOn": "true",
+                        "valueOff": "false"
+                    }
+                ],
+                "actions": [
+                    {
+                        "type": "Action.Submit",
+                        "title": "Submit",
+                        "data": {
+                            "action": "testActionType",
+                            "subscriptionId": "${subscriptionId}"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2"
+}

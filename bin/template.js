@@ -16,6 +16,7 @@ exports.generateTemplate = (
 
     let projectName = appName;
     let projectDir;
+    const isWin = process.platform === "win32";
     if (!projectName) {
         projectName = path.basename(process.cwd());
         projectDir = process.cwd();
@@ -40,6 +41,7 @@ exports.generateTemplate = (
         { dirPath: path.resolve(projectDir, 'src/server/routes') },
         { dirPath: path.resolve(projectDir, 'src/server/views') },
         { dirPath: path.resolve(projectDir, 'src/server/models') },
+        { dirPath: path.resolve(projectDir, 'src/server/adaptiveCardPayloads') },
     ]);
     if (useOAuth) {
         createDirs([
@@ -64,7 +66,8 @@ exports.generateTemplate = (
         { filePath: path.resolve(__dirname, '../template/src/run-server.js',), destinationPath: path.resolve(projectDir, 'src/run-server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server.js',), destinationPath: path.resolve(projectDir, 'src/server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server/models/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/models/sequelize.js') },
-        { filePath: path.resolve(__dirname, '../template/src/server/lib/adaptiveCard.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/adaptiveCard.js') },
+        { filePath: path.resolve(__dirname, '../template/src/server/adaptiveCardPayloads/auth.json',), destinationPath: path.resolve(projectDir, 'src/server/adaptiveCardPayloads/auth.json') },
+        { filePath: path.resolve(__dirname, '../template/src/server/adaptiveCardPayloads/sample.json',), destinationPath: path.resolve(projectDir, 'src/server/adaptiveCardPayloads/sample.json') },
         { filePath: path.resolve(__dirname, '../template/tests/setup.js',), destinationPath: path.resolve(projectDir, 'tests/setup.js') },
         { filePath: path.resolve(__dirname, '../template/tests/notification.test.js',), destinationPath: path.resolve(projectDir, 'tests/notification.test.js') },
         { filePath: path.resolve(__dirname, '../template/serverless-deploy/env.default.yml',), destinationPath: path.resolve(projectDir, 'serverless-deploy/env.default.yml') },
@@ -126,7 +129,8 @@ exports.generateTemplate = (
         destinationPath: path.resolve(projectDir, 'package.json'),
         params: {
             name: projectName.replace(/\s/g, ''),
-            useOAuth: useOAuth
+            useOAuth: useOAuth,
+            isWin: isWin
         },
     });
 

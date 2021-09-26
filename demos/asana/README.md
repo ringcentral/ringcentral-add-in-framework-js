@@ -83,6 +83,11 @@ Go to RingCentral App and add your app to a conversation, `Auth` -> `Subscribe` 
 
 To test it, go to your `Asana` -> `My Tasks` -> `Add Task` -> `Change Its Name`. There should be an adaptive card sent to your RingCentral App conversation which also provides buttons for you to complete the task.
 
+### Tips
+
+- [Adaptive Cards Designer](https://adaptivecards.io/designer/) is a great online tool to design your Adaptive Cards. Json files under `src/server/adaptiveCards` follow the same format as in `CARD PAYLOAD EDITOR`, so you can design your card on [Adaptive Cards Designer](https://adaptivecards.io/designer/) and copy over the payload directly.
+- `npm run refreshDB` to delete existing db file and create a new one
+- 
 # Workflow Diagram
 
 Note: if you don't have Markdown view, please open the flow diagram directly from `diagram/flow.svg`.

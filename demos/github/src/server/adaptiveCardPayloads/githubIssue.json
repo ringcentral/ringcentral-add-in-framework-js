@@ -1,0 +1,115 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "TextBlock",
+            "size": "Large",
+            "text": "Github Issue"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+                            "size": "Small"
+                        }
+                    ],
+                    "width": "auto"
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "[${title}](${url}) (from [${issuerName}](${issuerUrl}))",
+                            "weight": "Bolder"
+                        }
+                    ],
+                    "width": "stretch"
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "separator": true,
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "${body}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "separator": true,
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "State: *${state}*"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "separator": true,
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Repository: [${repoFullName}](${repoUrl})"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.ShowCard",
+            "title": "Add Label",
+            "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                    {
+                        "id": "label",
+                        "type": "Input.Text",
+                        "placeholder": "Input your label...",
+                        "isRequired": true,
+                        "errorMessage": "please input any label",
+                        "label": "Label"
+                    }
+                ],
+                "actions": [
+                    {
+                        "type": "Action.Submit",
+                        "title": "Submit",
+                        "data": {
+                            "action": "addLabel",
+                            "subscriptionId": "${subscriptionId}",
+                            "issueNumber": "${issueNumber}",
+                            "issueUrl": "${url}"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2"
+}

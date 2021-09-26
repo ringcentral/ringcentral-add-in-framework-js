@@ -6,6 +6,8 @@ const { Subscription } = require('../models/subscriptionModel');
 <%if (useRefreshToken) {%>const { checkAndRefreshAccessToken } = require('../lib/oauth');<%}%>
 
 <%if (useOAuth) {%>
+//====INSTRUCTION====
+// search for [REPLACE] tags under Step.1-3. Note: It's recommended to use 3rd party platform's npm package to make API calls easier
 async function subscribe(req, res) {
     // validate jwt
     const jwtToken = req.body.token;
@@ -52,7 +54,8 @@ async function subscribe(req, res) {
         // Step.2: Get data from webhook creation response.
         const webhookData = {thirdPartySubscriptionId : "testSubId"};   // [REPLACE] this with actual API call to 3rd party platform to create a webhook subscription
 
-        // Step.3: Create new subscription in DB
+        // Step.3: Create new subscription in DB. Note: If up till now, it's running correctly, most likely your RingCentral App conversation will receive message in the form of Adaptive Card (exception: Asana - more info: try asana demo with 'npx ringcentral-add-in-framework demo')
+        // If your RingCentral App receives an Adaptive Card, go to notification.js for next step
         await Subscription.create({
             id: subscriptionId,
             userId: userId, 

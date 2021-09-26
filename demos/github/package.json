@@ -53,6 +53,8 @@
   },
   "dependencies": {
     "@octokit/rest": "^18.10.0",
+    "adaptive-expressions": "^4.14.1",
+    "adaptivecards-templating": "^2.1.0",
     "axios": "^0.21.1",
     "client-oauth2": "^4.3.3",
     "dotenv": "6.2.0",
