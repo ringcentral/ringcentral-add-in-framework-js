@@ -14,7 +14,7 @@ exports.User = sequelize.define('users', {
     type: Sequelize.STRING,
   },
   rcUserId: {
-    type: Sequelize.STRING,
+    type: Sequelize.NUMBER,
   },
   accessToken: {
     type: Sequelize.STRING,

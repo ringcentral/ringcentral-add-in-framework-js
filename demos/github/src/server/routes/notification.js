@@ -47,7 +47,7 @@ async function notification(req, res) {
         issuerName: issuerName,
         issuerUrl: issuerUrl,
         state: issueState,
-        body: issueBody,
+        body: issueBody ?? '',
         repoFullName: repoFullName,
         repoUrl: repoUrl,
         issueNumber: issueNumber,

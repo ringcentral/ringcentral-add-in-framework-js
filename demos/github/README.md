@@ -55,20 +55,34 @@ There are several OAuth-related fields in `.env` need to be set.
 # .env file
 
 # local server setup
-APP_SERVER= # Copy `https://xxxx.ngrok.io` from last step
+PORT=6066
+APP_HOST=localhost
+# Copy `https://xxxx.ngrok.io` from last step
+APP_SERVER=https://xxxxxx.ngrok.io
+# This is the key string to encrypt server-client communication credentials
+APP_SERVER_SECRET_KEY=sampleKey 
 
 # Github Oauth
-CLIENT_ID= # ClientId from Github OAuth App
-CLIENT_SECRET= # ClientSecret from Github OAuth App
+# ClientId from Github OAuth App
+CLIENT_ID= 
+# ClientSecret from Github OAuth App
+CLIENT_SECRET= 
 ACCESS_TOKEN_URI=https://github.com/login/oauth/access_token
 AUTHORIZATION_URI=https://github.com/login/oauth/authorize
 SCOPES=admin:repo_hook,read:user,repo
 SCOPES_SEPARATOR=,
 
-GITHUB_REPO_NAME= # This can be any repo name that you want to watch, it's recommended to create a new test repo for initial try
+# This can be any repo name that you want to watch, it's recommended to create a new test repo for initial try
+GITHUB_REPO_NAME= 
 
 # RingCentral developer portal
-IM_SHARED_SECRET= # You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
+# You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
+IM_SHARED_SECRET= 
+
+# db uri
+DATABASE_CONNECTION_URI=sqlite://./db.sqlite
+# client-side UI asset path
+ASSETS_PATH=http://localhost:8081
 ```
 
 ## Step.3 Start Local Server and Client
