@@ -47,7 +47,7 @@ Note: your local firewall might block certain ngrok regions. If so, try changing
 
 Firstly, we want to create a new app on https://app.asana.com/0/developer-console. After it's created, we'll see `ClientId` and `ClientSecret`.
 
-There are several OAuth-related fields in `.env` need to be set.
+Rename `sample.env` to `.env` and `sample.env.test` to `env.test`(env for test). There are several OAuth-related fields in `.env` need to be set.
 
 ```bash
 # .env file

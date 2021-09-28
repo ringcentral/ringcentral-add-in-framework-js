@@ -3,6 +3,7 @@ const commander = require('commander');
 const program = new commander.Command();
 const { version } = require('../package.json');
 const { generateTemplate } = require('./template');
+const { release } = require('./release')
 const path = require('path');
 const { readdirSync } = require('fs')
 
@@ -129,4 +130,35 @@ program
         }
         generateTemplate(answers);
     });
+
+program
+    .command('release')
+    .alias('r')
+    .description('create a new release')
+    .action(() => {
+        inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    name: 'releaseType',
+                    message: 'Choose a release type:',
+                    choices: [
+                        'major',
+                        'minor',
+                        'patch'
+                    ],
+                },
+                {
+                    type: 'input',
+                    name: 'commit',
+                    message: 'Enter commit description:',
+                    default: ''
+                },
+            ])
+            .then((answers) => {
+                console.log('doing release...');
+                release(answers);
+            })
+    });
+
 program.parse(process.argv);

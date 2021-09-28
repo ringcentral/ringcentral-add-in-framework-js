@@ -13,12 +13,14 @@
     "test": "node ./bin/test.js"
   },
   "dependencies": {
+    "@jsdevtools/npm-publish": "^1.4.3",
     "commander": "^8.1.0",
     "ejs": "^3.1.6",
     "inquirer": "^8.1.2"
   },
   "devDependencies": {
     "ejs-lint": "^1.2.1",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "simple-git": "^2.45.1"
   }
 }

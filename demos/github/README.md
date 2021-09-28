@@ -49,7 +49,7 @@ Firstly, we want to create a `OAuth App` on https://github.com/settings/develope
 
 After it's created, we'll see `ClientId` and let's also generate a `ClientSecret`.
 
-There are several OAuth-related fields in `.env` need to be set.
+Rename `sample.env` to `.env` and `sample.env.test` to `env.test`(env for test). There are several OAuth-related fields in `.env` need to be set.
 
 ```bash
 # .env file
