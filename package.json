@@ -1,26 +1,26 @@
 {
-  "name": "ringcentral-add-in-framework",
-  "version": "0.0.39",
-  "description": "Framework for RingCentral Add-In App",
-  "keywords": [
-    "RingCentral",
-    "Add-In",
-    "Webhook"
-  ],
-  "bin": "bin/index.js",
-  "scripts": {
-    "start": "node ./bin/index.js",
-    "test": "node ./bin/test.js"
-  },
-  "dependencies": {
-    "@jsdevtools/npm-publish": "^1.4.3",
-    "commander": "^8.1.0",
-    "ejs": "^3.1.6",
-    "inquirer": "^8.1.2"
-  },
-  "devDependencies": {
-    "ejs-lint": "^1.2.1",
-    "rimraf": "^3.0.2",
-    "simple-git": "^2.45.1"
-  }
+    "name": "ringcentral-add-in-framework",
+    "version": "0.0.40",
+    "description": "Framework for RingCentral Add-In App",
+    "keywords": [
+        "RingCentral",
+        "Add-In",
+        "Webhook"
+    ],
+    "bin": "bin/index.js",
+    "scripts": {
+        "start": "node ./bin/index.js",
+        "test": "node ./bin/test.js"
+    },
+    "dependencies": {
+        "@jsdevtools/npm-publish": "^1.4.3",
+        "commander": "^8.1.0",
+        "ejs": "^3.1.6",
+        "inquirer": "^8.1.2"
+    },
+    "devDependencies": {
+        "ejs-lint": "^1.2.1",
+        "rimraf": "^3.0.2",
+        "simple-git": "^2.45.1"
+    }
 }
