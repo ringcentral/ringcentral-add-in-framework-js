@@ -30,7 +30,7 @@ async function release({
         fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4), function(err){if (err) {
             console.log(`write file failed with ${err}`)
           } else {       
-               console.log(`write file successful`)
+               console.log(`write file successful.`)
           }});
         console.log('package.json version updated.');
         await git.add('*').commit(commit).push().addTag(packageJson.version);
