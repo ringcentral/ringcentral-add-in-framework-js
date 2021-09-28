@@ -27,9 +27,12 @@ async function release({
         packageJson.version = newVersionNumber;
         await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 4));
         await git.add('*').commit(commit).push().addTag(packageJson.version);
+        console.log('git pushed.');
+        console.log('npm publishing...');
         await npmPublish({
             token: process.env.INPUT_TOKEN
         });
+        console.log(`npm published: ${newVersionNumber}`);
     }
     catch (e) {
         console.log(e);
