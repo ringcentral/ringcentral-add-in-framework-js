@@ -2,7 +2,7 @@ const simpleGit = require('simple-git');
 const git = simpleGit();
 const packageJsonPath = '../package.json';
 const packageJson = require(packageJsonPath);
-const fs = require('fs').promises;
+const fs = require('fs');
 const npmPublish = require("@jsdevtools/npm-publish");
 
 async function release({
@@ -27,7 +27,7 @@ async function release({
         const newVersionNumber = `${major}.${minor}.${patch}`;
         packageJson.version = newVersionNumber;
         console.log(`new version: ${newVersionNumber}`);
-        await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 4), function(err){if (err) {
+        fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4), function(err){if (err) {
             console.log(`write file failed with ${err}`)
           } else {       
                console.log(`write file successful`)
