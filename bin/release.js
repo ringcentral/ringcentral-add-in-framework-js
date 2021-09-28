@@ -10,6 +10,7 @@ async function release({
     commit
 }) {
     try {
+        console.log(`current version: ${packageJson.version}`);
         const versionNumbers = packageJson.version.split('.');
         let major = versionNumbers[0];
         let minor = versionNumbers[1];
