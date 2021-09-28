@@ -4,6 +4,7 @@ const git = simpleGit();
 const packageJsonPath = '../package.json';
 const packageJson = require(packageJsonPath);
 const fs = require('fs').promises;
+const { resolve } = require('path');
 const npmPublish = require("@jsdevtools/npm-publish");
 
 async function release({
@@ -28,7 +29,7 @@ async function release({
         const newVersionNumber = `${major}.${minor}.${patch}`;
         packageJson.version = newVersionNumber;
         console.log(`new version: ${newVersionNumber}`);
-        await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 4));
+        await fs.writeFile(resolve(__dirname, packageJsonPath), JSON.stringify(packageJson, null, 4));
         console.log('package.json version updated.');
         await git.add('*').commit(commit).push().addTag(packageJson.version);
         console.log(`git pushed with tag: ${packageJson.version}`);
