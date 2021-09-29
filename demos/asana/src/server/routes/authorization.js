@@ -1,7 +1,7 @@
 const { User } = require('../models/userModel');
 const { Subscription } = require('../models/subscriptionModel');
 const { decodeJwt, generateJwt } = require('../lib/jwt');
-const {  checkAndRefreshAccessToken, getOAuthApp } = require('../lib/oauth');
+const { checkAndRefreshAccessToken, getOAuthApp } = require('../lib/oauth');
 const Asana = require('asana');
 
 async function openAuthPage(req, res) {
@@ -30,15 +30,20 @@ async function getUserInfo(req, res) {
     }
     const userId = decodedToken.id;
     const user = await User.findByPk(userId);
+    if (!user || !user.accessToken) {
+        res.status(401);
+        res.send('Token invalid.');
+        return;
+    }
     // check token refresh condition
-        await checkAndRefreshAccessToken(user);
-        
-    const subscriptions = await Subscription.findAll({
+    await checkAndRefreshAccessToken(user);
+
+    const subscription = await Subscription.findOne({
         where: {
-            userId: userId
+            rcWebhookUri: rcWebhookUri
         }
     });
-    const hasSubscription = subscriptions.length > 0;
+    const hasSubscription = subscription != null;
     res.json({ user, hasSubscription });
 }
 
@@ -69,7 +74,7 @@ async function generateToken(req, res) {
             });
         }
         // If user exists but logged out, we want to fill in token info
-        else if(!user.accessToken){
+        else if (!user.accessToken) {
             user.accessToken = accessToken;
             user.refreshToken = refreshToken;
             user.tokenExpiredAt = expires;

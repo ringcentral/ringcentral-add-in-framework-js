@@ -30,12 +30,18 @@ async function getUserInfo(req, res) {
     }
     const userId = decodedToken.id;
     const user = await User.findByPk(userId);
-    const subscriptions = await Subscription.findAll({
+    if (!user || !user.accessToken) {
+        res.status(401);
+        res.send('Token invalid.');
+        return;
+    }
+    
+    const subscription = await Subscription.findOne({
         where: {
-            userId: userId
+            rcWebhookUri: rcWebhookUri
         }
     });
-    const hasSubscription = subscriptions.length > 0;
+    const hasSubscription = subscription != null;
 
     res.json({ user, hasSubscription });
 }

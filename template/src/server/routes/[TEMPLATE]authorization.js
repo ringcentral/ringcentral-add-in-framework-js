@@ -18,6 +18,7 @@ async function openAuthPage(req, res) {
 
 async function getUserInfo(req, res) {
     const jwtToken = req.query.token;
+    const rcWebhookUri = req.query.rcWebhookUri;
     if (!jwtToken) {
         res.status(403);
         res.send('Error params');
@@ -31,15 +32,20 @@ async function getUserInfo(req, res) {
     }
     const userId = decodedToken.id;
     const user = await User.findByPk(userId);
+    if (!user || !user.accessToken) {
+        res.status(401);
+        res.send('Token invalid.');
+        return;
+    }
     <%if (useRefreshToken) {%>// check token refresh condition
         await checkAndRefreshAccessToken(user);<%}%>
         
-    const subscriptions = await Subscription.findAll({
+    const subscription = await Subscription.findOne({
         where: {
-            userId: userId
+            rcWebhookUri: rcWebhookUri
         }
     });
-    const hasSubscription = subscriptions.length > 0;
+    const hasSubscription = subscription != null;
     res.json({ user, hasSubscription });
 }
 

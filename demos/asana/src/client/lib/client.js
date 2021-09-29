@@ -6,7 +6,7 @@ export class Client {
   }
 
   async getUserInfo() {
-    const response = await fetch(`${this._config.getUserInfoUri}?token=${this.token}`);
+    const response = await fetch(`${this._config.getUserInfoUri}?token=${this.token}&&rcWebhookUri=${this._config.rcWebhookUri}`);
     if (response.status === 401) {
       this.cleanToken();
       throw new Error('Unauthorized');
