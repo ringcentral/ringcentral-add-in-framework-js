@@ -17,6 +17,7 @@ async function openAuthPage(req, res) {
 
 async function getUserInfo(req, res) {
     const jwtToken = req.query.token;
+    const rcWebhookUri = req.query.rcWebhookUri;
     if (!jwtToken) {
         res.status(403);
         res.send('Error params');
