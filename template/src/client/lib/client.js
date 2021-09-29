@@ -62,6 +62,7 @@ export class Client {
       },
       body: JSON.stringify({
         token: this.token,
+        rcWebhookUri: this._config.rcWebhookUri
       }),
     });
     if (resp.status !== 200) {

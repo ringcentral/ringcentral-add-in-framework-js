@@ -175,6 +175,7 @@ async function interactiveMessages(req, res) {
         // Step.3: Call 3rd party API to perform action that you want to apply
         try {
             // [INSERT] API call to perform action on 3rd party platform 
+
             // notify user the result of the action in RingCentral App conversation
             await sendTextMessage(subscription.rcWebhookUri, `Action completed`);
         } catch (e) {
@@ -290,6 +291,7 @@ async function interactiveMessages(req, res) {
     // Step.5: Call 3rd party API to perform action that you want to apply
     try {
       // [INSERT] API call to perform action on 3rd party platform 
+      
       // notify user the result of the action in RingCentral App conversation
       await sendTextMessage(subscription.rcWebhookUri, `Action completed`);
     } catch (e) {

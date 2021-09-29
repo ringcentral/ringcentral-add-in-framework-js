@@ -35,7 +35,7 @@ async function getUserInfo(req, res) {
         res.send('Token invalid.');
         return;
     }
-    
+
     const subscription = await Subscription.findOne({
         where: {
             rcWebhookUri: rcWebhookUri
@@ -116,14 +116,13 @@ async function revokeToken(req, res) {
             user.accessToken = '';
             user.rcUserId = '';
             // Step.1: Unsubscribe all webhook and clear subscriptions in db
-            const subscriptions = await Subscription.findAll({
+            const subscription = await Subscription.findOne({
                 where: {
-                    userId: userId
+                    rcWebhookUri: req.body.rcWebhookUri
                 }
             });
-            for (const subscription of subscriptions) {
-                const sub = await Subscription.findByPk(subscription.id);
-                const thirdPartySubscriptionId = sub.thirdPartyWebhookId;
+            if (subscription && subscription.thirdPartyWebhookId) {
+                const thirdPartySubscriptionId = subscription.thirdPartyWebhookId;
                 // [INSERT] call to delete webhook subscription from 3rd party platform
 
                 // create a github rest client
@@ -137,7 +136,7 @@ async function revokeToken(req, res) {
                     hook_id: thirdPartySubscriptionId
                 });
 
-                await sub.destroy();
+                await subscription.destroy();
             }
             await user.save();
         }

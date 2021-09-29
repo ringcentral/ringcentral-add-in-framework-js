@@ -116,18 +116,17 @@ async function revokeToken(req, res) {
             user.accessToken = '';
             user.refreshToken = '';
             // Step.1: Unsubscribe all webhook and clear subscriptions in db
-            const subscriptions = await Subscription.findAll({
+            const subscription = await Subscription.findOne({
                 where: {
-                    userId: userId
+                    rcWebhookUri: req.body.rcWebhookUri
                 }
             });
-            const client = Asana.Client.create().useAccessToken(user.accessToken);
-            for (const subscription of subscriptions) {
-                const sub = await Subscription.findByPk(subscription.id);
-                const thirdPartySubscriptionId = sub.thirdPartyWebhookId;
+            if (subscription && subscription.thirdPartyWebhookId) {
+                const client = Asana.Client.create().useAccessToken(user.accessToken);
+                const thirdPartySubscriptionId = subscription.thirdPartyWebhookId;
                 // [INSERT] call to delete webhook subscription from 3rd party platform
                 await client.webhooks.deleteById(thirdPartySubscriptionId);
-                await sub.destroy();
+                await subscription.destroy();
             }
             await user.save();
         }
