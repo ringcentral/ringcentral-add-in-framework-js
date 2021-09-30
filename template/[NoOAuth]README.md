@@ -41,10 +41,12 @@ Note: your local firewall might block certain ngrok regions. If so, try changing
 # .env file
 
 # local server setup
-APP_SERVER= # Copy `https://xxxx.ngrok.io` from last step
+# Copy `https://xxxx.ngrok.io` from last step
+APP_SERVER= 
 
 # RingCentral developer portal
-IM_SHARED_SECRET= # You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
+# You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
+IM_SHARED_SECRET= 
 ```
 
 ## Step.3 Coding

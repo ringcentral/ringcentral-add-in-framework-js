@@ -69,7 +69,7 @@ SCOPES_SEPARATOR=, # this field is default to ',', but can be changed
 IM_SHARED_SECRET= # You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
 ```
 
-## Step.3 Write Code and Test It
+## Step.3 Start Local Server and Client
 
 Open 2 new terminals and run below commands respectively:
 
@@ -98,11 +98,11 @@ Now press `Apply` ([workflow 1-2](#workflow-diagram)). We should be able to see 
 
 (Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`([workflow 16-30](#workflow-diagram)). To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).)
 
-### Development
+## Step.4 Write Your Code and Try It
 
 Now that development environment is all set, let's make some changes to the code. 
 
-There is a few spots that need your input. Note: If you want to test your changes, you'll need to kill the server and start it again. So in above `npm run start` terminal, do `Ctrl + C` and run `npm run start` again.
+There is a few spots that need your input. Note: If you want to test your changes, you'll need to kill the server which runs `npm run start` and start it again.
 
 1. Go to `src/server/routes/authorization.js` and follow the instruction on top. After this step, click `Connect to 3rd Party Service and Subscribe`([workflow 3-7](#workflow-diagram)) and you'll be able to auth user for 3rd party platform. Then Developer Tool should show `Subscribe` and `Unsubscribe and Logout` buttons.
 2. Go to `src/server/routes/subscription.js` and follow the instruction on top. After this step, click `subscribe`([workflow 8-11](#workflow-diagram)) button on Developer Tool, your RingCentral App conversation should receive an example message from webhook.
@@ -117,6 +117,7 @@ There is a few spots that need your input. Note: If you want to test your change
 ### Additional Note
 
 There are several npm packages to be highlighted here:
+- [adaptivecards-templating](https://www.npmjs.com/package/adaptivecards-templating): Tool to inject data into Adaptive Cards json files.
 - [sequelize](https://www.npmjs.com/package//sequelize): Node.js database ORM tool
 - [axios](https://www.npmjs.com/package/axios): Promise based HTTP client for the browser and node.js
 - [client-oauth2](https://www.npmjs.com/package/client-oauth2): OAuth2 wrapper
