@@ -94,11 +94,12 @@ async function generateToken(req, res) {
             await user.save();
         }
 
-        // [DELETE] this block after it correctly prints out userId from 3rd party platform, and go to subscription.js
+        // [DELETE] this block after it correctly prints out userId from 3rd party platform
         console.log('\n====================');
         console.log(`authorization.js - generateToken - Step.2\n[log]user: ${JSON.stringify(user, null, 2)}`);
         console.log('====================\n');
         // [DELETE] block end
+        // Step.3: Now, go to subscription.js
 
         // Return jwt to client for future client-server communication
         const jwtToken = generateJwt({ id: userId });

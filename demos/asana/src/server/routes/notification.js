@@ -126,7 +126,7 @@ async function interactiveMessages(req, res) {
       user.refreshToken = refreshToken;
       user.tokenExpiredAt = expires;
       if (!user.rcUserId) {
-        user.rcUserId = body.user.id;
+        user.rcUserId = body.user.id.toString();
       }
       await user.save();
     }
@@ -140,7 +140,7 @@ async function interactiveMessages(req, res) {
         user.accessToken = accessToken;
         user.refreshToken = refreshToken;
         user.tokenExpiredAt = expires;
-        user.rcUserId = body.user.id;
+        user.rcUserId = body.user.id.toString();
         await user.save();
       }
       // Case: when target user doesn't exist as known by 3rd party platform
@@ -151,7 +151,7 @@ async function interactiveMessages(req, res) {
           accessToken: accessToken,
           refreshToken: refreshToken,
           tokenExpiredAt: expires,
-          rcUserId: body.user.id,
+          rcUserId: body.user.id.toString(),
         });
       }
     }

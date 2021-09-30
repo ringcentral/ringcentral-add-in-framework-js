@@ -124,7 +124,7 @@ async function interactiveMessages(req, res) {
       user.accessToken = accessToken;
 
       if (!user.rcUserId) {
-        user.rcUserId = body.user.id;
+        user.rcUserId = body.user.id.toString();
       }
       await user.save();
     }
@@ -137,7 +137,7 @@ async function interactiveMessages(req, res) {
       if (user) {
         user.accessToken = accessToken;
 
-        user.rcUserId = body.user.id;
+        user.rcUserId = body.user.id.toString();
         await user.save();
       }
       // Case: when target user doesn't exist as known by 3rd party platform
@@ -148,7 +148,7 @@ async function interactiveMessages(req, res) {
           name: userInfo.login,    // [REPLACE] name with actual name in user info, this field is optional
           accessToken: accessToken,
 
-          rcUserId: body.user.id,
+          rcUserId: body.user.id.toString(),
         });
       }
     }

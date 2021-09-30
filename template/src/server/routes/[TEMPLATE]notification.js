@@ -13,7 +13,10 @@ const sampleCardTemplateString = JSON.stringify(sampleCardTemplate, null, 2);
 //====INSTRUCTION====
 // Below methods is to receive 3rd party notification and format it into Adaptive Card and send to RingCentral App conversation
 // It would already send sample message if any notification comes in. And you would want to extract info from the actual 3rd party call and format it.
+
+//====ADAPTIVE CARD DESIGN====
 // Adaptive Card Designer: https://adaptivecards.io/designer/
+// Add new card: Copy the whole payload in CARD PAYLOAD EDITOR from card designer and create a new .json file for it under `src/server/adaptiveCardPayloads` folder. Also remember to reference it.
 async function notification(req, res) {
     try {
         console.log(`Receiving notification: ${JSON.stringify(req.body, null, 2)}`);
@@ -114,7 +117,7 @@ async function interactiveMessages(req, res) {
         user.tokenExpiredAt = expires;<%}%>
         if(!user.rcUserId)
         {
-          user.rcUserId = body.user.id;
+          user.rcUserId = body.user.id.toString();
         }
         await user.save();
       }
@@ -128,7 +131,7 @@ async function interactiveMessages(req, res) {
           user.accessToken = accessToken;
           <%if (useRefreshToken) {%>user.refreshToken = refreshToken;
           user.tokenExpiredAt = expires;<%}%>
-          user.rcUserId = body.user.id;
+          user.rcUserId = body.user.id.toString();
           await user.save();
         } 
         // Case: when target user doesn't exist as known by 3rd party platform
@@ -140,7 +143,7 @@ async function interactiveMessages(req, res) {
             accessToken: accessToken,
             <%if (useRefreshToken) {%>refreshToken: refreshToken,
             tokenExpiredAt: expires,<%}%>
-            rcUserId: body.user.id,
+            rcUserId: body.user.id.toString(),
           });
         }
       }
@@ -249,7 +252,7 @@ async function interactiveMessages(req, res) {
       // Case: when target user exists only as known by 3rd party platform
       if (user) {
         user.accessToken = accessToken;
-        user.rcUserId = body.user.id;
+        user.rcUserId = body.user.id.toString();
         await user.save();
       } 
       // Case: when target user doesn't exist as known by 3rd party platform
@@ -259,7 +262,7 @@ async function interactiveMessages(req, res) {
           id: userInfoResponse.id,    // [REPLACE] id with actual id in user info
           name: userInfoResponse.name,    // [REPLACE] name with actual name in user info, this field is optional
           accessToken: accessToken,
-          rcUserId: body.user.id,
+          rcUserId: body.user.id.toString(),
         });
       }
     }
