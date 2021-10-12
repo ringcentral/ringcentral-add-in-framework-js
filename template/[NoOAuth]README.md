@@ -90,15 +90,7 @@ Create your app following [this guide](https://developers.ringcentral.com/guide/
 
 ## Deploy with Serverless
 
-### 1. Compile JS files
-
-```
-$ npm run client-build
-```
-
-And get all JS assets file at public folder. Upload all files in public into CDN or static web server.
-
-### 2. Create `serverless-deploy/env.yml` file
+### 1. Create `serverless-deploy/env.yml` file
 
 ```
 $ cp serverless-deploy/env.default.yml serverless-deploy/env.yml
@@ -107,16 +99,16 @@ $ cp serverless-deploy/env.default.yml serverless-deploy/env.yml
 Edit `serverless-deploy/env.yml` to set environment variables.
 We will get `APP_SERVER` after first deploy. So now just keep it blank.
 
-### 3. Create `serverless-deploy/serverless.yml` file
+### 2. Create `serverless-deploy/serverless.yml` file
 
 ```
 $ cp serverless-deploy/serverless.default.yml serverless-deploy/serverless.yml
 ```
 
 Edit `serverless-deploy/env.yml` to update serverless settings.
-The Dynamo `TableName` should be `${DYNAMODB_TABLE_PREFIX}webhooks`. `DYNAMODB_TABLE_PREFIX` is environment variable that we set upper. `ASSETS_PATH` is uri where you host JS files in `Step 1`.
+The Dynamo `TableName` should be `${DYNAMODB_TABLE_PREFIX}webhooks`. `DYNAMODB_TABLE_PREFIX` is environment variable that we set upper.
 
-### 4. Deploy
+### 3. Deploy
 
 ```
 $ npm run serverless-build
