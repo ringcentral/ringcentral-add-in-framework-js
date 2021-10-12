@@ -7,13 +7,11 @@ This template aims to help you quickly set up your app with 3rd party webhook in
 - Download and install RingCentral App and login: https://www.ringcentral.com/apps/rc-app
 - Nodejs and npm.
 
-# Workflow
+# Workflow Diagram
 
-The workflow is:
+Note: if you don't have Markdown view, please open the flow diagram directly from `diagram/flow.svg`.
 
-1. Register app on 3rd party platform
-2. Create webhook subscription on 3rdp party platform with notification endpoint as `https://xxxx.ngrok.io/notification`. (Note: refer to [Development Section](#development) for more info regarding `https://xxxx.ngrok.io`)
-3. Incoming notification messages will go to `notification` method under `src/server/routes/notification.js`
+![flow](./diagram/flow.svg)
 
 # Development
 
@@ -61,18 +59,20 @@ In `src/server/routes/notification.js`, follow steps in `notification` function.
 npm run start
 ```
 
-For local development, we can use [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) to simulate RingCentral App Gallery shell which handles communications between your app and RingCentral server.
+### Online Developer Tool
 
-!!!Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`. To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).
+For local development, we can use [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) to simulate RingCentral App Gallery shell which handles communications between your app and RingCentral server.
 
 To use above tool, there are two fields we want to fill in:
 
 1. `App Url`: It is for this tool to retrieve the app's entry point to render. In our framework, it's set to `https://xxxx.ngrok.io/setup`
 2. `Webhook Url`, there are 2 ways:
    1. Click `Get a webhookUrl` and login to your RingCentral App. Generate webhook url from your Team channel.
-   2. Go to RingCentral App Gallery and add Incoming Webhook App to your conversation channel. As a result, you will get a webhook URL like `https://hooks.glip.com/webhook/xxxxx` (aka `RC_WEBHOOK`) and that's what we need here.
+   2. Go to RingCentral App Gallery and add `Incoming Webhook` App to your conversation channel. As a result, you will get a webhook URL like `https://hooks.glip.com/webhook/xxxxx` (aka `RC_WEBHOOK`) and that's what we need here.
 
-Now press `Apply`.
+Now press `Apply` ([workflow 1-2](#workflow-diagram)). We should be able to see the UI button gets rendered in top block.
+
+(Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`([workflow 8-22](#workflow-diagram)). To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).)
 
 # Test
 

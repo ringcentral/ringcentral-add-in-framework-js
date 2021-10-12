@@ -42,13 +42,13 @@ exports.generateTemplate = (
         { dirPath: path.resolve(projectDir, 'src/server/views') },
         { dirPath: path.resolve(projectDir, 'src/server/models') },
         { dirPath: path.resolve(projectDir, 'src/server/adaptiveCardPayloads') },
+        { dirPath: path.resolve(projectDir, 'diagram') },
     ]);
     if (useOAuth) {
         createDirs([
             { dirPath: path.resolve(projectDir, 'src/client') },
             { dirPath: path.resolve(projectDir, 'src/client/components') },
             { dirPath: path.resolve(projectDir, 'src/client/lib') },
-            { dirPath: path.resolve(projectDir, 'diagram') },
         ]);
     }
 
@@ -95,6 +95,7 @@ exports.generateTemplate = (
         copyFiles([
             { filePath: path.resolve(__dirname, '../template/[NoOAuth]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
             { filePath: path.resolve(__dirname, '../template/src/server/views/style.css',), destinationPath: path.resolve(projectDir, 'src/server/views/style.css') },
+            { filePath: path.resolve(__dirname, '../template/[NoOAuth]diagram/flow.svg',), destinationPath: path.resolve(projectDir, 'diagram/flow.svg') },
         ]);
     }
 
