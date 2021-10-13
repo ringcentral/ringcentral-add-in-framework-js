@@ -1,6 +1,6 @@
 {
     "name": "ringcentral-add-in-framework",
-    "version": "0.0.49",
+    "version": "0.1.0",
     "description": "Framework for RingCentral Add-In App",
     "keywords": [
         "RingCentral",

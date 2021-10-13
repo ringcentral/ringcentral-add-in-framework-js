@@ -19,9 +19,12 @@ async function release({
         let patch = versionNumbers[2];
         if (releaseType === "major") {
             major = Number(major) + 1;
+            minor = 0;
+            patch = 0;
         }
         else if (releaseType === "minor") {
             minor = Number(minor) + 1;
+            patch = 0;
         }
         else if (releaseType === "patch") {
             patch = Number(patch) + 1;
