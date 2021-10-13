@@ -27,6 +27,3 @@ npx ringcentral-add-in-framework demo
 ```
 
 For further Information, please refer to the `README.md` that's inside your generated template or demo.
-
-# TODOs
-- More demos
