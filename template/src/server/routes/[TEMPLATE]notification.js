@@ -7,9 +7,7 @@ const crypto = require('crypto');
 const { Template } = require('adaptivecards-templating');
 
 const authCardTemplate = require('../adaptiveCardPayloads/auth.json');
-const authCardTemplateString = JSON.stringify(authCardTemplate, null, 2);
 const sampleCardTemplate = require('../adaptiveCardPayloads/sample.json');
-const sampleCardTemplateString = JSON.stringify(sampleCardTemplate, null, 2);
 //====INSTRUCTION====
 // Below methods is to receive 3rd party notification and format it into Adaptive Card and send to RingCentral App conversation
 // It would already send sample message if any notification comes in. And you would want to extract info from the actual 3rd party call and format it.
@@ -43,7 +41,7 @@ async function notification(req, res) {
 
         // Step.3: Transform notification info into RingCentral App adaptive card - design your own adaptive card: https://adaptivecards.io/designer/
         // If this step is successful, go to authorization.js - revokeToken() for the last step
-        const cardPayload = {    // [REPLACE] this with your params that's customized to show info from 3rd party notification and provide interaction
+        const cardData = {    // [REPLACE] this with your params that's customized to show info from 3rd party notification and provide interaction
             title: testNotificationInfo.title,
             content: testNotificationInfo.message,
             link: testNotificationInfo.linkToPage,
@@ -52,8 +50,8 @@ async function notification(req, res) {
         // Send adaptive card to your channel in RingCentral App
         await sendAdaptiveCardMessage(
           subscription.rcWebhookUri, 
-          sampleCardTemplateString,
-          cardPayload);
+          sampleCardTemplate,
+          cardData);
     } catch (e) {
         console.error(e);
     }
@@ -161,7 +159,7 @@ async function interactiveMessages(req, res) {
       if (!user || !user.accessToken) {
         await sendAdaptiveCardMessage(
           subscription.rcWebhookUri, 
-          authCardTemplateString,
+          authCardTemplate,
           {
             authorizeUrl: oauth.code.getUri(),
             subscriptionId,
@@ -186,7 +184,7 @@ async function interactiveMessages(req, res) {
             if (e.statusCode === 401) {
                 await sendAdaptiveCardMessage(
                   subscription.rcWebhookUri, 
-                  authCardTemplateString,
+                  authCardTemplate,
                   {
                     authorizeUrl: oauth.code.getUri(),
                     subscriptionId,
@@ -277,7 +275,7 @@ async function interactiveMessages(req, res) {
       // Step.4: if an unknown user wants to perform actions, we want to authorize first
       await sendAdaptiveCardMessage(
         subscription.rcWebhookUri,
-        authCardTemplateString,
+        authCardTemplate,
         {
           authorizeUrl: '{url to get accessToken}', // [REPLACE] the string with actual url to where user can get/generate accessToken on 3rd party platform
           subscriptionId,
@@ -302,7 +300,7 @@ async function interactiveMessages(req, res) {
       if (e.statusCode === 401) {
         await sendAdaptiveCardMessage(
           subscription.rcWebhookUri,
-          authCardTemplateString,
+          authCardTemplate,
           {
             authorizeUrl: oauth.code.getUri(),
             subscriptionId,
@@ -327,15 +325,15 @@ async function sendTextMessage(rcWebhook, message) {
     });
 }
 
-async function sendAdaptiveCardMessage(rcWebhook, cardTemplate, cardPayload) {
+async function sendAdaptiveCardMessage(rcWebhook, cardTemplate, cardData) {
   const template = new Template(cardTemplate);
   const card = template.expand({
-    $root: cardPayload
+    $root: cardData
   });
   console.log(card);
   const response = await axios.post(rcWebhook, {
     attachments: [
-      JSON.parse(card),
+      card,
     ]
   }, {
     headers: {

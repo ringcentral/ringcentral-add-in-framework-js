@@ -5,11 +5,17 @@ const { getOAuthApp, checkAndRefreshAccessToken } = require('../lib/oauth');
 const constants = require('../lib/constants');
 const crypto = require('crypto');
 const { Template } = require('adaptivecards-templating');
-const Asana = require('asana');
+const { Gitlab } = require('@gitbeaker/node');
 
 const authCardTemplate = require('../adaptiveCardPayloads/auth.json');
-const asanaTaskCardTemplate = require('../adaptiveCardPayloads/asanaTask.json');
+const sampleCardTemplate = require('../adaptiveCardPayloads/sample.json');
+//====INSTRUCTION====
+// Below methods is to receive 3rd party notification and format it into Adaptive Card and send to RingCentral App conversation
+// It would already send sample message if any notification comes in. And you would want to extract info from the actual 3rd party call and format it.
 
+//====ADAPTIVE CARD DESIGN====
+// Adaptive Card Designer: https://adaptivecards.io/designer/
+// Add new card: Copy the whole payload in CARD PAYLOAD EDITOR from card designer and create a new .json file for it under `src/server/adaptiveCardPayloads` folder. Also remember to reference it.
 async function notification(req, res) {
   try {
     console.log(`Receiving notification: ${JSON.stringify(req.body, null, 2)}`);
@@ -21,47 +27,41 @@ async function notification(req, res) {
       res.send('Unknown subscription id');
       return;
     }
-    const incomingEvents = req.body.events;
-    if (incomingEvents) {
-      // check token refresh condition
-      const userId = subscription.userId;
-      const user = await User.findByPk(userId);
-      await checkAndRefreshAccessToken(user);
-      // Step.1: Extract info from 3rd party notification POST body
-      // Asana events don't contain the actual change, we'll just get resource here then fetch the change ourselves
-      const event = req.body.events[0];
-
-      // Step.2(optional): Filter out notifications that user is not interested in, some platform may not have a build-in filtering mechanism.  
-      const client = Asana.Client.create().useAccessToken(user.accessToken);
-      // get info
-      const userChangedTask = await client.users.findById(event.user.gid);
-      const taskChanged = await client.tasks.findById(event.resource.gid);
-      const username = userChangedTask.name;
-      const userEmail = userChangedTask.email;
-      const taskName = taskChanged.name;
-      const taskUrl = taskChanged.permalink_url;
-      const taskGid = taskChanged.gid;
-
-      // Step.3: Transform notification info into RingCentral App adaptive card - design your own adaptive card: https://adaptivecards.io/designer/
-      const cardParams = {
-        username: username,
-        userEmail: userEmail,
-        taskName: taskName,
-        taskUrl: taskUrl,
-        taskGid: taskGid,
-        subscriptionId: subscriptionId
-      };
-
-      // Send adaptive card to your channel in RingCentral App
-      await sendAdaptiveCardMessage(subscription.rcWebhookUri, asanaTaskCardTemplate, cardParams);
+    // check token refresh condition
+    const userId = subscription.userId;
+    const user = await User.findByPk(userId);
+    await checkAndRefreshAccessToken(user);
+    // Step.1: Extract info from 3rd party notification POST body
+    const gitlabUser = req.body.user;
+    const gitlabProject = req.body.project;
+    const gitlabIssue = req.body.object_attributes;
+    // Step.2(optional): Filter out notifications that user is not interested in, some platform may not have a build-in filtering mechanism.  
+    if (gitlabIssue.state === 'closed') {
+      res.status(200);
+      res.json({
+        result: 'OK',
+      });
+      return;
     }
+
+
+    // Step.3: Transform notification info into RingCentral App adaptive card - design your own adaptive card: https://adaptivecards.io/designer/
+    // If this step is successful, go to authorization.js - revokeToken() for the last step
+    const cardPayload = {    // [REPLACE] this with your params that's customized to show info from 3rd party notification and provide interaction
+      title: `${gitlabUser.name}(${gitlabUser.email}) created an issue on ${gitlabProject.homepage}`,
+      content: `${gitlabIssue.title}: ${gitlabIssue.description}`,
+      link: gitlabIssue.url,
+      issueId: gitlabIssue.iid,
+      projectId: gitlabIssue.project_id,
+      subscriptionId: subscriptionId
+    };
+    // Send adaptive card to your channel in RingCentral App
+    await sendAdaptiveCardMessage(
+      subscription.rcWebhookUri,
+      sampleCardTemplate,
+      cardPayload);
   } catch (e) {
     console.error(e);
-  }
-
-  // required by Asana for handshake (https://developers.asana.com/docs/webhooks)
-  if (req.headers['x-hook-secret']) {
-    res.header('X-Hook-Secret', req.headers['x-hook-secret']);
   }
 
   res.status(200);
@@ -99,7 +99,6 @@ async function interactiveMessages(req, res) {
   }
   const oauth = getOAuthApp();
   let user = await User.findOne({ where: { rcUserId: body.user.id } });
-  let asanaClient;
   const action = body.data.action;
   if (action === 'authorize') {
     const buff = Buffer.from(body.data.token, 'base64');
@@ -117,7 +116,6 @@ async function interactiveMessages(req, res) {
       return;
     }
     const { accessToken, refreshToken, expires } = token;
-    asanaClient = Asana.Client.create().useAccessToken(accessToken);
     // Case: when target user exist as known by RingCentral App
     if (user) {
       user.accessToken = accessToken;
@@ -131,8 +129,13 @@ async function interactiveMessages(req, res) {
     // Case: when target user doesn't exist as known by RingCentral App
     else {
       // Step.1: Get user info with 3rd party API call
-      const userInfo = await asanaClient.users.me(); // [REPLACE] userInfoResponse with actual user info API call to 3rd party server
-      user = await User.findByPk(userInfo.gid);  // [REPLACE] this with actual user id
+      const gitlabClient = new Gitlab({
+        host: process.env.API_SERVER,
+        oauthToken: accessToken,
+      });
+
+      const userInfoResponse = await gitlabClient.Users.current(); // [REPLACE] userInfoResponse with actual user info API call to 3rd party server
+      user = await User.findByPk(userInfoResponse.id);  // [REPLACE] this with actual user id
       // Case: when target user exists only as known by 3rd party platform
       if (user) {
         user.accessToken = accessToken;
@@ -145,7 +148,8 @@ async function interactiveMessages(req, res) {
       else {
         // Step.2: Create a new user in DB if user doesn't exist
         await User.create({
-          id: userInfo.gid,    // [REPLACE] id with actual id in user info
+          id: userInfoResponse.id,    // [REPLACE] id with actual id in user info
+          name: userInfoResponse.username,    // [REPLACE] name with actual name in user info, this field is optional
           accessToken: accessToken,
           refreshToken: refreshToken,
           tokenExpiredAt: expires,
@@ -162,7 +166,6 @@ async function interactiveMessages(req, res) {
   else {
     if (user) {
       await checkAndRefreshAccessToken(user);
-      asanaClient = Asana.Client.create().useAccessToken(user.accessToken);
     }
     // If an unknown user wants to perform actions, we want to authenticate and authorize first
     if (!user || !user.accessToken) {
@@ -171,7 +174,7 @@ async function interactiveMessages(req, res) {
         authCardTemplate,
         {
           authorizeUrl: oauth.code.getUri(),
-          subscriptionId: subscriptionId,
+          subscriptionId,
         });
       res.status(200);
       res.send('OK');
@@ -180,14 +183,20 @@ async function interactiveMessages(req, res) {
   }
 
   // Below tis the section for your customized actions handling
-  if (action === 'completeTask') {
+  // testActionType is from adaptiveCard.js - getSampleCard()
+  if (action === 'testActionType') {
+    const gitlabClient = new Gitlab({
+      host: process.env.API_SERVER,
+      oauthToken: user.accessToken,
+    });
     // Step.3: Call 3rd party API to perform action that you want to apply
     try {
       // [INSERT] API call to perform action on 3rd party platform 
-      const taskChange ={
-        completed: true
+      const closeIssueOption = {
+        state_event: 'close'
       }
-      await asanaClient.tasks.update(body.data.taskId,taskChange);
+      await gitlabClient.Issues.edit(req.body.data.projectId, req.body.data.issueId, closeIssueOption);
+
       // notify user the result of the action in RingCentral App conversation
       await sendTextMessage(subscription.rcWebhookUri, `Action completed`);
     } catch (e) {
@@ -198,7 +207,7 @@ async function interactiveMessages(req, res) {
           authCardTemplate,
           {
             authorizeUrl: oauth.code.getUri(),
-            subscriptionId: subscriptionId,
+            subscriptionId,
           });
       }
       console.error(e);
@@ -220,10 +229,10 @@ async function sendTextMessage(rcWebhook, message) {
   });
 }
 
-async function sendAdaptiveCardMessage(rcWebhook, cardTemplate, params) {
+async function sendAdaptiveCardMessage(rcWebhook, cardTemplate, cardPayload) {
   const template = new Template(cardTemplate);
   const card = template.expand({
-    $root: params
+    $root: cardPayload
   });
   console.log(card);
   const response = await axios.post(rcWebhook, {

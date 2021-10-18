@@ -9,9 +9,7 @@ const { Template } = require('adaptivecards-templating');
 
 
 const authCardTemplate = require('../adaptiveCardPayloads/auth.json');
-const authCardTemplateString = JSON.stringify(authCardTemplate, null, 2);
 const githubIssueCardTemplate = require('../adaptiveCardPayloads/githubIssue.json');
-const githubIssueCardTemplateString = JSON.stringify(githubIssueCardTemplate, null, 2);
 
 async function notification(req, res) {
   try {
@@ -54,7 +52,7 @@ async function notification(req, res) {
         subscriptionId: subscriptionId
       };
       // Send adaptive card to your channel in RingCentral App
-      await sendAdaptiveCardMessage(subscription.rcWebhookUri, githubIssueCardTemplateString, cardParams);
+      await sendAdaptiveCardMessage(subscription.rcWebhookUri, githubIssueCardTemplate, cardParams);
     }
   } catch (e) {
     console.error(e);
@@ -164,7 +162,7 @@ async function interactiveMessages(req, res) {
     if (!user || !user.accessToken) {
       await sendAdaptiveCardMessage(
         subscription.rcWebhookUri,
-        authCardTemplateString,
+        authCardTemplate,
         {
           authorizeUrl: oauth.code.getUri(),
           subscriptionId: subscriptionId,
@@ -198,7 +196,7 @@ async function interactiveMessages(req, res) {
       if (e.statusCode === 401) {
         await sendAdaptiveCardMessage(
           subscription.rcWebhookUri,
-          authCardTemplateString,
+          authCardTemplate,
           {
             authorizeUrl: oauth.code.getUri(),
             subscriptionId: subscriptionId,
@@ -231,7 +229,7 @@ async function sendAdaptiveCardMessage(rcWebhook, cardTemplate, params) {
   console.log(card);
   const response = await axios.post(rcWebhook, {
     attachments: [
-      JSON.parse(card),
+      card,
     ]
   }, {
     headers: {
