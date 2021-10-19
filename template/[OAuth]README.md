@@ -98,6 +98,15 @@ Now press `Apply` ([workflow 1-2](#workflow-diagram)). We should be able to see 
 
 (Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`([workflow 16-30](#workflow-diagram)). To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).)
 
+### POST Test Data
+
+There is a simple HTTP POST script: `scripts/test-data.js`. If you need to have a quick test to mock 3rd party notification, please follow comments inside the file.
+
+```bash
+# run test post data
+node scripts/test-data.js
+```
+
 ## Step.4 Write Your Code and Try It
 
 Now that development environment is all set, let's make some changes to the code. 

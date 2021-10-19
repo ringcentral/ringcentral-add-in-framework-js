@@ -1,0 +1,210 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "${title}",
+      "weight": "Bolder",
+      "size": "Large",
+      "wrap": true
+    },
+    {
+      "type": "Container",
+      "separator": true,
+      "items": [
+        {
+          "$data": "${tasks}",
+          "type": "Container",
+          "separator": true,
+          "items": [
+            {
+              "type": "ColumnSet",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": 3,
+                  "spacing": "Default",
+                  "verticalContentAlignment": "Center",
+                  "items": [
+                    {
+                      "type": "ColumnSet",
+                      "columns": [
+                        {
+                          "type": "Column",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "text": "**Task:**",
+                              "wrap": true,
+                              "horizontalAlignment": "Right",
+                              "size": "Medium"
+                            }
+                          ],
+                          "width": "90px"
+                        },
+                        {
+                          "type": "Column",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "text": "${title}",
+                              "wrap": true,
+                              "size": "Medium"
+                            }
+                          ],
+                          "width": "auto"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "ColumnSet",
+                      "columns": [
+                        {
+                          "type": "Column",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "text": "**Assignee:**",
+                              "wrap": true,
+                              "horizontalAlignment": "Right",
+                              "size": "Medium"
+                            }
+                          ],
+                          "width": "90px"
+                        },
+                        {
+                          "type": "Column",
+                          "items": [
+                            {
+                              "type": "Image",
+                              "url": "${assigneeAvatar}",
+                              "height": "24px"
+                            }
+                          ],
+                          "width": "auto"
+                        },
+                        {
+                          "type": "Column",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "text": "${assignee}",
+                              "wrap": true,
+                              "size": "Medium"
+                            }
+                          ],
+                          "width": "auto"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "items": [
+                    {
+                      "type": "ActionSet",
+                      "actions": [
+                        {
+                          "type": "Action.Submit",
+                          "title": "Complete",
+                          "data": {
+                            "action": "completeTask",
+                            "taskId": "${taskId}",
+                            "subscriptionId": "${subscriptionId}"
+                          }
+                        },
+                        {
+                          "type": "Action.ToggleVisibility",
+                          "title": "Details",
+                          "targetElements": [
+                            "due${taskId}",
+                            "description${taskId}",
+                            "image${taskId}"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "width": 1
+                }
+              ]
+            },
+            {
+              "type": "ColumnSet",
+              "id": "due${taskId}",
+              "isVisible": false,
+              "columns": [
+                {
+                  "type": "Column",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "**Due:**",
+                      "color": "${if(overdue, 'Warning', 'Default')}",
+                      "wrap": true,
+                      "horizontalAlignment": "Right"
+                    }
+                  ],
+                  "width": "90px"
+                },
+                {
+                  "type": "Column",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "${formatDateTime(deadline, 'yyyy-MM-dd')}",
+                      "color": "${if(overdue, 'Warning', 'Default')}",
+                      "wrap": true
+                    }
+                  ],
+                  "width": "auto"
+                }
+              ]
+            },
+            {
+              "type": "ColumnSet",
+              "id": "description${taskId}",
+              "columns": [
+                {
+                  "type": "Column",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "**Description:**",
+                      "wrap": true,
+                      "horizontalAlignment": "Right"
+                    }
+                  ],
+                  "width": "90px"
+                },
+                {
+                  "type": "Column",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "${description}",
+                      "wrap": true
+                    }
+                  ],
+                  "width": "auto"
+                }
+              ],
+              "isVisible": false
+            },
+            {
+              "type": "Image",
+              "id": "image${taskId}",
+              "url": "${image}",
+              "height": "200px",
+              "isVisible": false
+            }
+          ],
+          "bleed": true
+        }
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.3"
+}

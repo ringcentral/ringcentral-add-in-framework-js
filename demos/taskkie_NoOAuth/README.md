@@ -1,6 +1,6 @@
-# RingCentral-Add-In-Framework
+# RingCentral-Add-In-Framework Tasskie  Demo
 
-This template aims to help you quickly set up your app with 3rd party webhook integration.
+This demo implements a self-hosted service that creates simple tasks from outside RingCentral App and manages them within RingCentral App conversations.
 
 # Prerequisites
 
@@ -50,11 +50,7 @@ APP_SERVER=
 IM_SHARED_SECRET= 
 ```
 
-## Step.3 Coding
-
-In `src/server/routes/notification.js`, follow steps in `notification` function.
-
-## Step.4 Test
+## Step.3 Test
 
 ```bash
 # open a new terminal

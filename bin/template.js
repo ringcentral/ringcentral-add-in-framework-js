@@ -56,12 +56,12 @@ exports.generateTemplate = (
     copyFiles([
         { filePath: path.resolve(__dirname, '../template/.babelrc',), destinationPath: path.resolve(projectDir, '.babelrc') },
         { filePath: path.resolve(__dirname, '../template/jest.config.js',), destinationPath: path.resolve(projectDir, 'jest.config.js') },
-        { filePath: path.resolve(__dirname, '../template/[TEMPLATE].env.test',), destinationPath: path.resolve(projectDir, '.env.test') },
         { filePath: path.resolve(__dirname, '../template/template.gitignore',), destinationPath: path.resolve(projectDir, '.gitignore') },
         { filePath: path.resolve(__dirname, '../template/scripts/init-db.js',), destinationPath: path.resolve(projectDir, 'scripts/init-db.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/refresh-db.js',), destinationPath: path.resolve(projectDir, 'scripts/refresh-db.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/serverless-deploy.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-deploy.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/serverless-build.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-build.js') },
+        { filePath: path.resolve(__dirname, '../template/scripts/test-post.js',), destinationPath: path.resolve(projectDir, 'scripts/test-post.js') },
         { filePath: path.resolve(__dirname, '../template/src/lambda.js',), destinationPath: path.resolve(projectDir, 'src/lambda.js') },
         { filePath: path.resolve(__dirname, '../template/src/run-server.js',), destinationPath: path.resolve(projectDir, 'src/run-server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server.js',), destinationPath: path.resolve(projectDir, 'src/server.js') },
@@ -145,6 +145,14 @@ exports.generateTemplate = (
             accessTokenUri: accessTokenUri,
             authorizationUri: authorizationUri,
             scopes: scopes
+        },
+    });
+    
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/[TEMPLATE].env.test',),
+        destinationPath: path.resolve(projectDir, '.env.test'),
+        params: {
+            useOAuth: useOAuth,
         },
     });
 
