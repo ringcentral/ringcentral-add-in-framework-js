@@ -24,7 +24,7 @@ async function run() {
     }
 
     // input your subscriptionId
-    const subscriptionId = 'eWluuaCka';
+    const subscriptionId = '';
 
     const r = await axios.post(
         `${process.env.APP_SERVER}/notification?subscriptionId=${subscriptionId}`,

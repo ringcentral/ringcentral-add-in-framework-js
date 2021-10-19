@@ -150,7 +150,7 @@ async function getTaskList(activeTasks) {
       title: task.title,
       description: task.description,
       assignee: task.assignee,
-      assigneeAvatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(task.assignee)}}&background=random&bold=true&rounded=true&color=random&format=png`,
+      assigneeAvatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(task.assignee)}}&background=random&bold=true&rounded=true&color=random&format=png`,  //online service to get user initials avatar
       deadline: task.deadline,
       image: task.image,
       taskId: task.id,
