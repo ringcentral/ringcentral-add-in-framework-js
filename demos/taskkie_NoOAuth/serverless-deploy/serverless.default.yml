@@ -1,4 +1,4 @@
-service: add-in-da-kong-taskkie
+service: ringcentral-add-in-framework
 provider:
   stage: ${opt:stage, 'prod'}
   name: aws
@@ -15,18 +15,18 @@ provider:
   deploymentBucket:
     tags:
       Department: dev
-      Owner: DaKong
+      Owner: Your name
       Stage: production
-      Environment: da-kong-taskkie
-      Team: int-xmn
-      Name: add-in-da-kong-taskkie
+      Environment: your-env-tag
+      Team: your-team
+      Name: ringcentral-add-in-framework
   tags:
     Department: dev
-    Owner: DaKong
+    Owner: Your name
     Stage: production
-    Environment: da-kong-taskkie
-    Team: int-xmn
-    Name: add-in-da-kong-taskkie
+    Environment: your-env-tag
+    Team: your-team
+    Name: ringcentral-add-in-framework
 package:
   excludeDevDependencies: true
   patterns:
@@ -47,7 +47,7 @@ resources:
     subscriptionTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: add-in-taskkie-subscriptions
+        TableName: ringcentral-add-in-framework-webhooks
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -57,10 +57,10 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    taskTable:
+    userTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: add-in-taskkie-tasks
+        TableName: ringcentral-add-in-framework-users
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
