@@ -21,6 +21,9 @@ Note: if you don't have Markdown view, please open the flow diagram directly fro
 # install dependencies
 npm i
 
+# create db file - additional note: 'npm run refreshDB' command will clear DB and re-init it
+npm run initDB 
+
 # start proxy server, this will allow your local bot server to be accessed by the RingCentral service
 npm run ngrok
 
