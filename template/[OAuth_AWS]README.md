@@ -49,13 +49,7 @@ Note: your local firewall might block certain ngrok regions. If so, try changing
 
 ## Step.2 Set Up Environment Info
 
-Firstly, create an app on gitlab: https://gitlab.com/-/profile/applications which:
-- Give it a name
-- Fill Redirect URI with `https://xxxx.ngrok.io/oauth-callack`
-- Tick `api` scope
-- After it's created, go to the app at the bottom of the page and copy `Application ID` and `Secret`
-
-Rename `sample.env` to `.env` and `sample.env.test` to `env.test`(env for test). There are several OAuth-related fields in `.env` need to be set.
+There are several OAuth-related fields in `.env` need to be set. They can be found on your target 3rd party platform docs.
 
 ```bash
 # .env file
@@ -63,21 +57,16 @@ Rename `sample.env` to `.env` and `sample.env.test` to `env.test`(env for test).
 # local server setup
 APP_SERVER= # Copy `https://xxxx.ngrok.io` from last step
 
-# Gitlab
-API_SERVER= # Your gitlab API server address. Or, the public server is https://github.com
-TEST_PROJECT_NAME= # Your gitlab project name. It's hard-coded here for convenience. Please use user input in practices
-
 # 3rd party Oauth
-CLIENT_ID= # gitlab app's Application ID here
-CLIENT_SECRET= # gitlab app's Secret here
-ACCESS_TOKEN_URI= # The public uri is https://gitlab.com/oauth/token
-AUTHORIZATION_URI= # The public uri is https://gitlab.com/oauth/authorize
+CLIENT_ID=
+CLIENT_SECRET=
+ACCESS_TOKEN_URI=
+AUTHORIZATION_URI=
 SCOPES= # if SCOPES_SEPARATOR is ',', then SCOPES will be something like scope1,scope2,scope3
 SCOPES_SEPARATOR=, # this field is default to ',', but can be changed
 
 # RingCentral developer portal
 IM_SHARED_SECRET= # You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
-
 ```
 
 ## Step.3 Start Local Server and Client
@@ -109,6 +98,15 @@ Now press `Apply` ([workflow 1-2](#workflow-diagram)). We should be able to see 
 
 (Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`([workflow 16-30](#workflow-diagram)). To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).)
 
+### POST Test Data
+
+There is a simple HTTP POST script: `scripts/test-data.js`. If you need to have a quick test to mock 3rd party notification, please follow comments inside the file.
+
+```bash
+# run test post data
+node scripts/test-data.js
+```
+
 ## Step.4 Write Your Code and Try It
 
 Now that development environment is all set, let's make some changes to the code. 
@@ -119,8 +117,6 @@ There is a few spots that need your input. Note: If you want to test your change
 2. Go to `src/server/routes/subscription.js` and follow the instruction on top. After this step, click `subscribe`([workflow 8-11](#workflow-diagram)) button on Developer Tool, your RingCentral App conversation should receive an example message from webhook.
 3. Go to `src/server/routes/notification.js` and follow the instruction on top. After this step, it would send message([workflow 12-15](#workflow-diagram)) with data transformed from 3rd party platform notification where there's any new event that you subscribe to.
 4. Go back to `src/server/routes/authorization.js`, follow the instruction in `revokeToken` method. After this step, click `Unsubscribe and Logout`([workflow 31-33](#workflow-diagram)) button and there will be no more notifications from 3rd party platform.
-
-Now it should be all set. Please go to RingCentral App Gallery and add your app to a conversation, `Auth` -> `Subscribe` -> `Finish`. It should then provide the ability to listen to `New Issue` event and also give RingCentral user ability to `Close Issue` within RingCentral App.
 
 ### Tips
 
@@ -155,12 +151,6 @@ Create your app following [this guide](https://developers.ringcentral.com/guide/
 ## Deploy with Serverless
 
 ### 1. Compile JS files
-
-Note: Windows user please change `client-build` command field in `package.json` to
-
-```
-set NODE_ENV=production&& webpack --config webpack-production.config.js
-```
 
 ```
 $ npm run client-build

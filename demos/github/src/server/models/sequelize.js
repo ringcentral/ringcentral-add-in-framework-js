@@ -16,7 +16,7 @@ if (process.env.DIALECT === 'dynamodb') {
 }
 
 const sequelize = new Sequelize(
-  process.env.DATABASE_CONNECTION_URI,
+  process.env.DATABASE_URL,
   config
 );
 

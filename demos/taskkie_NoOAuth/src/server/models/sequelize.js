@@ -15,6 +15,6 @@ if (process.env.DIALECT === 'dynamodb') {
   config.dialect = 'dynamo';
 }
 
-const sequelize = new Sequelize(process.env.DATABASE_CONNECTION_URI, config);
+const sequelize = new Sequelize(process.env.DATABASE_URL, config);
 
 exports.sequelize = sequelize;

@@ -80,7 +80,7 @@ GITHUB_REPO_NAME=
 IM_SHARED_SECRET= 
 
 # db uri
-DATABASE_CONNECTION_URI=sqlite://./db.sqlite
+DATABASE_URL=sqlite://./db.sqlite
 # client-side UI asset path
 ASSETS_PATH=http://localhost:8081
 ```
@@ -141,11 +141,30 @@ Create your app following [this guide](https://developers.ringcentral.com/guide/
 
 ### 1. Compile JS files
 
+Note: Windows user please change `client-build` command field in `package.json` to
+
+```
+set NODE_ENV=production&& webpack --config webpack-production.config.js
+```
+
 ```
 $ npm run client-build
 ```
 
 And get all JS assets file at public folder. Upload all files in public into CDN or static web server.
+
+### 1.1. Host client with server static host
+
+It's not recommended, but if you want to have a easier deployment without hosting client files on a separated place (eg. via CDN), you could choose to add following code in `src/server/index.js`
+
+```javascript
+// static host client code
+app.use('/client', express.static(__dirname + '/client'));
+```
+
+Move client built output in `public` to `src/server/client`, and then `ASSETS_PATH` in `.env` should be `{serverAddress}/client`.
+
+It's essentially a tradeoff between simple hosting and client app download speed.
 
 ### 2. Create `serverless-deploy/env.yml` file
 

@@ -11,7 +11,8 @@ exports.generateTemplate = (
         authorizationUri,
         clientId,
         clientSecret,
-        scopes
+        scopes,
+        deployment
     }) => {
 
     let projectName = appName;
@@ -33,7 +34,6 @@ exports.generateTemplate = (
     // create dirs
     createDirs([
         { dirPath: path.resolve(projectDir, 'scripts') },
-        { dirPath: path.resolve(projectDir, 'serverless-deploy') },
         { dirPath: path.resolve(projectDir, 'tests') },
         { dirPath: path.resolve(projectDir, 'src') },
         { dirPath: path.resolve(projectDir, 'src/server') },
@@ -51,6 +51,32 @@ exports.generateTemplate = (
             { dirPath: path.resolve(projectDir, 'src/client/lib') },
         ]);
     }
+    switch (deployment) {
+        case 'none':
+            copyFiles([
+                { filePath: path.resolve(__dirname, '../template/[OAuth]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
+            ]);
+            break;
+        case 'aws_lambda_and_dynamoDB':
+            createDirs([
+                { dirPath: path.resolve(projectDir, 'serverless-deploy') },
+            ]);
+            copyFiles([
+                { filePath: path.resolve(__dirname, '../template/[OAuth_AWS]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
+                { filePath: path.resolve(__dirname, '../template/scripts/serverless-deploy.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-deploy.js') },
+                { filePath: path.resolve(__dirname, '../template/scripts/serverless-build.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-build.js') },
+                { filePath: path.resolve(__dirname, '../template/serverless-deploy/env.default.yml',), destinationPath: path.resolve(projectDir, 'serverless-deploy/env.default.yml') },
+                { filePath: path.resolve(__dirname, '../template/serverless-deploy/serverless.default.yml',), destinationPath: path.resolve(projectDir, 'serverless-deploy/serverless.default.yml') },
+            ]);
+            break;
+        case 'heroku_with_postgres':
+            copyFiles([
+                { filePath: path.resolve(__dirname, '../template/[OAuth_Heroku]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
+                { filePath: path.resolve(__dirname, '../template/app.json',), destinationPath: path.resolve(projectDir, 'app.json') },
+                { filePath: path.resolve(__dirname, '../template/Procfile',), destinationPath: path.resolve(projectDir, 'Procfile') },
+            ]);
+            break;
+    }
 
     // copy files
     copyFiles([
@@ -58,20 +84,15 @@ exports.generateTemplate = (
         { filePath: path.resolve(__dirname, '../template/jest.config.js',), destinationPath: path.resolve(projectDir, 'jest.config.js') },
         { filePath: path.resolve(__dirname, '../template/template.gitignore',), destinationPath: path.resolve(projectDir, '.gitignore') },
         { filePath: path.resolve(__dirname, '../template/scripts/init-db.js',), destinationPath: path.resolve(projectDir, 'scripts/init-db.js') },
-        { filePath: path.resolve(__dirname, '../template/scripts/refresh-db.js',), destinationPath: path.resolve(projectDir, 'scripts/refresh-db.js') },
-        { filePath: path.resolve(__dirname, '../template/scripts/serverless-deploy.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-deploy.js') },
-        { filePath: path.resolve(__dirname, '../template/scripts/serverless-build.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-build.js') },
+        { filePath: path.resolve(__dirname, '../template/scripts/refresh-local-db.js',), destinationPath: path.resolve(projectDir, 'scripts/refresh-local-db.js') },
         { filePath: path.resolve(__dirname, '../template/scripts/test-post.js',), destinationPath: path.resolve(projectDir, 'scripts/test-post.js') },
         { filePath: path.resolve(__dirname, '../template/src/lambda.js',), destinationPath: path.resolve(projectDir, 'src/lambda.js') },
         { filePath: path.resolve(__dirname, '../template/src/run-server.js',), destinationPath: path.resolve(projectDir, 'src/run-server.js') },
         { filePath: path.resolve(__dirname, '../template/src/server.js',), destinationPath: path.resolve(projectDir, 'src/server.js') },
-        { filePath: path.resolve(__dirname, '../template/src/server/models/sequelize.js',), destinationPath: path.resolve(projectDir, 'src/server/models/sequelize.js') },
         { filePath: path.resolve(__dirname, '../template/src/server/adaptiveCardPayloads/auth.json',), destinationPath: path.resolve(projectDir, 'src/server/adaptiveCardPayloads/auth.json') },
         { filePath: path.resolve(__dirname, '../template/src/server/adaptiveCardPayloads/sample.json',), destinationPath: path.resolve(projectDir, 'src/server/adaptiveCardPayloads/sample.json') },
         { filePath: path.resolve(__dirname, '../template/tests/setup.js',), destinationPath: path.resolve(projectDir, 'tests/setup.js') },
         { filePath: path.resolve(__dirname, '../template/tests/notification.test.js',), destinationPath: path.resolve(projectDir, 'tests/notification.test.js') },
-        { filePath: path.resolve(__dirname, '../template/serverless-deploy/env.default.yml',), destinationPath: path.resolve(projectDir, 'serverless-deploy/env.default.yml') },
-        { filePath: path.resolve(__dirname, '../template/serverless-deploy/serverless.default.yml',), destinationPath: path.resolve(projectDir, 'serverless-deploy/serverless.default.yml') },
     ])
 
 
@@ -81,7 +102,6 @@ exports.generateTemplate = (
             { filePath: path.resolve(__dirname, '../template/src/server/views/oauth-callback.pug',), destinationPath: path.resolve(projectDir, 'src/server/views/oauth-callback.pug') },
             { filePath: path.resolve(__dirname, '../template/src/server/views/style.css',), destinationPath: path.resolve(projectDir, 'src/server/views/style.css') },
             { filePath: path.resolve(__dirname, '../template/src/server/lib/jwt.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/jwt.js') },
-            { filePath: path.resolve(__dirname, '../template/[OAuth]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
             { filePath: path.resolve(__dirname, '../template/[OAuth]diagram/flow.svg',), destinationPath: path.resolve(projectDir, 'diagram/flow.svg') },
             { filePath: path.resolve(__dirname, '../template/src/client/components/Root.jsx',), destinationPath: path.resolve(projectDir, 'src/client/components/Root.jsx') },
             { filePath: path.resolve(__dirname, '../template/src/client/app.js',), destinationPath: path.resolve(projectDir, 'src/client/app.js') },
@@ -131,7 +151,8 @@ exports.generateTemplate = (
         params: {
             name: projectName.replace(/\s/g, ''),
             useOAuth: useOAuth,
-            isWin: isWin
+            isWin: isWin,
+            deployment: deployment
         },
     });
 
@@ -147,7 +168,7 @@ exports.generateTemplate = (
             scopes: scopes
         },
     });
-    
+
     copyTemplate({
         templatePath: path.resolve(__dirname, '../template/[TEMPLATE].env.test',),
         destinationPath: path.resolve(projectDir, '.env.test'),
@@ -197,6 +218,14 @@ exports.generateTemplate = (
         params: {
             useOAuth: useOAuth,
             useRefreshToken: useRefreshToken
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/models/[TEMPLATE]sequelize.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/models/sequelize.js'),
+        params: {
+            deployment: deployment
         },
     });
 

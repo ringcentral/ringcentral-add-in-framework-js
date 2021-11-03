@@ -11,7 +11,7 @@ async function setup(req, res) {
       rcWebhookUri,
       subscriptionId: subscriptionId,
       subscriptionUrl: `${process.env.APP_SERVER}${constants.route.forClient.SUBSCRIBE}`,
-      taskUrl: `${process.env.APP_SERVER}${constants.route.forThirdParty.TASK}?subscriptionId=${subscriptionId}`,
+      taskUrl: `${process.env.APP_SERVER}${constants.route.forThirdParty.NOTIFICATION}?subscriptionId=${subscriptionId}`,
     },
   });
 }

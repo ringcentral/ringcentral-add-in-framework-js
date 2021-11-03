@@ -78,6 +78,12 @@ program
                     message: '3rd party app scopes, separate with ","(optional):',
                     default: '',
                     when: (answers) => answers.useOAuth && answers.setupParams
+                },
+                {
+                    type: 'list',
+                    name: 'deployment',
+                    message: 'Do you want to pre-configure with any of following deployments?',
+                    choices: ['none', 'aws_lambda_and_dynamoDB', 'heroku_with_postgres'],
                 }
             ])
             .then((answers) => {

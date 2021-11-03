@@ -12,12 +12,13 @@
     "server": "node ./src/run-server.js",
     "start": "npm run server",
     "initDB": "node ./scripts/init-db",
-    "refreshDB": "node ./scripts/refresh-db",
+    "refreshDB": "node ./scripts/refresh-local-db",
     <% if (useOAuth) { %>"client": "webpack-dev-server --config webpack-dev-server.config.js --inline",
     "client-build": <% if (isWin) { %>"set NODE_ENV=production&& webpack --config webpack-production.config.js",<%} else {%> "NODE_ENV=production webpack --config webpack-production.config.js",<%}%> <% } %>
     "serverless-build": "node ./scripts/serverless-build",
     "serverless-deploy": "node ./scripts/serverless-deploy",
-    "test": "jest"
+    "test": "jest",
+    {<% if (deployment === 'heroku_with_postgres') { %>"heroku-postbuild": "npm run initDB",<% } %>
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -57,7 +58,8 @@
     "adaptivecards-templating": "^2.1.0",
     "shortid": "2.2.16",
     "sequelize": "^5.22.3",
-    "dynamo-sequelize": "^0.8.1",
+    {<% if (deployment === 'heroku_with_postgres') { %>"pg": "^8.7.1",<% } %>
+    {<% if (deployment === 'aws_lambda_and_dynamoDB') { %>"dynamo-sequelize": "^0.8.1",<% } %>
     "axios": "^0.21.1",
     "dotenv": "6.2.0",
     "glip-integration-js": "^0.2.0",

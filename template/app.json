@@ -1,0 +1,53 @@
+{
+    "name": "RingCentral Add-In Framework Template",
+    "description" : "A test app for RingCentral Add-In App",
+    "repository": "",
+    "keywords": ["node", "express", "ringcentral add-in"],
+    "addons": [
+      {
+        "plan": "heroku-postgresql"
+      }
+    ],
+    "env": {
+      "APP_SERVER_SECRET_KEY": {
+        "description": "A secret key for verifying the integrity of signed cookies.",
+        "generator": "secret"
+      },
+      "APP_SERVER": {
+        "description": "Your heroku app URI.",
+        "value": "https://your_app_name.herokuapp.com"
+      },
+      "ASSETS_PATH": {
+        "description": "Client app asset path",
+        "value": "https://assetpath"
+      },
+      "CLIENT_ID": {
+        "description": "3rd party platform app client id",
+        "value": "client_id"
+      },
+      "CLIENT_SECRET": {
+        "description": "3rd party platform app client secret",
+        "value": "client_secret"
+      },
+      "ACCESS_TOKEN_URI": {
+        "description": "3rd party platform access token uri",
+        "value": "https://platform.com/oauth/access_token"
+      },
+      "AUTHORIZATION_URI": {
+        "description": "3rd party platform authorization uri",
+        "value": "https://platform.com/oauth/authorize"
+      },
+      "SCOPES": {
+        "description": "3rd party platform authorization scopes(default separated by comma)",
+        "value": "scope1,scope2"
+      },
+      "SCOPES_SEPARATOR": {
+        "description": "3rd party platform authorization scopes separator",
+        "value": ","
+      },
+      "IM_SHARED_SECRET": {
+        "description": "RingCentral app interactive message shared secret",
+        "value": "shared_secret"
+      }
+    }
+  }
