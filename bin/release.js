@@ -52,7 +52,7 @@ async function release({
         await octokit.rest.repos.createRelease({
             owner: process.env.GITHUB_OWNER,
             repo: packageJson.name,
-            tag: releaseVersionName,
+            tag_name: releaseVersionName,
             name: releaseVersionName,
             body: commit
         });
