@@ -6,6 +6,7 @@ const packageJson = require(packageJsonPath);
 const fs = require('fs').promises;
 const { resolve } = require('path');
 const npmPublish = require("@jsdevtools/npm-publish");
+const { Octokit } = require("@octokit/rest");
 
 async function release({
     releaseType,
@@ -41,6 +42,20 @@ async function release({
             token: process.env.INPUT_TOKEN
         });
         console.log(`npm published: ${newVersionNumber}`);
+
+        const octokit = new Octokit({
+            auth: process.env.GITHUB_TOKEN
+        });
+
+        const releaseVersionName = `v${newVersionNumber}`;
+
+        await octokit.rest.repos.createRelease({
+            owner: process.env.GITHUB_OWNER,
+            repo: packageJson.name,
+            tag: releaseVersionName,
+            name: releaseVersionName,
+            body: commit
+        });
     }
     catch (e) {
         console.log(e);
