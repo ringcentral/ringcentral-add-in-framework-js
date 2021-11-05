@@ -26,4 +26,4 @@ We also have simple demos that are based on the template and they'll be up and r
 npx ringcentral-add-in-framework demo
 ```
 
-For further Information, please refer to the `README.md` that's inside your generated template or demo.
+For further Information, please refer to the `README.md` that's inside your generated template or demo and [RingCentral App Developer Guide](https://developers.ringcentral.com/guide/applications)
