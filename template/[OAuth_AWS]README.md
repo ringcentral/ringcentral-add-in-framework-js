@@ -160,7 +160,7 @@ And get all JS assets file at public folder. Upload all files in public into CDN
 
 ### 1.1. Host client with server static host
 
-It's not recommended, but if you want to have a easier deployment without hosting client files on a separated place (eg. via CDN), you could choose to add following code in `src/server/index.js`
+It's not recommended, but if you want to have a easier deployment without hosting client files on a separated place (eg. via CDN, [Github Pages](https://pages.github.com/) etc.), you could choose to add following code in `src/server/index.js`
 
 ```javascript
 // static host client code
