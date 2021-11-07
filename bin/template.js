@@ -38,6 +38,7 @@ exports.generateTemplate = (
         { dirPath: path.resolve(projectDir, 'src') },
         { dirPath: path.resolve(projectDir, 'src/server') },
         { dirPath: path.resolve(projectDir, 'src/server/lib') },
+        { dirPath: path.resolve(projectDir, 'src/server/handlers') },
         { dirPath: path.resolve(projectDir, 'src/server/routes') },
         { dirPath: path.resolve(projectDir, 'src/server/views') },
         { dirPath: path.resolve(projectDir, 'src/server/models') },
@@ -53,16 +54,12 @@ exports.generateTemplate = (
     }
     switch (deployment) {
         case 'none':
-            copyFiles([
-                { filePath: path.resolve(__dirname, '../template/[OAuth]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
-            ]);
             break;
         case 'aws_lambda_and_dynamoDB':
             createDirs([
                 { dirPath: path.resolve(projectDir, 'serverless-deploy') },
             ]);
             copyFiles([
-                { filePath: path.resolve(__dirname, '../template/[OAuth_AWS]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
                 { filePath: path.resolve(__dirname, '../template/scripts/serverless-deploy.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-deploy.js') },
                 { filePath: path.resolve(__dirname, '../template/scripts/serverless-build.js',), destinationPath: path.resolve(projectDir, 'scripts/serverless-build.js') },
                 { filePath: path.resolve(__dirname, '../template/serverless-deploy/env.default.yml',), destinationPath: path.resolve(projectDir, 'serverless-deploy/env.default.yml') },
@@ -71,7 +68,6 @@ exports.generateTemplate = (
             break;
         case 'heroku_with_postgres':
             copyFiles([
-                { filePath: path.resolve(__dirname, '../template/[OAuth_Heroku]README.md',), destinationPath: path.resolve(projectDir, 'README.md') },
                 { filePath: path.resolve(__dirname, '../template/app.json',), destinationPath: path.resolve(projectDir, 'app.json') },
                 { filePath: path.resolve(__dirname, '../template/Procfile',), destinationPath: path.resolve(projectDir, 'Procfile') },
             ]);
@@ -93,6 +89,7 @@ exports.generateTemplate = (
         { filePath: path.resolve(__dirname, '../template/src/server/adaptiveCardPayloads/sample.json',), destinationPath: path.resolve(projectDir, 'src/server/adaptiveCardPayloads/sample.json') },
         { filePath: path.resolve(__dirname, '../template/tests/setup.js',), destinationPath: path.resolve(projectDir, 'tests/setup.js') },
         { filePath: path.resolve(__dirname, '../template/tests/notification.test.js',), destinationPath: path.resolve(projectDir, 'tests/notification.test.js') },
+        { filePath: path.resolve(__dirname, '../template/src/server/lib/messageHelper.js',), destinationPath: path.resolve(projectDir, 'src/server/lib/messageHelper.js') },
     ])
 
 
@@ -205,6 +202,24 @@ exports.generateTemplate = (
     });
 
     copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/handlers/[TEMPLATE]notificationHandler.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/handlers/notificationHandler.js'),
+        params: {
+            useOAuth: useOAuth,
+            useRefreshToken: useRefreshToken
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../template/src/server/handlers/subscriptionHandler.js',),
+        destinationPath: path.resolve(projectDir, 'src/server/handlers/subscriptionHandler.js'),
+        params: {
+            useOAuth: useOAuth,
+            useRefreshToken: useRefreshToken
+        },
+    });
+
+    copyTemplate({
         templatePath: path.resolve(__dirname, '../template/src/server/routes/[TEMPLATE]view.js',),
         destinationPath: path.resolve(projectDir, 'src/server/routes/view.js'),
         params: {
@@ -244,6 +259,22 @@ exports.generateTemplate = (
             destinationPath: path.resolve(projectDir, 'src/server/routes/authorization.js'),
             params: {
                 useRefreshToken: useRefreshToken
+            },
+        });
+
+        copyTemplate({
+            templatePath: path.resolve(__dirname, '../template/src/server/handlers/[TEMPLATE]authorizationHandler.js',),
+            destinationPath: path.resolve(projectDir, 'src/server/handlers/authorizationHandler.js'),
+            params: {
+                useRefreshToken: useRefreshToken
+            },
+        });
+
+        copyTemplate({
+            templatePath: path.resolve(__dirname, '../template/[OAuth]README.md',),
+            destinationPath: path.resolve(projectDir, 'README.md'),
+            params: {
+                deployment: deployment
             },
         });
     }

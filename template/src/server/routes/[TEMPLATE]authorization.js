@@ -1,10 +1,9 @@
 const { User } = require('../models/userModel');
 const { Subscription } = require('../models/subscriptionModel');
 const { decodeJwt, generateJwt } = require('../lib/jwt');
+const { onAuthorize, onUnauthorize } = require('../handlers/authorizationHandler');
 const { <%if (useRefreshToken) {%> checkAndRefreshAccessToken,<%}%> getOAuthApp } = require('../lib/oauth');
 
-//====INSTRUCTION====
-// go to generateToken() method below
 async function openAuthPage(req, res) {
     try {
         const oauthApp = getOAuthApp();
@@ -49,117 +48,24 @@ async function getUserInfo(req, res) {
     res.json({ user, hasSubscription });
 }
 
+async function generateToken(req, res) {
+    const oauthApp = getOAuthApp();
 <%if (useRefreshToken) {%>
-//====INSTRUCTION====
-//search for [REPLACE] tags under Step.1. Note: It's recommended to use 3rd party platform's npm package to make API calls easier
-async function generateToken(req, res) {
-    const oauthApp = getOAuthApp();
     const { accessToken, refreshToken, expires } = await oauthApp.code.getToken(req.body.callbackUri);
-    if (!accessToken || !refreshToken) {
-        res.status(403);
-        res.send('Params error');
-        return;
-    }
-    console.log(`Receiving accessToken: ${accessToken} and refreshToken: ${refreshToken}`);
-    try {
-        // Step.1: Get user info from 3rd party API call
-        const userInfoResponse = { id: "id", email: "email", name: "name" }   // [REPLACE] this line with actual call
-        const userId = userInfoResponse.id; // [REPLACE] this line with user id from actual response
-
-        // [DELETE] this block after it correctly prints out userId from 3rd party platform, and go to Step2
-        console.log('\n====================');
-        console.log(`authorization.js - generateToken - Step.1\n[log]userId: ${userId}`);
-        console.log('====================');
-        return;
-        // [DELETE] block end
-
-        // Find if it's existing user in our database
-        let user = await User.findByPk(userId);
-        // Step.2: If user doesn't exist, we want to create a new one
-        if (!user) {
-            user = await User.create({
-                id: userId,
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                tokenExpiredAt: expires,
-                email: userInfoResponse.email, // [REPLACE] this with actual user email in response, [DELETE] this line if user info doesn't contain email
-                name: userInfoResponse.name, // [REPLACE] this with actual user name in response, [DELETE] this line if user info doesn't contain name
-            });
-        }
-        // If user exists but logged out, we want to fill in token info
-        else if(!user.accessToken){
-            user.accessToken = accessToken;
-            user.refreshToken = refreshToken;
-            user.tokenExpiredAt = expires;
-            await user.save();
-        }
-
-        // [DELETE] this block after it correctly prints out userId from 3rd party platform
-        console.log('\n====================');
-        console.log(`authorization.js - generateToken - Step.2\n[log]user: ${JSON.stringify(user, null, 2)}`);
-        console.log('====================\n');
-        // [DELETE] block end
-        // Step.3: Now, go to subscription.js
-
-        // Return jwt to client for future client-server communication
-        const jwtToken = generateJwt({ id: userId });
-        res.status(200);
-        res.json({
-            authorize: true,
-            token: jwtToken,
-        });
-    } catch (e) {
-        console.error(e);
-        res.status(500);
-        res.send('Internal error.');
-    }
-}
-<%} else {%>
-//====INSTRUCTION====
-//search for [REPLACE] tags under Step.1. Note: you'll probably want to use 3rd party platform's npm package to make things easier
-async function generateToken(req, res) {
-    const oauthApp = getOAuthApp();
+    if (!accessToken || !refreshToken) {<%} else {%>
     const { accessToken } = await oauthApp.code.getToken(req.body.callbackUri);
-    if (!accessToken) {
+    if (!accessToken) {<%}%>
         res.status(403);
         res.send('Params error');
         return;
     }
-    console.log(`Receiving accessToken: ${accessToken}`);
+<%if (useRefreshToken) {%>
+    console.log(`Receiving accessToken: ${accessToken} and refreshToken: ${refreshToken}`);<%} else {%>
+    console.log(`Receiving accessToken: ${accessToken}`);<%}%>
     try {
-        // Step.1: Get user info from 3rd party API call
-        const userInfoResponse = { id: "id", email: "email", name: "name" }   // [REPLACE] this line with actual call
-        const userId = userInfoResponse.id; // [REPLACE] this line with user id from actual response
-
-        // [DELETE] this block after it correctly prints out userId from 3rd party platform, and go to Step2
-        console.log('\n====================');
-        console.log(`authorization.js - generateToken - Step.1\n[log]userId: ${userId}`);
-        console.log('====================');
-        return;
-        // [DELETE] block end
-
-        // Find if it's existing user in our database
-        let user = await User.findByPk(userId);  
-        // Step.2: If user doesn't exist, we want to create a new one
-        if (!user) {
-            user = await User.create({
-                id: userId,
-                accessToken: accessToken,
-                email: userInfoResponse.email, // [REPLACE] this with actual user email in response, [DELETE] this line if user info doesn't contain email
-                name: userInfoResponse.name, // [REPLACE] this with actual user name in response, [DELETE] this line if user info doesn't contain name
-            });
-        }
-        else{
-            user.accessToken = accessToken;
-            await user.save();
-        }
-
-        // [DELETE] this block after it correctly prints out userId from 3rd party platform, and go to subscription.js
-        console.log('\n====================');
-        console.log(`authorization.js - generateToken - Step.2\n[log]user: ${JSON.stringify(user, null, 2)}`);
-        console.log('====================\n');
-        // [DELETE] block end
-
+<%if (useRefreshToken) {%>
+        const userId = await onAuthorize(accessToken, refreshToken, expires);<%} else {%>
+        const userId = await onAuthorize(accessToken);<%}%>
         // Return jwt to client for future client-server communication
         const jwtToken = generateJwt({ id: userId });
         res.status(200);
@@ -173,8 +79,8 @@ async function generateToken(req, res) {
         res.send('Internal error.');
     }
 }
-<%}%>
-// This methods is to log user out and unsubscribe everything under this user. Search for [INSERT] tag and make changes
+
+// This methods is to log user out and unsubscribe everything under this user.
 async function revokeToken(req, res) {
     const jwtToken = req.body.token;
     if (!jwtToken) {
@@ -190,27 +96,7 @@ async function revokeToken(req, res) {
     }
     const userId = decodedToken.id;
     try {
-        const user = await User.findByPk(userId);
-        if (user) {
-            // Clear database info
-            user.rcUserId = '';
-            user.accessToken = '';<%if (useRefreshToken) {%>
-            user.refreshToken = '';<%}%>
-            // Step.1: Unsubscribe all webhook and clear subscriptions in db
-            const subscription = await Subscription.findOne({
-                where: {
-                    rcWebhookUri: req.body.rcWebhookUri
-                }
-            });
-            if (subscription && subscription.thirdPartyWebhookId) {
-                const thirdPartySubscriptionId = subscription.thirdPartyWebhookId;
-                // [INSERT] call to delete webhook subscription from 3rd party platform
-
-                await subscription.destroy();
-
-            }
-            await user.save();
-        }
+        await onUnauthorize(userId);
         res.status(200);
         res.json({
             result: 'ok',

@@ -12,6 +12,17 @@ async function release({
     commit
 }) {
     try {
+        console.log('fetching for changes...');
+        const fetchResponse = await git.fetch();
+        
+        if(fetchResponse.remote)
+        {
+            console.warn('New changes are fetched from the remote. Please pull the latest changes.');
+            return;
+        }
+        
+        console.log('no change from remote, proceed releasing...');
+        
         console.log(`current version: ${packageJson.version}`);
         const versionNumbers = packageJson.version.split('.');
         let major = versionNumbers[0];

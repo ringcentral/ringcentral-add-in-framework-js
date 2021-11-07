@@ -1,17 +1,14 @@
 # RingCentral-Add-In-Framework
 
 This template aims to help you quickly set up your app with 3rd party webhook integration.
-
+<% if (deployment === 'heroku_with_postgres') { %>
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+<%}%> 
 # Prerequisites
 
 - Download and install RingCentral App and login: https://www.ringcentral.com/apps/rc-app
-- Nodejs and npm.
-
-# Workflow Diagram
-
-Note: if you don't have Markdown view, please open the flow diagram directly from `diagram/flow.svg`.
-
-![flow](./diagram/flow.svg)
+- Nodejs and npm
+- Register an app on rd party platform
 
 # Development
 
@@ -38,44 +35,54 @@ Note: your local firewall might block certain ngrok regions. If so, try changing
 
 ## Step.2 Set Up Environment Info
 
+There are several OAuth-related fields in `.env` need to be set. They can be found on your target 3rd party platform docs.
+
 ```bash
 # .env file
 
 # local server setup
-# Copy `https://xxxx.ngrok.io` from last step
-APP_SERVER= 
+APP_SERVER= # Copy `https://xxxx.ngrok.io` from last step
 
 # RingCentral developer portal
-# You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
-IM_SHARED_SECRET= 
+IM_SHARED_SECRET= # You'll need a RingCentral App first, and this can then be found on developer portal, under App Settings
 ```
 
-## Step.3 Coding
+## Step.3 Create A Notification Add-In App In Sandbox
 
-In `src/server/routes/notification.js`, follow steps in `notification` function.
+Go to [RingCentral Developer Portal](https://developers.ringcentral.com/) and [create a notification add-in app](https://developers.ringcentral.com/guide/basics/create-app).
 
-## Step.4 Test
+On app creation page, please:
+- Tick on Interactive Messages and fill in Outbound Webhook URL with `https://xxxx.ngrok.io/interactive-messages`
+- Copy Shared Secret and fill in for `IM_SHARED_SECRET` in above `.env` file
+- Tick on 'This app can be installed via web' and fill in `https://xxxx.ngrok.io/setup` 
+
+## Step.4 Write Your Code and Try It
+
+Now that development environment is all set, let's write handler codes. We just need to focus on files under `src/server/handlers`. 
+
+Workflow-wise, let's write codes for files in following order:
+1. subscriptionHandler.js = subscription([workflow 4-7](#workflow-diagram))
+2. notificationHandler.js = notification([workflow 12-15](#workflow-diagram)) + interactive message([workflow 8-22](#workflow-diagram))
+
+### Workflow Diagram
+
+Note: if you don't have Markdown view, please open the flow diagram directly from `diagram/flow.svg`.
+
+![flow](./diagram/flow.svg)
+
+## Step.5 Start Local Server and Client
+
+Open 2 new terminals and run below commands respectively:
 
 ```bash
 # open a new terminal
 # start local server
 npm run start
+
+# open another new terminal
+# start client app
+npm run client
 ```
-
-### Online Developer Tool
-
-For local development, we can use [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) to simulate RingCentral App Gallery shell which handles communications between your app and RingCentral server.
-
-To use above tool, there are two fields we want to fill in:
-
-1. `App Url`: It is for this tool to retrieve the app's entry point to render. In our framework, it's set to `https://xxxx.ngrok.io/setup`
-2. `Webhook Url`, there are 2 ways:
-   1. Click `Get a webhookUrl` and login to your RingCentral App. Generate webhook url from your Team channel.
-   2. Go to RingCentral App Gallery and add `Incoming Webhook` App to your conversation channel. As a result, you will get a webhook URL like `https://hooks.glip.com/webhook/xxxxx` (aka `RC_WEBHOOK`) and that's what we need here.
-
-Now press `Apply` ([workflow 1-2](#workflow-diagram)). We should be able to see the UI button gets rendered in top block.
-
-(Important note: [RingCentral notification app developer tool](https://ringcentral.github.io/ringcentral-notification-app-developer-tool/) doesn't provide the environment for `interactiveMessages`([workflow 8-22](#workflow-diagram)). To have a test environment for that, you will need to [create your sandbox app](#register-app-on-ringcentral-developer-website) on [RingCentral Developer Portal](https://developers.ringcentral.com/login.html#/) (Add-In is currently in beta, so you want to join beta on the same web page).)
 
 ### POST Test Data
 
@@ -86,6 +93,22 @@ There is a simple HTTP POST script: `scripts/test-data.js`. If you need to have 
 node scripts/test-data.js
 ```
 
+### Tips
+
+- [Adaptive Cards Designer](https://adaptivecards.io/designer/) is a great online tool to design your Adaptive Cards. Json files under `src/server/adaptiveCards` follow the same format as in `CARD PAYLOAD EDITOR`, so you can design your card on [Adaptive Cards Designer](https://adaptivecards.io/designer/) and copy over the payload directly.
+- `npm run refreshDB` to delete existing db file and create a new one
+
+### Additional Note
+
+There are several npm packages to be highlighted here:
+- [adaptivecards-templating](https://www.npmjs.com/package/adaptivecards-templating): Tool to inject data into Adaptive Cards json files.
+- [sequelize](https://www.npmjs.com/package//sequelize): Node.js database ORM tool
+- [axios](https://www.npmjs.com/package/axios): Promise based HTTP client for the browser and node.js
+- [client-oauth2](https://www.npmjs.com/package/client-oauth2): OAuth2 wrapper
+- [serverless](https://www.npmjs.com/package/serverless): serverless framework
+
+When start development, it's recommended to use 3rd party's official npm package for its API calls.
+
 # Test
 
 This template uses [supertest](https://www.npmjs.com/package/supertest) and [nock](https://www.npmjs.com/package/nock) for testing. A few examples are in `tests` folder. To start test:
@@ -94,15 +117,33 @@ This template uses [supertest](https://www.npmjs.com/package/supertest) and [noc
 npm run test
 ```
 
+<% if (deployment === 'aws_lambda_and_dynamoDB') { %>
 # Deployment
-
-## Register App on RingCentral Developer Website
-
-Create your app following [this guide](https://developers.ringcentral.com/guide/applications).
 
 ## Deploy with Serverless
 
-### 1. Create `serverless-deploy/env.yml` file
+### 1. Compile JS files
+
+```
+$ npm run client-build
+```
+
+And get all JS assets file at public folder. Upload all files in public into CDN or static web server.
+
+### 1.1. Host client with server static host
+
+It's not recommended, but if you want to have a easier deployment without hosting client files on a separated place (eg. via CDN, [Github Pages](https://pages.github.com/) etc.), you could choose to add following code in `src/server/index.js`
+
+```javascript
+// static host client code
+app.use('/client', express.static(__dirname + '/client'));
+```
+
+Move client built output in `public` to `src/server/client`, and then `ASSETS_PATH` in `.env` should be `{serverAddress}/client`.
+
+It's essentially a tradeoff between simple hosting and client app download speed.
+
+### 2. Create `serverless-deploy/env.yml` file
 
 ```
 $ cp serverless-deploy/env.default.yml serverless-deploy/env.yml
@@ -111,16 +152,16 @@ $ cp serverless-deploy/env.default.yml serverless-deploy/env.yml
 Edit `serverless-deploy/env.yml` to set environment variables.
 We will get `APP_SERVER` after first deploy. So now just keep it blank.
 
-### 2. Create `serverless-deploy/serverless.yml` file
+### 3. Create `serverless-deploy/serverless.yml` file
 
 ```
 $ cp serverless-deploy/serverless.default.yml serverless-deploy/serverless.yml
 ```
 
 Edit `serverless-deploy/env.yml` to update serverless settings.
-The Dynamo `TableName` should be `${DYNAMODB_TABLE_PREFIX}webhooks`. `DYNAMODB_TABLE_PREFIX` is environment variable that we set upper.
+The Dynamo `TableName` should be `${DYNAMODB_TABLE_PREFIX}webhooks`. `DYNAMODB_TABLE_PREFIX` is environment variable that we set upper. `ASSETS_PATH` is uri where you host JS files in `Step 1`.
 
-### 3. Deploy
+### 4. Deploy
 
 ```
 $ npm run serverless-build
@@ -133,3 +174,18 @@ Copy the uri, and update environment variable `APP_SERVER` with it in `serverles
 ```
 $ npm run serverless-deploy
 ```
+<%}%> 
+
+<% if (deployment === 'heroku_with_postgres') { %>
+# Deployment
+
+## Deploy with Heroku
+
+Use Heroku deploy button on the top to do initial deployment. Then link your repository with Heroku for future deployments using `git push heroku {branch}`.
+
+More Info:
+
+- [Heroku Button](https://devcenter.heroku.com/articles/heroku-button)
+- This template is configured with [Heroku Postgres](https://devcenter.heroku.com/articles/heroku-postgresql)
+- Integrate with [Other Heroku Add-on](https://devcenter.heroku.com/categories/add-ons)
+<%}%> 
