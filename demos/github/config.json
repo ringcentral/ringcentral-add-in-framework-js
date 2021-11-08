@@ -1,0 +1,42 @@
+{
+    "useOAuth": true,
+    "useRefreshToken" : false,
+    "tokenUri" : "https://github.com/login/oauth/access_token",
+    "authUri": "https://github.com/login/oauth/authorize",
+    "scopes": "admin:repo_hook,read:user,repo",
+    "deployment": "aws_lambda_and_dynamoDB",
+    "additionalEnvVar":[
+        {
+            "name": "TEST_REPO_NAME",
+            "value":""
+        }
+    ],
+    "adds":[
+        {
+            "fileName" : "githubIssue.json",
+            "destination": "src/server/adaptiveCardPayloads/githubIssue.json"
+        }
+    ],
+    "overwrites" :[
+        {
+            "fileName" : "authorizationHandler.js",
+            "destination": "src/server/handlers/authorizationHandler.js"
+        },
+        {
+            "fileName" : "notificationHandler.js",
+            "destination": "src/server/handlers/notificationHandler.js"
+        },
+        {
+            "fileName" : "subscriptionHandler.js",
+            "destination": "src/server/handlers/subscriptionHandler.js"
+        },
+        {
+            "fileName" : "package.json",
+            "destination": "package.json"
+        },
+        {
+            "fileName" : "README_quickstart.md",
+            "destination": "README_quickstart.md"
+        }
+    ]
+}

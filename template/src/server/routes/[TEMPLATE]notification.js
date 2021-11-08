@@ -27,9 +27,10 @@ async function notification(req, res) {
           res.send('Unknown subscription id');
           return;
         }
-        <%if (useRefreshToken) {%>// check token refresh condition
+        
         const userId = subscription.userId;
         const user = await User.findByPk(userId.toString());
+        <%if (useRefreshToken) {%>// check token refresh condition
         await checkAndRefreshAccessToken(user);<%}%>
         await onReceiveNotification(req.body, subscription, user);
     } catch (e) {

@@ -1,16 +1,18 @@
 const fs = require('fs');
 const path = require('path');
-const { copyDir } = require('./copyHelper');
+const { copyFiles } = require('./copyHelper');
+const { generateTemplate } = require('./template');
 
 exports.generateDemo = (
     {
-        demoType
+        demoType,
+        isTest
     }) => {
     let projectName = demoType;
     let projectDir;
     if (!projectName) {
         projectName = path.basename(process.cwd());
-        projectDir = process.cwd();
+        projectDir = !isTest ? process.cwd() : `${process.cwd()}/test`;
     } else {
         projectDir = path.resolve(process.cwd(), projectName);
     }
@@ -20,11 +22,42 @@ exports.generateDemo = (
     if (fs.existsSync(path.resolve(projectDir, 'package.json'))) {
         throw Error('project existed');
     }
-    // copy demo
-    copyDir(
-        {
-            demoPath: path.resolve(__dirname, '../demos', demoType),
-            destinationPath: path.resolve(projectDir)
+    // get config
+    const demoPath = path.resolve(__dirname, '../demos', demoType);
+    const config = require(path.resolve(demoPath, 'config.json'));
+
+    // generate base template
+    generateTemplate({
+        appName: projectName,
+        useOAuth: config.useOAuth,
+        useRefreshToken: config.useRefreshToken,
+        accessTokenUri: config.tokenUri,
+        authorizationUri: config.authUri,
+        scopes: config.scopes,
+        deployment: config.deployment
+    });
+
+    // add and overwrite demo files
+    for (const file of config.adds) {
+        copyFiles([
+            { filePath: path.resolve(demoPath, file.fileName), destinationPath: path.resolve(projectDir, file.destination) }
+        ]);
+    }
+    for (const file of config.overwrites) {
+        copyFiles([
+            { filePath: path.resolve(demoPath, file.fileName), destinationPath: path.resolve(projectDir, file.destination) }
+        ]);
+    }
+
+    // add additional environment variables if any
+    if (config.additionalEnvVar) {
+        let envFileText = fs.readFileSync(path.resolve(projectDir, '.env'), 'utf-8');
+        let newText = 'IM_SHARED_SECRET=';
+        for (const envVar of config.additionalEnvVar) {
+            
+            newText += `\n\n${envVar.name}=${envVar.value}`;
         }
-    );
+        envFileText = envFileText.replace('IM_SHARED_SECRET=', newText);
+        fs.writeFileSync(path.resolve(projectDir, '.env'), envFileText);
+    }
 }

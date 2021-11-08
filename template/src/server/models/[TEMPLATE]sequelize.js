@@ -1,8 +1,6 @@
 <% if (deployment === 'aws_lambda_and_dynamoDB') { %>
 const Sequelize = require('dynamo-sequelize').default;
-
 const config = {
-  dialect: 'dynamo',
   define: {
     timestamps: true
   },
@@ -13,11 +11,15 @@ const config = {
   }
 };
 
+if (process.env.DIALECT === 'dynamodb') {
+  config.dialect = 'dynamo';
+}
+
 const sequelize = new Sequelize(
   process.env.DATABASE_URL,
   config
 );
-
+  
 <%} else {%>
 const { Sequelize } = require('sequelize');
 

@@ -90,6 +90,10 @@ Note: if you don't have Markdown view, please open the flow diagram directly fro
 
 ![flow](./diagram/flow.svg)
 
+### Data Transformation
+
+[Adaptive Cards Designer](https://adaptivecards.io/designer/) is a great online tool to design your Adaptive Cards. Json files under `src/server/adaptiveCards` follow the same format as in `CARD PAYLOAD EDITOR`, so you can design your card on [Adaptive Cards Designer](https://adaptivecards.io/designer/) and copy over the payload directly.
+
 ## Step.5 Start Local Server and Client
 
 Open 2 new terminals and run below commands respectively:
@@ -115,8 +119,7 @@ node scripts/test-data.js
 
 ### Tips
 
-- [Adaptive Cards Designer](https://adaptivecards.io/designer/) is a great online tool to design your Adaptive Cards. Json files under `src/server/adaptiveCards` follow the same format as in `CARD PAYLOAD EDITOR`, so you can design your card on [Adaptive Cards Designer](https://adaptivecards.io/designer/) and copy over the payload directly.
-- `npm run refreshDB` to delete existing db file and create a new one
+- `npm run refreshDB` to delete existing local db file and create a new one
 
 ### Additional Note
 

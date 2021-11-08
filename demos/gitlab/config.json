@@ -1,0 +1,46 @@
+{
+    "useOAuth": true,
+    "useRefreshToken" : true,
+    "tokenUri" : "https://gitlab.com/oauth/token",
+    "authUri": "https://gitlab.com/oauth/authorize",
+    "scopes": "api",
+    "deployment": "aws_lambda_and_dynamoDB",
+    "additionalEnvVar":[
+        {
+            "name": "API_SERVER",
+            "value":"https://gitlab.com"
+        },
+        {
+            "name": "TEST_PROJECT_NAME",
+            "value":""
+        }
+    ],
+    "adds":[
+        {
+            "fileName" : "gitlabIssueCard.json",
+            "destination": "src/server/adaptiveCardPayloads/gitlabIssueCard.json"
+        }
+    ],
+    "overwrites" :[
+        {
+            "fileName" : "authorizationHandler.js",
+            "destination": "src/server/handlers/authorizationHandler.js"
+        },
+        {
+            "fileName" : "notificationHandler.js",
+            "destination": "src/server/handlers/notificationHandler.js"
+        },
+        {
+            "fileName" : "subscriptionHandler.js",
+            "destination": "src/server/handlers/subscriptionHandler.js"
+        },
+        {
+            "fileName" : "package.json",
+            "destination": "package.json"
+        },
+        {
+            "fileName" : "README_quickstart.md",
+            "destination": "README_quickstart.md"
+        }
+    ]
+}
