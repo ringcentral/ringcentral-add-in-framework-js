@@ -8,13 +8,6 @@ async function onAuthorize(accessToken) {<%}%>
     const userInfoResponse = { id: "id", email: "email", name: "name" }   // [REPLACE] this line with actual call
     const userId = userInfoResponse.id; // [REPLACE] this line with user id from actual response
 
-    // [DELETE] this block after it correctly prints out userId from 3rd party platform, and go to Step2
-    console.log('\n====================');
-    console.log(`authorization.js - generateToken - Step.1\n[log]userId: ${userId}`);
-    console.log('====================');
-    return;
-    // [DELETE] block end
-
     // Find if it's existing user in our database
     let user = await User.findByPk(userId);
     // Step.2: If user doesn't exist, we want to create a new one
@@ -35,12 +28,6 @@ async function onAuthorize(accessToken) {<%}%>
         user.tokenExpiredAt = expires;<%}%>
         await user.save();
     }
-
-    // [DELETE] this block after it correctly prints out userId from 3rd party platform
-    console.log('\n====================');
-    console.log(`authorization.js - generateToken - Step.2\n[log]user: ${JSON.stringify(user, null, 2)}`);
-    console.log('====================\n');
-    // [DELETE] block end
 
     return userId;
 }

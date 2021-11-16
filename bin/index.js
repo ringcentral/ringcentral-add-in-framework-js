@@ -13,6 +13,17 @@ const { generateDemo } = require('./demo');
 program.version(version).description('RingCentral Add-In Framework');
 
 program
+.command('help')
+.alias('h')
+.description('help:')
+.action(()=>{
+    console.log('To install a template:');
+    console.log('   npx ringcentral-add-in-framework template');
+    console.log('To install a demo:');
+    console.log('   npx ringcentral-add-in-framework demo');
+});
+
+program
     .command('template')
     .alias('t')
     .description('install a new template')
@@ -82,7 +93,7 @@ program
                 {
                     type: 'list',
                     name: 'deployment',
-                    message: 'Do you want to pre-configure with any of following deployments?',
+                    message: 'We provide a few pre-configured deployment methods. If not listed, please select none, and implement your own deployment method.',
                     choices: ['none', 'aws_lambda_and_dynamoDB', 'heroku_with_postgres'],
                 }
             ])
