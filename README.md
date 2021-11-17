@@ -1,6 +1,6 @@
 # [RingCentral Add-In Framework](https://github.com/ringcentral/ringcentral-add-in-framework-js)
 
-![Build Status](https://github.comringcentral/ringcentral-add-in-framework-js/actions/workflows/release.yaml/badge.svg)
+[![Build Status](https://github.com/ringcentral/ringcentral-add-in-framework-js/actions/workflows/release.yaml/badge.svg)](https://github.com/ringcentral/ringcentral-add-in-framework-js/actions)
 [![Latest release](https://img.shields.io/github/v/release/ringcentral/ringcentral-add-in-framework-js)](https://github.com/ringcentral/ringcentral-add-in-framework-js/releases)
 
 
