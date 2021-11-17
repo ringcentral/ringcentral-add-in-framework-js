@@ -1,4 +1,8 @@
-# RingCentral Add-In Framework
+# [RingCentral Add-In Framework](https://github.com/ringcentral/ringcentral-add-in-framework-js)
+
+![Build Status](https://github.comringcentral/ringcentral-add-in-framework-js/actions/workflows/release.yaml/badge.svg)
+[![Latest release](https://img.shields.io/github/v/release/ringcentral/ringcentral-add-in-framework-js)](https://github.com/ringcentral/ringcentral-add-in-framework-js/releases)
+
 
 The framework will help you create a [RingCentral Add-In App](https://developers.ringcentral.com/guide/team-messaging/add-ins) that subscribes to 3rd party notifications via webhook and forward incoming notifications from 3rd party server to RingCentral App.
 
