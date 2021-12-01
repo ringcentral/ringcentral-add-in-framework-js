@@ -11,33 +11,49 @@ The framework will help you create a [RingCentral Add-In App](https://developers
 - Download and install RingCentral App and login: https://www.ringcentral.com/apps/rc-app
 - Nodejs and npm.
 
-# Install Framework
+# Framework
 
-This framework contains several templates due to the fact that different 3rd party platforms have different designs on their APIs. Before starting the installation, please:
+This framework should be used as a boilerplate project. There are two types of Add-Ins that can be installed with this framework:
+- Notification App
+- Bot
+
+## Notification App
+<details>
+  <summary>How to install a notification app template/demo</summary>
+This framework contains several app template variations due to the fact that different 3rd party platforms have different designs on their APIs. Before starting the installation, please:
 1. Go to 3rd party platform and register a new app there. For most platforms who have OAuth flow implementation, there will be `ClientId` and `ClientSecret` generated for your app.
 2. If 3rd party platform uses `OAuth`, please check if it uses `accessToken` + `refreshToken` OR just `accessToken`.
 3. If 3rd party platform uses `OAuth`, please find their API endpoints for authorization and access token exchange.
-
-Then install a `template` with following commands:
-
-```bash
-npx ringcentral-add-in-framework template
-```
-
-We also have simple `demos` that are based on the template and they'll be up and running with a few steps to configure. Demos can be installed with:
+   
+Then install a `app-template` with following commands:
 
 ```bash
-npx ringcentral-add-in-framework demo
+npx ringcentral-add-in-framework app-template
+
+OR
+
+npx ringcentral-add-in-framework at
 ```
 
-# Use Framework Template
+We also have simple `app-demo` that are based on the template and they'll be up and running with a few steps to configure. Demos can be installed with:
 
-This framework should be used as a boilerplate project. To work with a plain `template`, we essentially want to fill in our business logic in handlers which are for:
+```bash
+npx ringcentral-add-in-framework app-demo
+
+OR
+
+npx ringcentral-add-in-framework ad
+```
+</details>
+
+<details>
+  <summary>How to use a notification app template</summary>
+To work with a plain `app-template`, we want to fill in our business logic in handlers which are for:
 - Authorization (authorize Add-In server with user's 3rd party platform account)
 - Subscription (create event subscription on 3rd party platform)
 - Notification (receive and format data from 3rd party platform when subscribed events happen)
 
-## Coding
+### Coding
 
 Please follow the steps inside the handlers. For example, authorization handler in `template` looks like:
 
@@ -80,11 +96,87 @@ if (!user) {
 }
 ```
 
-# Use Framework Demo
+</details>
 
+<details>
+  <summary>How to use a notification app demo</summary>
 It's a lot easier than using a `template`, and `demos` are essentially `templates` with platform-dependent logic written to implement simple functionality. Therefore a few cli commands would make it up and run.
 
 At the moment, we have `demos` for `Github`, `Asana` and `Gitlab`.
+
+</details>
+
+## Bot
+<details>
+  <summary>How to install a bot template</summary>
+To install a `bot-template`, use:
+
+```bash
+npx ringcentral-add-in-framework bot-template
+
+OR
+
+npx ringcentral-add-in-framework bt
+```
+</details>
+
+<details>
+  <summary>How to use a bot template</summary>
+
+### Quick Try
+A `bot-template` would be up-and-running without any extra code. Here's how:
+
+1. run `npm i` and then `npm run ngrok`. We'll get `https://xxxxxx.ngrok.io` as our server address.
+2. Create a Bot Add-In on developer.ringcentral.com, and go to app settings. (Additional Info on creating a bot: https://developers.ringcentral.com/guide/team-messaging/bots/walkthrough)
+   1. OAuth Redirect URI: `https://xxxxxx.ngrok.io/bot/oauth`
+   2. App Permissions: Read Messages, Read Accounts, Team Messaging, Webhook Subscriptions, Edit Messages
+   3. Outbound Webhook URL: `https://xxxxxx.ngrok.io/interactive-messages`
+   4. Note down `SharedSecret`
+3. We'll also get `ClientId` and `ClientSecret` for the app after created. Let's then fill in `.env` file with:
+
+```bash
+RINGCENTRAL_CHATBOT_SERVER=https://xxxxxxx.ngrok.io
+
+RINGCENTRAL_CHATBOT_CLIENT_ID={ClientId}
+
+RINGCENTRAL_CHATBOT_CLIENT_SECRET={ClientSecret}
+
+RINGCENTRAL_SERVER=https://platform.devtest.ringcentral.com
+
+RINGCENTRAL_CHATBOT_EXPRESS_PORT=6066
+
+RINGCENTRAL_CHATBOT_DATABASE_CONNECTION_URI=sqlite://./db.sqlite
+
+# Credentials for admin actions
+RINGCENTRAL_CHATBOT_ADMIN_USERNAME=admin
+RINGCENTRAL_CHATBOT_ADMIN_PASSWORD=password
+
+# RingCentral Add-In App interactive message shared secret
+RINGCENTRAL_SHARED_SECRET={SharedSecret}
+```
+
+4. Open another terminal and run `npm run start`
+5. On developer portal, go to your bot app's `Bot` tab and do `Add To RingCentral`
+6. Go to `https://app.devtest.ringcentral.com` to test it with direct message or @{yourBotName} in a team conversation with command `hello` and `card`
+
+### Development
+
+New bot command, in `src/handlers/botHandler.js`, add a new `case`:
+
+```javascript
+case 'new command':
+    // send text
+    const myText = '';
+    await bot.sendMessage(group.id, { text: myText });
+    // Or, send adaptive card. Here we use adaptive card template package, please refer to the use of it in the template
+    // https://adaptivecards.io/designer/ is a great tool to design your card
+    const card = {};
+    await bot.sendAdaptiveCard(group.id, card);
+```
+
+</details>
+
+<br>
 
 # Detailed Info
 

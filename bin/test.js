@@ -1,5 +1,6 @@
-const { generateTemplate } = require('./template');
-const { generateDemo } = require('./demo');
+const { generateAppTemplate } = require('./app-template');
+const { generateAppDemo } = require('./app-demo');
+const { generateBotTemplate } = require('./bot-template');
 const rimraf = require("rimraf");
 const path = require('path');
 const { readdirSync } = require('fs')
@@ -13,7 +14,7 @@ const OAuthAndRefreshConfigWithNoDeploy = {
     setupParams: false,
     deployment: 'none'
 };
-generateTemplate(OAuthAndRefreshConfigWithNoDeploy);
+generateAppTemplate(OAuthAndRefreshConfigWithNoDeploy);
 rimraf.sync(__dirname.replace('bin', OAuthAndRefreshConfigWithNoDeploy.appName));
 console.log('OAuthAndRefreshConfigWithNoDeploy test successful.');
 
@@ -24,7 +25,7 @@ const OAuthAndRefreshConfigWithAWSDeploy = {
     setupParams: false,
     deployment: 'aws_lambda_and_dynamoDB'
 };
-generateTemplate(OAuthAndRefreshConfigWithAWSDeploy);
+generateAppTemplate(OAuthAndRefreshConfigWithAWSDeploy);
 rimraf.sync(__dirname.replace('bin', OAuthAndRefreshConfigWithAWSDeploy.appName));
 console.log('OAuthAndRefreshConfigWithAWSDeploy test successful.');
 
@@ -35,7 +36,7 @@ const OAuthAndRefreshConfigWithHerokuDeploy = {
     setupParams: false,
     deployment: 'heroku_with_postgres'
 };
-generateTemplate(OAuthAndRefreshConfigWithHerokuDeploy);
+generateAppTemplate(OAuthAndRefreshConfigWithHerokuDeploy);
 rimraf.sync(__dirname.replace('bin', OAuthAndRefreshConfigWithHerokuDeploy.appName));
 console.log('OAuthAndRefreshConfigWithHerokuDeploy test successful.');
 
@@ -46,7 +47,7 @@ const OAuthNoRefreshConfig = {
     setupParams: false,
     deployment: 'none'
 };
-generateTemplate(OAuthNoRefreshConfig);
+generateAppTemplate(OAuthNoRefreshConfig);
 rimraf.sync(__dirname.replace('bin', OAuthNoRefreshConfig.appName));
 console.log('OAuthNoRefresh test successful.');
 
@@ -57,7 +58,7 @@ const NoOAuthConfig = {
     setupParams: false,
     deployment: 'none'
 };
-generateTemplate(NoOAuthConfig);
+generateAppTemplate(NoOAuthConfig);
 rimraf.sync(__dirname.replace('bin', NoOAuthConfig.appName));
 console.log('NoOAuth test successful.');
 
@@ -65,10 +66,26 @@ console.log('NoOAuth test successful.');
 const demoNames = readdirSync(path.resolve(__dirname, '../demos'));
 for (const demoName of demoNames) {
     console.log(demoName);
-    generateDemo({
+    generateAppDemo({
         demoType: demoName,
         isTest: true
     });
     rimraf.sync(__dirname.replace('bin', demoName));
 }
 console.log('demo test successful.');
+
+const BotWithInteractiveMessageConfig = {
+    botName: 'BotWithInteractiveMessage',
+    useInterativeMessage: true
+};
+generateBotTemplate(BotWithInteractiveMessageConfig);
+rimraf.sync(__dirname.replace('bin', BotWithInteractiveMessageConfig.botName));
+console.log('BotWithInteractiveMessageConfig test successful.');
+
+const BotWithoutInteractiveMessageConfig = {
+    botName: 'BotWithoutInteractiveMessage',
+    useInterativeMessage: false
+};
+generateBotTemplate(BotWithoutInteractiveMessageConfig);
+rimraf.sync(__dirname.replace('bin', BotWithoutInteractiveMessageConfig.botName));
+console.log('BotWithoutInteractiveMessageConfig test successful.');

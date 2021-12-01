@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const { copyFiles } = require('./copyHelper');
-const { generateTemplate } = require('./template');
+const { generateAppTemplate: generateTemplate } = require('./app-template');
 
-exports.generateDemo = (
+exports.generateAppDemo = (
     {
         demoType,
         isTest

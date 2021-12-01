@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { copyTemplate, copyFiles, createDirs } = require('./copyHelper');
 
-exports.generateTemplate = (
+exports.generateAppTemplate = (
     {
         appName,
         useOAuth,

@@ -2,31 +2,63 @@
 const commander = require('commander');
 const program = new commander.Command();
 const { version } = require('../package.json');
-const { generateTemplate } = require('./template');
+
+const { generateAppTemplate } = require('./app-template');
+const { generateAppDemo } = require('./app-demo');
+
+const { generateBotTemplate } = require('./bot-template');
+
+
 const { release } = require('./release')
 const path = require('path');
 const { readdirSync } = require('fs')
 
 const inquirer = require('inquirer');
-const { generateDemo } = require('./demo');
 
 program.version(version).description('RingCentral Add-In Framework');
 
 program
-.command('help')
-.alias('h')
-.description('help:')
-.action(()=>{
-    console.log('To install a template:');
-    console.log('   npx ringcentral-add-in-framework template');
-    console.log('To install a demo:');
-    console.log('   npx ringcentral-add-in-framework demo');
-});
+    .command('help')
+    .alias('h')
+    .description('help:')
+    .action(() => {
+        console.log('To install an app template:');
+        console.log('   npx ringcentral-add-in-framework app-template');
+        console.log('To install an app demo:');
+        console.log('   npx ringcentral-add-in-framework app-demo');
+        console.log('To install a bot template:');
+        console.log('   npx ringcentral-add-in-framework bot-template');
+    });
 
 program
-    .command('template')
-    .alias('t')
-    .description('install a new template')
+    .command('bot-template')
+    .alias('bt')
+    .description('install a new bot template')
+    .action(() => {
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'botName',
+                    message: 'Enter bot name:',
+                    default: 'bot-template'
+                },
+                {
+                    type: 'confirm',
+                    name: 'useInteractiveMessage',
+                    message: 'Add interactive message(outbound webhook) support?',
+                    default: true
+                }
+            ]
+            ).then((answers) => {
+                generateBotTemplate(answers);
+            })
+    })
+
+program
+    .command('app-template')
+    .alias('at')
+    .description('install a new app template')
     .action(() => {
         inquirer
             .prompt([
@@ -34,7 +66,7 @@ program
                     type: 'input',
                     name: 'appName',
                     message: 'Enter app name:',
-                    default: 'template'
+                    default: 'app-template'
                 },
                 {
                     type: 'confirm',
@@ -98,13 +130,13 @@ program
                 }
             ])
             .then((answers) => {
-                generateTemplate(answers);
+                generateAppTemplate(answers);
             })
     });
 
 program
-    .command('demo')
-    .alias('d')
+    .command('app-demo')
+    .alias('ad')
     .description('install a new demo')
     .action(() => {
         inquirer
@@ -117,7 +149,7 @@ program
                 }
             ])
             .then((answers) => {
-                generateDemo(answers);
+                generateAppDemo(answers);
             })
     }
     );
@@ -132,20 +164,20 @@ program
             useRefreshToken: true,
             setupParams: false
         };
-        generateTemplate(answers);
+        generateAppTemplate(answers);
         answers = {
             appName: '2',
             useOAuth: true,
             useRefreshToken: false,
             setupParams: false
         };
-        generateTemplate(answers);
+        generateAppTemplate(answers);
         answers = {
             appName: '3',
             useOAuth: false,
             setupParams: false
         }
-        generateTemplate(answers);
+        generateAppTemplate(answers);
     });
 
 program
