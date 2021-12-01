@@ -18,8 +18,12 @@ This framework should be used as a boilerplate project. There are two types of A
 - Bot
 
 ## Notification App
+
 <details>
   <summary>How to install a notification app template/demo</summary>
+
+### Install Notification App Template
+
 This framework contains several app template variations due to the fact that different 3rd party platforms have different designs on their APIs. Before starting the installation, please:
 1. Go to 3rd party platform and register a new app there. For most platforms who have OAuth flow implementation, there will be `ClientId` and `ClientSecret` generated for your app.
 2. If 3rd party platform uses `OAuth`, please check if it uses `accessToken` + `refreshToken` OR just `accessToken`.
@@ -48,6 +52,9 @@ npx ringcentral-add-in-framework ad
 
 <details>
   <summary>How to use a notification app template</summary>
+
+### Use Notification App Template
+
 To work with a plain `app-template`, we want to fill in our business logic in handlers which are for:
 - Authorization (authorize Add-In server with user's 3rd party platform account)
 - Subscription (create event subscription on 3rd party platform)
@@ -100,6 +107,9 @@ if (!user) {
 
 <details>
   <summary>How to use a notification app demo</summary>
+
+### Use Notification App Demo
+
 It's a lot easier than using a `template`, and `demos` are essentially `templates` with platform-dependent logic written to implement simple functionality. Therefore a few cli commands would make it up and run.
 
 At the moment, we have `demos` for `Github`, `Asana` and `Gitlab`.
@@ -109,6 +119,9 @@ At the moment, we have `demos` for `Github`, `Asana` and `Gitlab`.
 ## Bot
 <details>
   <summary>How to install a bot template</summary>
+
+### Install Bot Template
+
 To install a `bot-template`, use:
 
 ```bash
