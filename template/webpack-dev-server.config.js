@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 const getBaseConfig = require('./getWebpackBaseConfig');
-const buildPath = path.resolve(__dirname, 'src', 'assets');
+const buildPath = path.resolve(__dirname, 'src', 'client');
 const outputPath = path.resolve(__dirname, 'public');
 
 const config = getBaseConfig();
