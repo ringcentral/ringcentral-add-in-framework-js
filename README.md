@@ -14,8 +14,8 @@ The framework will help you create a [RingCentral Add-In App](https://developers
 # Framework
 
 This framework should be used as a boilerplate project. There are two types of Add-Ins that can be installed with this framework:
-- Notification App
-- Bot
+- [Notification App](#notification-app)
+- [Bot](#bot)
 
 ## Notification App
 

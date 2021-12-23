@@ -18,7 +18,7 @@ async function onReceiveNotification(notificationData, subscription, user) {
         title: testNotificationInfo.title,
         content: testNotificationInfo.message,
         link: testNotificationInfo.linkToPage,
-        subscriptionId: subscriptionId
+        subscriptionId: subscription.id
     };
     // Send adaptive card to your channel in RingCentral App
     await sendAdaptiveCardMessage(

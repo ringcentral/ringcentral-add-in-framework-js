@@ -41,7 +41,7 @@ async function onUnauthorize(userId) {
         // Step.1: Unsubscribe all webhook and clear subscriptions in db
         const subscription = await Subscription.findOne({
             where: {
-                rcWebhookUri: req.body.rcWebhookUri
+                userId: userId
             }
         });
         if (subscription && subscription.thirdPartyWebhookId) {

@@ -16,8 +16,8 @@ async function onSubscribe(user, rcWebhookUri) {
   // Step.3: Create new subscription in DB. Note: If up till now, it's running correctly, most likely your RingCentral App conversation will receive message in the form of Adaptive Card (exception: Asana - more info: try asana demo with 'npx ringcentral-add-in-framework demo')
   await Subscription.create({
     id: subscriptionId,
-    userId: userId,
-    rcWebhookUri: req.body.rcWebhookUri,
+    userId: user.id,
+    rcWebhookUri: rcWebhookUri,
     thirdPartyWebhookId: webhookData.thirdPartySubscriptionId   // [REPLACE] this with webhook subscription id from 3rd party platform response
   });
 

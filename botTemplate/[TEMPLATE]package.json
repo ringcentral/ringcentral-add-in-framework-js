@@ -1,15 +1,20 @@
 {
-    "name": "ringcentral-add-in-framework-bot",
+    "name": "<%= name %>",
     "version": "0.0.1",
-    "description": "A template for RingCentral Bot Add-In",
+    "description": "RingCentral Bot Add-In",
+    "keywords": [
+      "RingCentral",
+      "Add-In",
+      "Bot"
+    ],
     "main": "index.js",
     "scripts": {
         "start": "node -r dotenv/config src/index.js",
         "ngrok": "ngrok http -region us 6066 "
     },
     "dependencies": {
-        "adaptive-expressions": "^4.14.1",
-        "adaptivecards-templating": "^2.2.0",
+        <% if (useInteractiveMessage) { %>"adaptive-expressions": "^4.14.1",
+        "adaptivecards-templating": "^2.2.0",<% } %>
         "express": "^4.17.1",
         "ringcentral-chatbot-core": "^1.0.11",
         "sequelize": "^6.12.0-alpha.1"

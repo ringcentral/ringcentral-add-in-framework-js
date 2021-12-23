@@ -34,7 +34,6 @@ exports.generateBotTemplate = (
     // copy files
     copyFiles([
         { filePath: path.resolve(__dirname, '../botTemplate/sample.env',), destinationPath: path.resolve(projectDir, '.env') },
-        { filePath: path.resolve(__dirname, '../botTemplate/package.json',), destinationPath: path.resolve(projectDir, 'package.json') },
         { filePath: path.resolve(__dirname, '../botTemplate/src/adaptiveCards/textCard.json',), destinationPath: path.resolve(projectDir, 'src/adaptiveCards/textCard.json') },
     ]);
 
@@ -57,6 +56,15 @@ exports.generateBotTemplate = (
         templatePath: path.resolve(__dirname, '../botTemplate/src/handlers/[TEMPLATE]botHandler.js',),
         destinationPath: path.resolve(projectDir, 'src/handlers/botHandler.js'),
         params: {
+            useInteractiveMessage: useInteractiveMessage
+        },
+    });
+
+    copyTemplate({
+        templatePath: path.resolve(__dirname, '../botTemplate/[TEMPLATE]package.json',),
+        destinationPath: path.resolve(projectDir, 'package.json'),
+        params: {
+            botName: botName,
             useInteractiveMessage: useInteractiveMessage
         },
     });
