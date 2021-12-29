@@ -10,6 +10,7 @@ const { generateBotTemplate } = require('./bot-template');
 
 
 const { release } = require('./release')
+const test = require('./test')
 const path = require('path');
 const { readdirSync } = require('fs')
 
@@ -155,32 +156,6 @@ program
     );
 
 program
-    .command('test')
-    .description('simple test for template installation')
-    .action(() => {
-        let answers = {
-            appName: '1',
-            useOAuth: true,
-            useRefreshToken: true,
-            setupParams: false
-        };
-        generateAppTemplate(answers);
-        answers = {
-            appName: '2',
-            useOAuth: true,
-            useRefreshToken: false,
-            setupParams: false
-        };
-        generateAppTemplate(answers);
-        answers = {
-            appName: '3',
-            useOAuth: false,
-            setupParams: false
-        }
-        generateAppTemplate(answers);
-    });
-
-program
     .command('release')
     .alias('r')
     .description('create a new release')
@@ -205,6 +180,8 @@ program
                 },
             ])
             .then((answers) => {
+                console.log('doing test...');
+                test();
                 console.log('doing release...');
                 release(answers);
             })

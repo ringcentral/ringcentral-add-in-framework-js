@@ -64,7 +64,7 @@ exports.generateBotTemplate = (
         templatePath: path.resolve(__dirname, '../botTemplate/[TEMPLATE]package.json',),
         destinationPath: path.resolve(projectDir, 'package.json'),
         params: {
-            botName: botName,
+            name: botName,
             useInteractiveMessage: useInteractiveMessage
         },
     });

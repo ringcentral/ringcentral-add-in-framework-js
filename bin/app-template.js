@@ -196,8 +196,7 @@ exports.generateAppTemplate = (
         templatePath: path.resolve(__dirname, '../template/src/server/routes/[TEMPLATE]subscription.js',),
         destinationPath: path.resolve(projectDir, 'src/server/routes/subscription.js'),
         params: {
-            useOAuth: useOAuth,
-            useRefreshToken: useRefreshToken
+            useOAuth: useOAuth
         },
     });
 

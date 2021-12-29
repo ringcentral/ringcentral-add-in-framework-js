@@ -1,6 +1,5 @@
 <%if (useOAuth) {%>const { decodeJwt } = require('../lib/jwt');
 const { User } = require('../models/userModel');<%}%>
-<%if (useRefreshToken) {%>const { checkAndRefreshAccessToken } = require('../lib/oauth');<%}%>
 const { onSubscribe } = require('../handlers/subscriptionHandler');
 <%if (useOAuth) {%>
 
@@ -38,8 +37,6 @@ async function subscribe(req, res) {
 
     // create webhook notification subscription
     try {
-    <%if (useRefreshToken) {%>// check token refresh condition
-        await checkAndRefreshAccessToken(user);<%}%>
         await onSubscribe(user, rcWebhookUri);    
         res.status(200);
         res.json({
