@@ -139,7 +139,7 @@ It's not recommended, but if you want to have a easier deployment without hostin
 app.use('/client', express.static(__dirname + '/client'));
 ```
 
-Move client built output in `public` to `src/server/client`, and then `ASSETS_PATH` in `.env` should be `{serverAddress}/client`.
+Move client built output in `public` to `src/server/client`, and then `ASSETS_PATH` in environment variable files should be `{serverAddress}/client`.
 
 It's essentially a tradeoff between simple hosting and client app download speed.
 

@@ -6,12 +6,15 @@ const packageJson = require(packageJsonPath);
 const fs = require('fs').promises;
 const { resolve } = require('path');
 const { Octokit } = require("@octokit/rest");
+const test = require('./test')
 
 async function release({
     releaseType,
     commit
 }) {
     try {
+        console.log('doing release...');
+
         console.log('fetching for changes...');
         const fetchResponse = await git.fetch();
         

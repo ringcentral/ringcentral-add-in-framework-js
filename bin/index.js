@@ -10,7 +10,6 @@ const { generateBotTemplate } = require('./bot-template');
 
 
 const { release } = require('./release')
-const test = require('./test')
 const path = require('path');
 const { readdirSync } = require('fs')
 
@@ -180,9 +179,6 @@ program
                 },
             ])
             .then((answers) => {
-                console.log('doing test...');
-                test();
-                console.log('doing release...');
                 release(answers);
             })
     });
