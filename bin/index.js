@@ -12,7 +12,7 @@ const { generateBotTemplate } = require('./bot-template');
 const { release } = require('./release')
 const path = require('path');
 const { readdirSync } = require('fs')
-
+const { test } = require('./test');
 const inquirer = require('inquirer');
 
 program.version(version).description('RingCentral Add-In Framework');
@@ -181,6 +181,13 @@ program
             .then((answers) => {
                 release(answers);
             })
+    });
+
+program
+    .command('test')
+    .alias('t')
+    .action(() => {
+        test();
     });
 
 program.parse(process.argv);
