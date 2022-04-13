@@ -8,6 +8,7 @@ const { readdirSync } = require('fs')
 // Below tests are to attempt generating templates so to verify that no error happens in the process
 // Generated templates will be deleted after generation
 async function test() {
+    console.log('start testing...')
     const OAuthAndRefreshConfigWithNoDeploy = {
         appName: 'OAuthAndRefreshConfigWithNoDeploy',
         useOAuth: true,
@@ -75,9 +76,11 @@ async function test() {
     }
     console.log('demo test successful.');
 
+    //tests to generate bots
     const BotWithInteractiveMessageConfig = {
         botName: 'BotWithInteractiveMessage',
-        useInterativeMessage: true
+        useInterativeMessage: true,
+        deployment: 'aws_lambda_and_dynamoDB'
     };
     generateBotTemplate(BotWithInteractiveMessageConfig);
     rimraf.sync(__dirname.replace('bin', BotWithInteractiveMessageConfig.botName));
@@ -85,7 +88,8 @@ async function test() {
 
     const BotWithoutInteractiveMessageConfig = {
         botName: 'BotWithoutInteractiveMessage',
-        useInterativeMessage: false
+        useInterativeMessage: false,
+        deployment: 'heroku_with_postgres'
     };
     generateBotTemplate(BotWithoutInteractiveMessageConfig);
     rimraf.sync(__dirname.replace('bin', BotWithoutInteractiveMessageConfig.botName));

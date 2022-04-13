@@ -1,6 +1,6 @@
 {
-    "name": "ringcentral-add-in-framework",
-    "version": "1.4.3",
+    "name": "create-rc-add-in",
+    "version": "1.5.0",
     "description": "Framework for RingCentral Add-In App",
     "keywords": [
         "RingCentral",
@@ -9,8 +9,7 @@
     ],
     "bin": "bin/index.js",
     "scripts": {
-        "start": "node ./bin/index.js",
-        "test": "node ./bin/test.js"
+        "start": "node ./bin/index.js"
     },
     "dependencies": {
         "@jsdevtools/npm-publish": "^1.4.3",

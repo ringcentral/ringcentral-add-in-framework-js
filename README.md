@@ -32,21 +32,13 @@ This framework contains several app template variations due to the fact that dif
 Then install a `app-template` with following commands:
 
 ```bash
-npx ringcentral-add-in-framework app-template
-
-OR
-
-npx ringcentral-add-in-framework at
+npx create-rc-add-in app
 ```
 
 We also have simple `app-demo` that are based on the template and they'll be up and running with a few steps to configure. Demos can be installed with:
 
 ```bash
-npx ringcentral-add-in-framework app-demo
-
-OR
-
-npx ringcentral-add-in-framework ad
+npx create-rc-add-in app-demo
 ```
 </details>
 
@@ -125,11 +117,7 @@ At the moment, we have `demos` for `Github`, `Asana` and `Gitlab`.
 To install a `bot-template`, use:
 
 ```bash
-npx ringcentral-add-in-framework bot-template
-
-OR
-
-npx ringcentral-add-in-framework bt
+npx create-rc-add-in bot
 ```
 </details>
 

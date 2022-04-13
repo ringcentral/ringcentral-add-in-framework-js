@@ -1,0 +1,32 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Current name: **${testName}**",
+            "wrap": true
+        },
+        {
+            "type": "Input.Text",
+            "placeholder": "Input a new name...",
+            "id": "testName"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Submit",
+                    "data": {
+                        "actionType": "update",
+                        "botId": "${botId}",
+                        "groupId": "${groupId}",
+                        "testId": "${testId}"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+  "name": "RingCentral Add-In Bot",
+  "description": "",
+  "repository": "",
+  "keywords": [
+    "node",
+    "express",
+    "ringcentral add-in",
+    "bot"
+  ],
+  "addons": [
+    {
+      "plan": "heroku-postgresql"
+    }
+  ],
+  "env": {
+    "RINGCENTRAL_SERVER": {
+      "description": "RingCentral platform server url",
+      "value": "https://platform.devtest.ringcentral.com"
+    },
+    "RINGCENTRAL_CHATBOT_DATABASE_CONNECTION_URI": {
+      "description": "Database uri. Leave this default for the 1st deployment and copy DATABASE_URL value to here right after.",
+      "value": "database_uri"
+    },
+    "RINGCENTRAL_CHATBOT_CLIENT_ID": {
+      "description": "Client Id for your bot, from App Settings on RingCentral Developer Portal",
+      "value": ""
+    },
+    "RINGCENTRAL_CHATBOT_CLIENT_SECRET": {
+      "description": "Client Secret for your bot, from App Settings on RingCentral Developer Portal",
+      "value": ""
+    },
+    "RINGCENTRAL_CHATBOT_SERVER": {
+      "description": "Bot server url. Leave this default for the 1st deployment and fill in right after",
+      "value": "bot_server"
+    },
+    "RINGCENTRAL_CHATBOT_ADMIN_USERNAME": {
+      "description": "Bot admin username",
+      "value": "admin"
+    },
+    "RINGCENTRAL_CHATBOT_ADMIN_PASSWORD": {
+      "description": "Bot admin password",
+      "value": "admin"
+    },
+    "USE_HEROKU_POSTGRES": {
+      "description": "Sequelize config",
+      "value": "true"
+    },
+    "IM_SHARED_SECRET": {
+      "description": "(ignore it if your are not using Interactive Messages feature)RingCentral app interactive message shared secret",
+      "value": "",
+      "required": false
+    }
+  }
+}

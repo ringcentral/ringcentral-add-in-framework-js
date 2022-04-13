@@ -33,6 +33,7 @@ program
 program
     .command('bot-template')
     .alias('bt')
+    .alias('bot')
     .description('install a new bot template')
     .action(() => {
         inquirer
@@ -48,6 +49,12 @@ program
                     name: 'useInteractiveMessage',
                     message: 'Add interactive message(outbound webhook) support?',
                     default: true
+                },
+                {
+                    type: 'list',
+                    name: 'deployment',
+                    message: 'We provide a few pre-configured deployment methods. If not listed, please select none, and implement your own deployment method.',
+                    choices: ['aws_lambda_and_dynamoDB', 'heroku_with_postgres'],
                 }
             ]
             ).then((answers) => {
@@ -58,6 +65,7 @@ program
 program
     .command('app-template')
     .alias('at')
+    .alias('app')
     .description('install a new app template')
     .action(() => {
         inquirer
