@@ -57,7 +57,7 @@ async function release({
 
         await octokit.rest.repos.createRelease({
             owner: process.env.GITHUB_OWNER,
-            repo: packageJson.name,
+            repo: 'ringcentral-add-in-framework-js',
             tag_name: versionTag,
             name: versionTag,
             body: commit

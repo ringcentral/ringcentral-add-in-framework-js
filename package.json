@@ -1,6 +1,6 @@
 {
     "name": "create-rc-add-in",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "description": "Framework for RingCentral Add-In App",
     "keywords": [
         "RingCentral",
