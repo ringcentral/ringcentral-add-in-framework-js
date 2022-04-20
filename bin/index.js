@@ -23,16 +23,15 @@ program
     .description('help:')
     .action(() => {
         console.log('To install an app template:');
-        console.log('   npx ringcentral-add-in-framework app-template');
+        console.log('   npx create-rc-ad-in app');
         console.log('To install an app demo:');
-        console.log('   npx ringcentral-add-in-framework app-demo');
+        console.log('   npx create-rc-ad-in app-demo');
         console.log('To install a bot template:');
-        console.log('   npx ringcentral-add-in-framework bot-template');
+        console.log('   npx create-rc-ad-in bot');
     });
 
 program
     .command('bot-template')
-    .alias('bt')
     .alias('bot')
     .description('install a new bot template')
     .action(() => {
@@ -64,7 +63,6 @@ program
 
 program
     .command('app-template')
-    .alias('at')
     .alias('app')
     .description('install a new app template')
     .action(() => {
@@ -144,7 +142,6 @@ program
 
 program
     .command('app-demo')
-    .alias('ad')
     .description('install a new demo')
     .action(() => {
         inquirer
