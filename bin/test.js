@@ -77,23 +77,41 @@ async function test() {
     console.log('demo test successful.');
 
     //tests to generate bots
-    const BotWithInteractiveMessageConfig = {
+    const BotWithInteractiveMessageConfigAWS = {
         botName: 'BotWithInteractiveMessage',
         useInterativeMessage: true,
         deployment: 'aws_lambda_and_dynamoDB'
     };
-    generateBotTemplate(BotWithInteractiveMessageConfig);
-    rimraf.sync(__dirname.replace('bin', BotWithInteractiveMessageConfig.botName));
-    console.log('BotWithInteractiveMessageConfig test successful.');
+    generateBotTemplate(BotWithInteractiveMessageConfigAWS);
+    rimraf.sync(__dirname.replace('bin', BotWithInteractiveMessageConfigAWS.botName));
+    console.log('BotWithInteractiveMessageConfigAWS test successful.');
 
-    const BotWithoutInteractiveMessageConfig = {
+    const BotWithoutInteractiveMessageConfigAWS = {
+        botName: 'BotWithInteractiveMessage',
+        useInterativeMessage: false,
+        deployment: 'aws_lambda_and_dynamoDB'
+    };
+    generateBotTemplate(BotWithoutInteractiveMessageConfigAWS);
+    rimraf.sync(__dirname.replace('bin', BotWithoutInteractiveMessageConfigAWS.botName));
+    console.log('BotWithoutInteractiveMessageConfigAWS test successful.');
+
+    const BotWithInteractiveMessageConfigHeroku = {
         botName: 'BotWithoutInteractiveMessage',
         useInterativeMessage: false,
         deployment: 'heroku_with_postgres'
     };
-    generateBotTemplate(BotWithoutInteractiveMessageConfig);
-    rimraf.sync(__dirname.replace('bin', BotWithoutInteractiveMessageConfig.botName));
-    console.log('BotWithoutInteractiveMessageConfig test successful.');
+    generateBotTemplate(BotWithInteractiveMessageConfigHeroku);
+    rimraf.sync(__dirname.replace('bin', BotWithInteractiveMessageConfigHeroku.botName));
+    console.log('BotWithInteractiveMessageConfigHeroku test successful.');
+
+    const BotWithoutInteractiveMessageConfigHeroku = {
+        botName: 'BotWithoutInteractiveMessage',
+        useInterativeMessage: false,
+        deployment: 'heroku_with_postgres'
+    };
+    generateBotTemplate(BotWithoutInteractiveMessageConfigHeroku);
+    rimraf.sync(__dirname.replace('bin', BotWithoutInteractiveMessageConfigHeroku.botName));
+    console.log('BotWithoutInteractiveMessageConfigHeroku test successful.');
 }
 
 exports.test = test;
