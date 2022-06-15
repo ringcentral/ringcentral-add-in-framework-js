@@ -32,6 +32,8 @@
         "ngrok": "^4.2.2",
         "nock": "^13.2.4",
         "sqlite3": "^5.0.2",
-        "supertest": "^6.2.2"
+        "supertest": "^6.2.2"<% if (deployment === 'aws_lambda_and_dynamoDB') { %>,
+        "serverless-deployment-bucket": "^1.5.2",
+        "serverless-plugin-log-retention": "^2.0.0"<% } %>
     }
 }

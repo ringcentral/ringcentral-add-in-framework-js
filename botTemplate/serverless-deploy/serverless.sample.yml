@@ -1,4 +1,8 @@
 service: ringcentral-add-in-test-bot-service
+plugins:
+  - serverless-plugin-log-retention
+custom:
+  logRetentionInDays: 180 # used to set a global value for all functions
 provider:
   stage: ${opt:stage, 'prod'}
   name: aws

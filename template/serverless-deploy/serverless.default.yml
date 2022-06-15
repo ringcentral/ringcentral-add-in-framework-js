@@ -72,3 +72,5 @@ resources:
           WriteCapacityUnits: 1
 plugins:
   - serverless-deployment-bucket
+  - serverless-plugin-log-retention
+logRetentionInDays: 180 # used to set a global value for all functions

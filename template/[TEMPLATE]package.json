@@ -49,7 +49,9 @@
     "webpack": "4.41.6",
     "webpack-cli": "3.3.11",
     "webpack-dev-server": "3.10.3",<% } %>
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "^2.0.3"<% if (deployment === 'aws_lambda_and_dynamoDB') { %>,
+      "serverless-deployment-bucket": "^1.5.2",
+      "serverless-plugin-log-retention": "^2.0.0"<% } %>
   },
   "dependencies": {<% if (useOAuth) { %>
     "client-oauth2": "^4.3.3",
