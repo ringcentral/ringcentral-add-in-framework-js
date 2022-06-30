@@ -60,7 +60,7 @@
     "adaptivecards-templating": "^2.1.0",
     "shortid": "2.2.16",
     "sequelize": "^5.22.3",
-    <% if (deployment === 'aws_lambda_and_dynamoDB') { %>"dynamo-sequelize": "^0.8.1",<%} else {%>"pg": "^8.7.1",<%}%>
+    <% if (deployment === 'aws_lambda_and_dynamoDB') { %>"dynamo-sequelize": "^3.0.0",<%} else {%>"pg": "^8.7.1",<%}%>
     "axios": "^0.21.1",
     "dotenv": "6.2.0",
     "glip-integration-js": "^0.2.0",

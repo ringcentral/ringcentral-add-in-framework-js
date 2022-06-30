@@ -57,7 +57,7 @@
       "axios": "^0.21.1",
       "client-oauth2": "^4.3.3",
       "dotenv": "6.2.0",
-      "dynamo-sequelize": "^0.8.1",
+      "dynamo-sequelize": "^3.0.0",
       "glip-integration-js": "^0.2.0",
       "jsonwebtoken": "^8.5.1",
       "pug": "^3.0.0",
