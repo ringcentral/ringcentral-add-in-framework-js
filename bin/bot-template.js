@@ -32,6 +32,11 @@ exports.generateBotTemplate = (
         { dirPath: path.resolve(projectDir, 'src/models') },
         { dirPath: path.resolve(projectDir, 'tests') }
     ]);
+    if (useInteractiveMessage) {
+        createDirs([
+            { dirPath: path.resolve(projectDir, 'src/static') }
+        ]);
+    }
 
     // copy files
     copyFiles([
@@ -49,6 +54,8 @@ exports.generateBotTemplate = (
         copyFiles([
             { filePath: path.resolve(__dirname, '../botTemplate/src/handlers/cardHandler.js',), destinationPath: path.resolve(projectDir, 'src/handlers/cardHandler.js') },
             { filePath: path.resolve(__dirname, '../botTemplate/src/adaptiveCards/submitCard.json',), destinationPath: path.resolve(projectDir, 'src/adaptiveCards/submitCard.json') },
+            { filePath: path.resolve(__dirname, '../botTemplate/src/adaptiveCards/openDialogCard.json',), destinationPath: path.resolve(projectDir, 'src/adaptiveCards/openDialogCard.json') },
+            { filePath: path.resolve(__dirname, '../botTemplate/src/static/dialog.html',), destinationPath: path.resolve(projectDir, 'src/static/dialog.html') },
         ]);
     }
 

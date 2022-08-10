@@ -20,6 +20,7 @@
         "pg": "^8.7.3",<%} else {%>"dynamo-sequelize": "^3.0.0",
         "serverless-http": "^3.0.1",<%}%> 
         "adaptive-expressions": "^4.14.1",
+        "crypto": "^1.0.1",
         "adaptivecards-templating": "^2.2.0",
         "glip-integration-js": "^0.2.1",
         "express": "^4.17.1",

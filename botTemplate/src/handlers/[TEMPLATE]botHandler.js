@@ -1,5 +1,6 @@
 const { Template } = require('adaptivecards-templating');
-<% if (useInteractiveMessage) { %>const submitCardTemplate = require('../adaptiveCards/submitCard.json');<% } else { %>
+<% if (useInteractiveMessage) { %>const submitCardTemplate = require('../adaptiveCards/submitCard.json');
+const openDialogCardTemplate = require('../adaptiveCards/openDialogCard.json');<% } else { %>
 const textCardTemplate = require('../adaptiveCards/textCard.json');<% } %>
 const { TestModel } = require('../models/testModel');
 
@@ -50,7 +51,18 @@ const botHandler = async event => {
                             $root: cardData
                         });
                         await messageBot.sendAdaptiveCard(group.id, card);
-                        break;
+                        break;<% if (useInteractiveMessage) { %>
+                    case 'dialog':
+                        const openDialogTemplate = new Template(openDialogCardTemplate);
+                        const openDialogCardData = {
+                            botId: messageBot.id,
+                            groupId: group.id
+                        }
+                        const openDialogCard = openDialogTemplate.expand({
+                            $root: openDialogCardData
+                        });
+                        await messageBot.sendAdaptiveCard(group.id, openDialogCard);
+                        break;<% } %>
                 }
         }
     }

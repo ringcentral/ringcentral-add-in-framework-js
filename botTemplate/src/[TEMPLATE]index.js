@@ -2,7 +2,8 @@ const { extendApp } = require('ringcentral-chatbot-core');
 const { botHandler } = require('./handlers/botHandler');
 const { TestModel } = require('./models/testModel');
 <% if (useInteractiveMessage) { %>
-const { cardHandler } = require('./handlers/cardHandler');<% } %>
+const { cardHandler } = require('./handlers/cardHandler');
+const path = require('path');<% } %>
 
 // extends or override express app as you need
 exports.appExtend = (app) => {
@@ -25,19 +26,10 @@ console.log('server running...');
 console.log(`bot oauth uri: ${process.env.RINGCENTRAL_CHATBOT_SERVER}${botConfig.botRoute}/oauth`);
 
 <% if (useInteractiveMessage) { %>
-const cardRoute = '/interactive-messages';
-app.post(cardRoute, async (req, res) => {
-    try {
-        await cardHandler(req);
-        res.status(200);
-        res.send('OK');
-    }
-    catch (e) {
-        console.log(e);
-        res.status(400);
-        res.send('Error');
-    }
+app.post('/interactive-messages', cardHandler);
+console.log(`card interactive message uri: ${process.env.RINGCENTRAL_CHATBOT_SERVER}/interactive-messages`);
+app.get('/iframeDialog', function (req, res) {
+    res.sendFile(path.join(__dirname, 'static/dialog.html'));
 });
-console.log(`card interactive message uri: ${process.env.RINGCENTRAL_CHATBOT_SERVER}${cardRoute}`);
 <% } %>
 }

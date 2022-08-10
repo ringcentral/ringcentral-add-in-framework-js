@@ -1,0 +1,35 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Click To Open A Model Dialog",
+            "wrap": true
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Open Card Dialog",
+                    "data": {
+                        "actionType": "openCardDialog",
+                        "botId": "${botId}",
+                        "groupId": "${groupId}"
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "Open iFrame Dialog",
+                    "data": {
+                        "actionType": "openIFrameDialog",
+                        "botId": "${botId}",
+                        "groupId": "${groupId}"
+                    }
+                }
+            ]
+        }
+    ]
+}

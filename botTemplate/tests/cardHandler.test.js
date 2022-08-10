@@ -47,7 +47,10 @@ describe('cardHandler', () => {
                 data: {
                     botId: 'unknownBotId'
                 },
-                user: {}
+                user: {},
+                card: {
+                    id: cardId
+                }
             }
 
             // Act
@@ -55,7 +58,7 @@ describe('cardHandler', () => {
 
             // Assert
             expect(res.status).toEqual(400);
-            expect(res.text).toEqual('Error');
+            expect(res.text).toEqual('Unknown Bot Id.');
         })
     });
 
