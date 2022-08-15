@@ -69,6 +69,14 @@ Open 2 new terminals and run below commands respectively:
 npm run dev
 ```
 
+## Step.6 Quick Try
+
+There are 3 bot commands in template. Try it with directly messaging bot with `command` or type @bot `command` in a team conversation:
+
+1. `hello`: bot will response with `hello` as well
+2. `card`: bot will response with an Adaptive Card
+3. `dialog` (need support for `interactive messages`): bot will response with an Adaptive Card with buttons to open `Modal Dialog`.
+
 ### Additional Note
 
 - [Adaptive Cards Designer](https://adaptivecards.io/designer/) is a great online tool to design your Adaptive Cards. Json files under `src/server/adaptiveCards` follow the same format as in `CARD PAYLOAD EDITOR`, so you can design your card on [Adaptive Cards Designer](https://adaptivecards.io/designer/) and copy over the payload directly.
