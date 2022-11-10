@@ -111,6 +111,8 @@ exports.generateBotTemplate = (
     });
 
     switch (deployment) {
+        case 'none':
+            break;
         case 'aws_lambda_and_dynamoDB':
             createDirs([
                 { dirPath: path.resolve(projectDir, 'serverless-deploy') },

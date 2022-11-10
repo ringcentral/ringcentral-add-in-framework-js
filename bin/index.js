@@ -53,7 +53,7 @@ program
                     type: 'list',
                     name: 'deployment',
                     message: 'We provide a few pre-configured deployment methods. If not listed, please select none, and implement your own deployment method.',
-                    choices: ['aws_lambda_and_dynamoDB', 'heroku_with_postgres'],
+                    choices: ['none', 'aws_lambda_and_dynamoDB', 'heroku_with_postgres'],
                 }
             ]
             ).then((answers) => {
